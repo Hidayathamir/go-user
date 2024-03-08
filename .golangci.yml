@@ -1,0 +1,65 @@
+# Refer to golangci-lint's example config file for more options and information:
+# https://github.com/golangci/golangci-lint/blob/master/.golangci.reference.yml
+
+run:
+  tests: false
+  timeout: 5m
+  modules-download-mode: readonly
+
+
+
+linters:
+  enable:
+    - errcheck
+    - goimports
+    - revive
+    - govet
+    - staticcheck
+    - bodyclose
+    - containedctx
+    - cyclop
+    - dupl
+    - dupword
+    - errchkjson
+    - errname
+    - errorlint
+    - forbidigo
+    - forcetypeassert
+    - funlen
+    - gocheckcompilerdirectives
+    - gochecknoinits
+    - gocognit
+    - gocritic
+    - gocyclo
+    - godot
+    - godox
+    - gofmt
+    - gomnd
+    - gosec
+    - gosmopolitan
+    - grouper
+    - importas
+    - ireturn
+    - maintidx
+    - misspell
+    - musttag
+    - nestif
+    - nilerr
+    - noctx
+    - nolintlint
+    - nosprintfhostport
+    - perfsprint
+    - predeclared
+    - spancheck
+    - testifylint
+    - unconvert
+    - unparam
+    - usestdlibvars
+    - wastedassign
+    - whitespace
+    - wrapcheck
+
+issues:
+  exclude-use-default: false
+  max-issues-per-linter: 0
+  max-same-issues: 0
