@@ -4,6 +4,7 @@ app:
   environment: 'dev' # 'prod', 'dev'
 
 http:
+  host: "localhost"
   port: 8080
 
 logger:

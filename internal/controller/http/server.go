@@ -3,6 +3,8 @@ package http
 
 import (
 	"fmt"
+	"net"
+	"strconv"
 
 	"github.com/Hidayathamir/go-user/config"
 	"github.com/Hidayathamir/go-user/internal/usecase/repo/db"
@@ -15,7 +17,8 @@ func RunServer(db *db.Postgres) error {
 
 	registerRouter(ginEngine, db)
 
-	err := ginEngine.Run(fmt.Sprintf(":%d", config.HTTP.Port))
+	addr := net.JoinHostPort(config.HTTP.Host, strconv.Itoa(config.HTTP.Port))
+	err := ginEngine.Run(addr)
 	if err != nil {
 		return fmt.Errorf("gin.Engine.Run: %w", err)
 	}

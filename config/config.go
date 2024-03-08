@@ -95,7 +95,8 @@ type app struct {
 }
 
 type http struct {
-	Port int `yaml:"port" env-required:"true"`
+	Host string `yaml:"host" env-required:"true"`
+	Port int    `yaml:"port" env-required:"true"`
 }
 
 type logLevel string
