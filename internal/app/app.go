@@ -4,6 +4,7 @@ package app
 import (
 	"github.com/Hidayathamir/go-user/config"
 	"github.com/Hidayathamir/go-user/internal/controller/http"
+	"github.com/Hidayathamir/go-user/internal/usecase/repo/db"
 	"github.com/sirupsen/logrus"
 )
 
@@ -14,7 +15,18 @@ func Run() {
 		logrus.Fatalf("config.Init: %v", err)
 	}
 
-	err = http.RunServer()
+	db, err := db.NewPostgresPoolConnection(db.URL{
+		Username: config.PG.Username,
+		Password: config.PG.Password,
+		Host:     config.PG.Host,
+		Port:     config.PG.Port,
+		DBName:   config.PG.DBName,
+	})
+	if err != nil {
+		logrus.Fatalf("db.NewPostgresPoolConnection: %v", err)
+	}
+
+	err = http.RunServer(db)
 	if err != nil {
 		logrus.Fatalf("http.RunServer: %v", err)
 	}

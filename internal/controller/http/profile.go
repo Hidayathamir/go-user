@@ -5,12 +5,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Profile -.
+// Profile is controller HTTP for profile related.
 type Profile struct {
 	usecaseProfile usecase.IProfile
 }
 
-// newProfile -.
 func newProfile(usecaseProfile usecase.IProfile) *Profile {
 	return &Profile{
 		usecaseProfile: usecaseProfile,

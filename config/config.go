@@ -115,5 +115,10 @@ type logger struct {
 }
 
 type pg struct {
-	PoolMax int `yaml:"pool_max" env-required:"true"`
+	PoolMax  int    `yaml:"pool_max" env-required:"true"`
+	Username string `yaml:"username" env-required:"true"`
+	Password string `yaml:"password" env-required:"true"`
+	Host     string `yaml:"host"     env-required:"true"`
+	Port     int    `yaml:"port"     env-required:"true"`
+	DBName   string `yaml:"db_name"  env-required:"true"`
 }

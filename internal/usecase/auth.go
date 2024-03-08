@@ -13,8 +13,7 @@ type Auth struct {
 
 var _ IAuth = &Auth{}
 
-// NewAuth -.
-func NewAuth(repoAuth repo.IAuth) *Auth {
+func newAuth(repoAuth repo.IAuth) *Auth {
 	return &Auth{
 		repoAuth: repoAuth,
 	}

@@ -13,8 +13,7 @@ type Profile struct {
 
 var _ IProfile = &Profile{}
 
-// NewProfile -.
-func NewProfile(repoProfile repo.IProfile) *Profile {
+func newProfile(repoProfile repo.IProfile) *Profile {
 	return &Profile{
 		repoProfile: repoProfile,
 	}

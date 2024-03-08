@@ -5,12 +5,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Auth -.
+// Auth is controller HTTP for authentication related.
 type Auth struct {
 	usecaseAuth usecase.IAuth
 }
 
-// newAuth -.
 func newAuth(usecaseAuth usecase.IAuth) *Auth {
 	return &Auth{
 		usecaseAuth: usecaseAuth,
