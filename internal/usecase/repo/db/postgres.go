@@ -18,20 +18,11 @@ type Postgres struct {
 	Pool    *pgxpool.Pool
 }
 
-// URL contains value needed to build postgres url connection.
-type URL struct {
-	Username string
-	Password string
-	Host     string
-	Port     int
-	DBName   string
-}
-
 // NewPostgresPoolConnection return postgres pool connection.
-func NewPostgresPoolConnection(u URL) (*Postgres, error) {
+func NewPostgresPoolConnection() (*Postgres, error) {
 	url := fmt.Sprintf(
 		"postgres://%s:%s@%s:%d/%s",
-		u.Username, u.Password, u.Host, u.Port, u.DBName,
+		config.PG.Username, config.PG.Password, config.PG.Host, config.PG.Port, config.PG.DBName,
 	)
 
 	poolConfig, err := pgxpool.ParseConfig(url)

@@ -15,13 +15,7 @@ func Run() {
 		logrus.Fatalf("config.Init: %v", err)
 	}
 
-	db, err := db.NewPostgresPoolConnection(db.URL{
-		Username: config.PG.Username,
-		Password: config.PG.Password,
-		Host:     config.PG.Host,
-		Port:     config.PG.Port,
-		DBName:   config.PG.DBName,
-	})
+	db, err := db.NewPostgresPoolConnection()
 	if err != nil {
 		logrus.Fatalf("db.NewPostgresPoolConnection: %v", err)
 	}
