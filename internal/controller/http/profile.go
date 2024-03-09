@@ -34,6 +34,7 @@ func (p *Profile) updateProfileByUsername(c *gin.Context) {
 	req := dto.ReqUpdateProfileByUsername{}
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
+		err := fmt.Errorf("gin.Context.ShouldBindJSON: %w", err)
 		writeResponse(c, http.StatusBadRequest, nil, err)
 		return
 	}
@@ -42,6 +43,7 @@ func (p *Profile) updateProfileByUsername(c *gin.Context) {
 
 	err = p.usecaseProfile.UpdateProfileByUsername(c, req)
 	if err != nil {
+		err := fmt.Errorf("Profile.usecaseProfile.UpdateProfileByUsername: %w", err)
 		writeResponse(c, http.StatusBadRequest, nil, err)
 		return
 	}

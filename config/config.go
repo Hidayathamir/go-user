@@ -14,11 +14,12 @@ var (
 	HTTP   *http
 	Logger *logger
 	PG     *pg
+	JWT    *jwt
 )
 
 // Init initiate configurations from `./config/config.yml` file.
 func Init() error {
-	if App != nil && HTTP != nil && Logger != nil && PG != nil {
+	if App != nil && HTTP != nil && Logger != nil && PG != nil && JWT != nil {
 		logrus.Warn("config already initialized")
 		return nil
 	}
@@ -39,6 +40,7 @@ func Init() error {
 	HTTP = &cfg.HTTP
 	Logger = &cfg.Logger
 	PG = &cfg.PG
+	JWT = &cfg.JWT
 
 	err = initLogrusConfig()
 	if err != nil {
@@ -55,6 +57,7 @@ type config struct {
 	HTTP   http   `yaml:"http"     env-required:"true"`
 	Logger logger `yaml:"logger"   env-required:"true"`
 	PG     pg     `yaml:"postgres" env-required:"true"`
+	JWT    jwt    `yaml:"jwt" env-required:"true"`
 }
 
 func (c *config) validate() error {
@@ -122,4 +125,9 @@ type pg struct {
 	Host     string `yaml:"host"     env-required:"true"`
 	Port     int    `yaml:"port"     env-required:"true"`
 	DBName   string `yaml:"db_name"  env-required:"true"`
+}
+
+type jwt struct {
+	ExpireHour int    `yaml:"expire_hour" env-required:"true"`
+	SignedKey  string `yaml:"signed_key" env-required:"true"`
 }

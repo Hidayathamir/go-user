@@ -1,9 +1,20 @@
 package repo
 
-import "github.com/Hidayathamir/go-user/internal/usecase/repo/db"
+import (
+	"context"
+	"fmt"
+	"time"
+
+	"github.com/Hidayathamir/go-user/internal/entity"
+	"github.com/Hidayathamir/go-user/internal/entity/table"
+	"github.com/Hidayathamir/go-user/internal/usecase/repo/db"
+	"github.com/Hidayathamir/go-user/pkg/query"
+)
 
 // IAuth contains abstraction of repo authentication.
 type IAuth interface {
+	// RegisterUser register new user.
+	RegisterUser(ctx context.Context, user entity.User) (int64, error)
 }
 
 // Auth implement IAuth.
@@ -18,4 +29,33 @@ func NewAuth(db *db.Postgres) *Auth {
 	return &Auth{
 		db: db,
 	}
+}
+
+// RegisterUser register new user.
+func (a *Auth) RegisterUser(ctx context.Context, user entity.User) (int64, error) {
+	now := time.Now()
+
+	sql, args, err := a.db.Builder.
+		Insert(table.User.String()).
+		Columns(
+			table.User.Username, table.User.Password,
+			table.User.CreatedAt, table.User.UpdatedAt,
+		).
+		Values(
+			user.Username, user.Password,
+			now, now,
+		).
+		Suffix(query.Returning(table.User.ID)).
+		ToSql()
+	if err != nil {
+		return 0, fmt.Errorf("Auth.db.Builder.ToSql: %w", err)
+	}
+
+	var userID int64
+	err = a.db.Pool.QueryRow(ctx, sql, args...).Scan(&userID)
+	if err != nil {
+		return 0, fmt.Errorf("Auth.db.Pool.QueryRow.Scan: %w", err)
+	}
+
+	return userID, nil
 }

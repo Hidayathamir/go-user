@@ -22,7 +22,7 @@ func registerRouterV1(routerV1 *gin.RouterGroup, db *db.Postgres) {
 	authGroup := routerV1.Group("auth")
 	{
 		authGroup.POST("login", cAuth.login)
-		authGroup.POST("register", cAuth.register)
+		authGroup.POST("register", cAuth.registerUser)
 	}
 
 	userGroup := routerV1.Group("users")

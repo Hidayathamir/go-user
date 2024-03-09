@@ -17,3 +17,7 @@ postgres:
   host: "localhost"
   port: 5432
   db_name: "playground"
+
+jwt:
+  expire_hour: 36
+  signed_key: "5f4a252a-539b-47f6-2224-d4c2edd71ca4"
