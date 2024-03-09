@@ -8,7 +8,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// configuration list.
+// configuration list. Got panic? did you run Init?
 var (
 	App    *app
 	HTTP   *http

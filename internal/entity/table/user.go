@@ -3,6 +3,7 @@ package table
 import "github.com/sirupsen/logrus"
 
 // User is table `user`. Use this to get table name and column name when query to database.
+// Got panic? did you run Init which run initTableUser?
 var User *user
 
 type user struct {
