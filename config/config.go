@@ -18,7 +18,7 @@ var (
 )
 
 // Init initiate configurations from `./config/config.yml` file.
-func Init() error {
+func Init(isLoadEnv bool) error {
 	if App != nil && HTTP != nil && Logger != nil && PG != nil && JWT != nil {
 		logrus.Warn("config already initialized")
 		return nil
@@ -29,6 +29,13 @@ func Init() error {
 	err := cleanenv.ReadConfig("./config/config.yml", &cfg)
 	if err != nil {
 		return fmt.Errorf("cleanenv.ReadConfig: %w", err)
+	}
+
+	if isLoadEnv {
+		err := cleanenv.ReadEnv(&cfg)
+		if err != nil {
+			return fmt.Errorf("cleanenv.ReadEnv: %w", err)
+		}
 	}
 
 	err = cfg.validate()
@@ -57,7 +64,7 @@ type config struct {
 	HTTP   http   `yaml:"http"     env-required:"true"`
 	Logger logger `yaml:"logger"   env-required:"true"`
 	PG     pg     `yaml:"postgres" env-required:"true"`
-	JWT    jwt    `yaml:"jwt" env-required:"true"`
+	JWT    jwt    `yaml:"jwt"      env-required:"true"`
 }
 
 func (c *config) validate() error {
@@ -92,14 +99,14 @@ func (e env) validate() error {
 }
 
 type app struct {
-	Name        string `yaml:"name"        env-required:"true"`
-	Version     string `yaml:"version"     env-required:"true"`
-	Environment env    `yaml:"environment" env-required:"true"`
+	Name        string `yaml:"name"        env-required:"true" env:"APP_NAME"`
+	Version     string `yaml:"version"     env-required:"true" env:"APP_VERSION"`
+	Environment env    `yaml:"environment" env-required:"true" env:"APP_ENVIRONMENT"`
 }
 
 type http struct {
-	Host string `yaml:"host" env-required:"true"`
-	Port int    `yaml:"port" env-required:"true"`
+	Host string `yaml:"host" env-required:"true" env:"HTTP_HOST"`
+	Port int    `yaml:"port" env-required:"true" env:"HTTP_PORT"`
 }
 
 type logLevel string
@@ -115,19 +122,19 @@ func (l logLevel) validate() error {
 }
 
 type logger struct {
-	LogLevel logLevel `yaml:"log_level" env-required:"true"`
+	LogLevel logLevel `yaml:"log_level" env-required:"true" env:"LOGGER_LOG_LEVEL"`
 }
 
 type pg struct {
-	PoolMax  int    `yaml:"pool_max" env-required:"true"`
-	Username string `yaml:"username" env-required:"true"`
-	Password string `yaml:"password" env-required:"true"`
-	Host     string `yaml:"host"     env-required:"true"`
-	Port     int    `yaml:"port"     env-required:"true"`
-	DBName   string `yaml:"db_name"  env-required:"true"`
+	PoolMax  int    `yaml:"pool_max" env-required:"true" env:"POSTGRES_POOL_MAX"`
+	Username string `yaml:"username" env-required:"true" env:"POSTGRES_USERNAME"`
+	Password string `yaml:"password" env-required:"true" env:"POSTGRES_PASSWORD"`
+	Host     string `yaml:"host"     env-required:"true" env:"POSTGRES_HOST"`
+	Port     int    `yaml:"port"     env-required:"true" env:"POSTGRES_PORT"`
+	DBName   string `yaml:"db_name"  env-required:"true" env:"POSTGRES_DB_NAME"`
 }
 
 type jwt struct {
-	ExpireHour int    `yaml:"expire_hour" env-required:"true"`
-	SignedKey  string `yaml:"signed_key" env-required:"true"`
+	ExpireHour int    `yaml:"expire_hour" env-required:"true" env:"JWT_EXPIRE_HOUR"`
+	SignedKey  string `yaml:"signed_key"  env-required:"true" env:"JWT_SIGNED_KEY"`
 }
