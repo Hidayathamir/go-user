@@ -9,3 +9,22 @@ services:
       POSTGRES_PASSWORD: password
     ports:
       - "5432:5432"
+    container_name: "db-postgres-container"
+    networks:
+      - go-user
+
+  app:
+    build: .
+    networks:
+      - go-user
+    depends_on:
+      - postgres
+    environment:
+      HTTP_HOST: "0.0.0.0"
+      POSTGRES_HOST: "db-postgres-container"
+    ports:
+      - "8080:8080"
+
+networks:
+  go-user:
+    driver: bridge

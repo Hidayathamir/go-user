@@ -17,30 +17,17 @@ var (
 	JWT    *jwt
 )
 
-// Init initiate configurations from `./config/config.yml` file.
+// Init initiate configurations from `./config/config.yml` file. If isLoadEnv
+// true then override using env var.
 func Init(isLoadEnv bool) error {
 	if App != nil && HTTP != nil && Logger != nil && PG != nil && JWT != nil {
 		logrus.Warn("config already initialized")
 		return nil
 	}
 
-	cfg := config{}
-
-	err := cleanenv.ReadConfig("./config/config.yml", &cfg)
+	cfg, err := loadConfig(isLoadEnv)
 	if err != nil {
-		return fmt.Errorf("cleanenv.ReadConfig: %w", err)
-	}
-
-	if isLoadEnv {
-		err := cleanenv.ReadEnv(&cfg)
-		if err != nil {
-			return fmt.Errorf("cleanenv.ReadEnv: %w", err)
-		}
-	}
-
-	err = cfg.validate()
-	if err != nil {
-		return fmt.Errorf("config.Validate: %w", err)
+		return fmt.Errorf("loadConfig: %w", err)
 	}
 
 	App = &cfg.App
@@ -57,6 +44,29 @@ func Init(isLoadEnv bool) error {
 	initGinConfig()
 
 	return nil
+}
+
+func loadConfig(isLoadEnv bool) (config, error) {
+	cfg := config{}
+
+	err := cleanenv.ReadConfig("./config/config.yml", &cfg)
+	if err != nil {
+		return config{}, fmt.Errorf("cleanenv.ReadConfig: %w", err)
+	}
+
+	if isLoadEnv {
+		err := cleanenv.ReadEnv(&cfg)
+		if err != nil {
+			return config{}, fmt.Errorf("cleanenv.ReadEnv: %w", err)
+		}
+	}
+
+	err = cfg.validate()
+	if err != nil {
+		return config{}, fmt.Errorf("config.Validate: %w", err)
+	}
+
+	return cfg, nil
 }
 
 type config struct {
