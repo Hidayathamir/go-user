@@ -31,10 +31,10 @@ func initTableUser() {
 	// Success: select "user".id from "user"
 	User = &user{
 		tableName: "\"user\"",
-		ID:        "\"user\".id",
-		Username:  "\"user\".username",
-		Password:  "\"user\".password",
-		CreatedAt: "\"user\".created_at",
-		UpdatedAt: "\"user\".updated_at",
+		ID:        "id",
+		Username:  "username",
+		Password:  "password",
+		CreatedAt: "created_at",
+		UpdatedAt: "updated_at",
 	}
 }

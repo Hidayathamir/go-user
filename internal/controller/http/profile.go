@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/Hidayathamir/go-user/internal/dto"
 	"github.com/Hidayathamir/go-user/internal/usecase"
 	"github.com/gin-gonic/gin"
 )
@@ -29,5 +30,21 @@ func (p *Profile) getProfileByUsername(c *gin.Context) {
 	writeResponse(c, http.StatusOK, user, nil)
 }
 
-func (*Profile) updateProfile(*gin.Context) { // TODO:
+func (p *Profile) updateProfileByUsername(c *gin.Context) {
+	req := dto.ReqUpdateProfileByUsername{}
+	err := c.ShouldBindJSON(&req)
+	if err != nil {
+		writeResponse(c, http.StatusBadRequest, nil, err)
+		return
+	}
+
+	req.Username = c.Param("username")
+
+	err = p.usecaseProfile.UpdateProfileByUsername(c, req)
+	if err != nil {
+		writeResponse(c, http.StatusBadRequest, nil, err)
+		return
+	}
+
+	writeResponse(c, http.StatusOK, "ok", nil)
 }
