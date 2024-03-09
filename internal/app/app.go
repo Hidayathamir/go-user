@@ -3,7 +3,6 @@ package app
 
 import (
 	"flag"
-	"os"
 
 	"github.com/Hidayathamir/go-user/config"
 	"github.com/Hidayathamir/go-user/internal/controller/http"
@@ -37,7 +36,7 @@ func Run() {
 // handleCommandLineArgsMigrate do db migration then exit if args migrate exists.
 func handleCommandLineArgsMigrate() {
 	var isHasArgMigrate bool
-	flag.BoolVar(&isHasArgMigrate, "migrate", false, "is do migrate, default false.")
+	flag.BoolVar(&isHasArgMigrate, "include-migrate", false, "is include migrate, if true will do migrate before run app, default false.")
 	flag.Parse()
 
 	if isHasArgMigrate {
@@ -45,7 +44,5 @@ func handleCommandLineArgsMigrate() {
 		if err != nil {
 			logrus.Fatalf("db.MigrateUp: %v", err)
 		}
-
-		os.Exit(0)
 	}
 }
