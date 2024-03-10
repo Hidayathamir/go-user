@@ -11,7 +11,6 @@ import (
 type ResGetProfileByUsername struct {
 	ID        int64     `json:"id"`
 	Username  string    `json:"username"`
-	Password  string    `json:"password"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
@@ -21,7 +20,6 @@ func (r ResGetProfileByUsername) LoadEntityUser(user entity.User) ResGetProfileB
 	return ResGetProfileByUsername{
 		ID:        user.ID,
 		Username:  user.Username,
-		Password:  user.Password,
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
 	}
