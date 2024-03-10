@@ -36,7 +36,7 @@ func newAuth(repoAuth repo.IAuth, repoProfile repo.IProfile) *Auth {
 func (a *Auth) LoginUser(ctx context.Context, req dto.ReqLoginUser) (string, error) {
 	err := req.Validate()
 	if err != nil {
-		return "", fmt.Errorf("dto.ReqRegisterUser.Validate: %w", err)
+		return "", fmt.Errorf("dto.ReqLoginUser.Validate: %w", err)
 	}
 
 	user, err := a.repoProfile.GetProfileByUsername(ctx, req.Username)
