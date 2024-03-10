@@ -21,6 +21,7 @@ const (
 var (
 	URLPing         = getBaseURL() + "/ping"
 	URLAuthRegister = getBaseURL() + "/api/v1/auth/register"
+	URLAuthLogin    = getBaseURL() + "/api/v1/auth/login"
 	URLUser         = getBaseURL() + "/api/v1/users"
 )
 
