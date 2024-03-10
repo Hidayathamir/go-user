@@ -9,7 +9,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func TestHTTPRegisterUser(t *testing.T) {
+func TestHTTPRegisterUserUniqueUsername(t *testing.T) {
 	Test(t,
 		Description("unique username should register success"),
 		Post(urlRegisterUser),
@@ -21,7 +21,9 @@ func TestHTTPRegisterUser(t *testing.T) {
 		Expect().Status().Equal(http.StatusOK),
 		Expect().Body().JSON().JQ(".error").Equal(nil),
 	)
+}
 
+func TestHTTPRegisterUserDuplicateUsername(t *testing.T) {
 	duplicateUsername := uuid.NewString()
 	Test(t,
 		Description("duplicate username should register fail, first is success"),
