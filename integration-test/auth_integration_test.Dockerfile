@@ -4,4 +4,4 @@ WORKDIR /app
 
 COPY . .
 
-CMD ["go", "test", "-v", "./integration-test/auth_integration_test.go"]
+CMD ["go", "test", "-v", "./integration-test/integration_test.go", "./integration-test/auth_integration_test.go"]
