@@ -1,30 +1,33 @@
 version: "3"
 
-services:
-  postgres:
-    image: postgres
-    environment:
-      POSTGRES_DB: playground
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-    ports:
-      - "5432:5432"
-    container_name: "db-postgres-container"
-    networks:
-      - go-user
-
-  app:
-    build: .
-    networks:
-      - go-user
-    depends_on:
-      - postgres
-    environment:
-      HTTP_HOST: "0.0.0.0"
-      POSTGRES_HOST: "db-postgres-container"
-    ports:
-      - "8080:8080"
-
 networks:
   go-user:
     driver: bridge
+
+services:
+  go-user-app:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: go-user-app-container
+    depends_on:
+      - go-user-db-postgres
+    environment:
+      HTTP_HOST: 0.0.0.0
+      POSTGRES_HOST: go-user-db-postgres-container
+    image: go-user-app
+    networks:
+      - go-user
+    ports:
+      - "8080:8080"
+  go-user-db-postgres:
+    container_name: go-user-db-postgres-container
+    environment:
+      POSTGRES_DB: playground
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: user
+    image: postgres:16
+    networks:
+      - go-user
+    ports:
+      - "5432:5432"
