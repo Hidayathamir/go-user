@@ -20,7 +20,6 @@ go-run:
 
 # Run integration test.
 go-integration-test:
-	export BASE_URL="http://localhost:8080" && \
 	go clean -testcache && \
 	go test -v ./integration-test/...
 
