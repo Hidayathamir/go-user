@@ -49,21 +49,13 @@ func (p *Profile) GetProfileByUsername(ctx context.Context, username string) (en
 		return entity.User{}, fmt.Errorf("Profile.db.Builder.ToSql: %w", err)
 	}
 
-	rows, err := p.db.Pool.Query(ctx, sql, args...)
-	if err != nil {
-		return entity.User{}, fmt.Errorf("Profile.db.Pool.Query: %w", err)
-	}
-	defer rows.Close()
-
 	user := entity.User{}
-	for rows.Next() {
-		err := rows.Scan(
-			&user.ID, &user.Username, &user.Password,
-			&user.CreatedAt, &user.UpdatedAt,
-		)
-		if err != nil {
-			return entity.User{}, fmt.Errorf("pgx.Rows.Scan: %w", err)
-		}
+	err = p.db.Pool.QueryRow(ctx, sql, args...).Scan(
+		&user.ID, &user.Username, &user.Password,
+		&user.CreatedAt, &user.UpdatedAt,
+	)
+	if err != nil {
+		return entity.User{}, fmt.Errorf("pgx.Rows.Scan: %w", err)
 	}
 
 	return user, nil
