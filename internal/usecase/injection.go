@@ -10,7 +10,8 @@ import (
 // NewAuth return usecase *Auth which implement usecase.IAuth.
 func NewAuth(db *db.Postgres) *Auth {
 	repoAuth := repo.NewAuth(db)
-	usecaseAuth := newAuth(repoAuth)
+	repoProfile := repo.NewProfile(db)
+	usecaseAuth := newAuth(repoAuth, repoProfile)
 	return usecaseAuth
 }
 

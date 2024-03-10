@@ -9,6 +9,7 @@ import (
 	"github.com/Hidayathamir/go-user/config"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -20,22 +21,22 @@ const (
 	keyUserID = "user_id"
 )
 
-// GenerateUserJWTToken -.
-func GenerateUserJWTToken(userID int) (string, error) {
+// GenerateUserJWTToken return jwt string.
+func GenerateUserJWTToken(userID int64) string {
 	expireIn := time.Hour * time.Duration(config.JWT.ExpireHour)
 	token := jwt.NewWithClaims(signingMethod, jwt.MapClaims{
-		keyUserID: strconv.Itoa(userID),
+		keyUserID: strconv.FormatInt(userID, 10),
 		"exp":     time.Now().Add(expireIn).Unix(),
 	})
 
 	tokenString, err := token.SignedString([]byte(config.JWT.SignedKey))
 	if err != nil {
-		return "", fmt.Errorf("jwt.Token.SignedString: %w", err)
+		logrus.Warnf("jwt.Token.SigndString: %v", err)
 	}
 
 	tokenString = "Bearer " + tokenString
 
-	return tokenString, nil
+	return tokenString
 }
 
 // ValidateUserJWTToken -.

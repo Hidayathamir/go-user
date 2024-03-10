@@ -13,19 +13,45 @@ import (
 type IAuth interface {
 	// RegisterUser register new user.
 	RegisterUser(ctx context.Context, req dto.ReqRegisterUser) (int64, error)
+	// LoginUser validate username and password, return jwt string and error.
+	LoginUser(ctx context.Context, req dto.ReqLoginUser) (string, error)
 }
 
 // Auth implement IAuth.
 type Auth struct {
-	repoAuth repo.IAuth
+	repoAuth    repo.IAuth
+	repoProfile repo.IProfile
 }
 
 var _ IAuth = &Auth{}
 
-func newAuth(repoAuth repo.IAuth) *Auth {
+func newAuth(repoAuth repo.IAuth, repoProfile repo.IProfile) *Auth {
 	return &Auth{
-		repoAuth: repoAuth,
+		repoAuth:    repoAuth,
+		repoProfile: repoProfile,
 	}
+}
+
+// LoginUser validate username and password, return jwt string and error.
+func (a *Auth) LoginUser(ctx context.Context, req dto.ReqLoginUser) (string, error) {
+	err := req.Validate()
+	if err != nil {
+		return "", fmt.Errorf("dto.ReqRegisterUser.Validate: %w", err)
+	}
+
+	user, err := a.repoProfile.GetProfileByUsername(ctx, req.Username)
+	if err != nil {
+		return "", fmt.Errorf("Auth.repoProfile.GetProfileByUsername: %w", err)
+	}
+
+	err = auth.CompareHashAndPassword(user.Password, req.Password)
+	if err != nil {
+		return "", fmt.Errorf("auth.CompareHashAndPassword: %w", err)
+	}
+
+	userJWT := auth.GenerateUserJWTToken(user.ID)
+
+	return userJWT, nil
 }
 
 // RegisterUser register new user.

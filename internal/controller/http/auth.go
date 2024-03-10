@@ -20,7 +20,23 @@ func newAuth(usecaseAuth usecase.IAuth) *Auth {
 	}
 }
 
-func (*Auth) login(*gin.Context) { // TODO:
+func (a *Auth) loginUser(c *gin.Context) {
+	req := dto.ReqLoginUser{}
+	err := c.ShouldBindJSON(&req)
+	if err != nil {
+		err := fmt.Errorf("gin.Context.ShouldBindJSON: %w", err)
+		writeResponse(c, http.StatusBadRequest, nil, err)
+		return
+	}
+
+	userJWT, err := a.usecaseAuth.LoginUser(c, req)
+	if err != nil {
+		err := fmt.Errorf("Auth.usecaseAuth.LoginUser: %w", err)
+		writeResponse(c, http.StatusBadRequest, nil, err)
+		return
+	}
+
+	writeResponse(c, http.StatusOK, userJWT, nil)
 }
 
 func (a *Auth) registerUser(c *gin.Context) {

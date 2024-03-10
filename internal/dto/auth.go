@@ -6,6 +6,23 @@ import (
 	"github.com/Hidayathamir/go-user/internal/entity"
 )
 
+// ReqLoginUser -.
+type ReqLoginUser struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+// Validate validate ReqLoginUser.
+func (r ReqLoginUser) Validate() error {
+	if r.Username == "" {
+		return errors.New("ReqLoginUser.Username can not be empty")
+	}
+	if r.Password == "" {
+		return errors.New("ReqLoginUser.Password can not be empty")
+	}
+	return nil
+}
+
 // ReqRegisterUser -.
 type ReqRegisterUser struct {
 	Username string `json:"username"`
