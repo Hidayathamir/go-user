@@ -10,14 +10,16 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var (
-	urlPing         = "/ping"
-	urlRegisterUser = "/api/v1/auth/register"
-)
-
 const (
 	hContentType = "Content-Type"
 	hAppJSON     = "application/json"
+)
+
+// Need to add base url in func setupURL.
+var (
+	urlPing         = "/ping"
+	urlAuthRegister = "/api/v1/auth/register"
+	urlUser         = "/api/v1/users"
 )
 
 func TestMain(m *testing.M) {
@@ -39,7 +41,8 @@ func setupURL() {
 	}
 
 	urlPing = baseURL + urlPing
-	urlRegisterUser = baseURL + urlRegisterUser
+	urlAuthRegister = baseURL + urlAuthRegister
+	urlUser = baseURL + urlUser
 }
 
 func ping() error {

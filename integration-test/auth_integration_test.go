@@ -12,7 +12,7 @@ import (
 func TestHTTPRegisterUserUniqueUsername(t *testing.T) {
 	Test(t,
 		Description("unique username should register success"),
-		Post(urlRegisterUser),
+		Post(urlAuthRegister),
 		Send().Headers(hContentType).Add(hAppJSON),
 		Send().Body().String(jutil.ToJSONString(map[string]string{
 			"username": uuid.NewString(),
@@ -27,7 +27,7 @@ func TestHTTPRegisterUserDuplicateUsername(t *testing.T) {
 	duplicateUsername := uuid.NewString()
 	Test(t,
 		Description("duplicate username should register fail, first is success"),
-		Post(urlRegisterUser),
+		Post(urlAuthRegister),
 		Send().Headers(hContentType).Add(hAppJSON),
 		Send().Body().String(jutil.ToJSONString(map[string]string{
 			"username": duplicateUsername,
@@ -38,7 +38,7 @@ func TestHTTPRegisterUserDuplicateUsername(t *testing.T) {
 	)
 	Test(t,
 		Description("duplicate username should register fail, second is fail"),
-		Post(urlRegisterUser),
+		Post(urlAuthRegister),
 		Send().Headers(hContentType).Add(hAppJSON),
 		Send().Body().String(jutil.ToJSONString(map[string]string{
 			"username": duplicateUsername,
