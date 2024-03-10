@@ -14,8 +14,6 @@ services:
     image: postgres:16
     networks:
       - auth-integration-test-go-user
-    ports:
-      - "13001:5432"
   auth-integration-test-go-user-app:
     build:
       context: ..
@@ -29,8 +27,6 @@ services:
     image: auth-integration-test-go-user-app
     networks:
       - auth-integration-test-go-user
-    ports:
-      - "12001:8080"
   auth-integration-test-go-user:
     build:
       context: ..
