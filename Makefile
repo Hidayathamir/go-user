@@ -18,6 +18,10 @@ compose-postgres:
 go-run:
 	go run main.go -include-migrate
 
+# or run go using air (live reload golang).
+air:
+	air -c .air.toml
+
 # Run integration test.
 go-integration-test:
 	go clean -testcache && \
