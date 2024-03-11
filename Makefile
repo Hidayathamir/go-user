@@ -11,8 +11,11 @@ clear-none-docker-images:
 ###################################
 
 # Run postgres container.
-compose-postgres:
-	docker compose up go-user-db-postgres
+compose-up-postgres:
+	docker compose up -d go-user-db-postgres
+
+compose-down-postgres:
+	docker compose down go-user-db-postgres
 
 # Run go app.
 go-run:
