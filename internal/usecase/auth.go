@@ -25,7 +25,8 @@ type Auth struct {
 
 var _ IAuth = &Auth{}
 
-func newAuth(repoAuth repo.IAuth, repoProfile repo.IProfile) *Auth {
+// NewAuth return *Auth which implement IAuth.
+func NewAuth(repoAuth repo.IAuth, repoProfile repo.IProfile) *Auth {
 	return &Auth{
 		repoAuth:    repoAuth,
 		repoProfile: repoProfile,

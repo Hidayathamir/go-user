@@ -1,7 +1,6 @@
 package http
 
 import (
-	"github.com/Hidayathamir/go-user/internal/usecase"
 	"github.com/Hidayathamir/go-user/internal/usecase/repo/db"
 	"github.com/gin-gonic/gin"
 )
@@ -16,8 +15,8 @@ func registerRouter(ginEngine *gin.Engine, db *db.Postgres) {
 }
 
 func registerRouterV1(routerV1 *gin.RouterGroup, db *db.Postgres) {
-	cAuth := newAuth(usecase.NewAuth(db))
-	cProfile := newProfile(usecase.NewProfile(db))
+	cAuth := injectionAuth(db)
+	cProfile := injectionProfile(db)
 
 	authGroup := routerV1.Group("auth")
 	{
