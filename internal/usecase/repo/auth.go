@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/Hidayathamir/go-user/config"
 	"github.com/Hidayathamir/go-user/internal/entity"
 	"github.com/Hidayathamir/go-user/internal/entity/table"
 	"github.com/Hidayathamir/go-user/internal/usecase/repo/db"
@@ -19,15 +20,17 @@ type IAuth interface {
 
 // Auth implement IAuth.
 type Auth struct {
-	db *db.Postgres
+	cfg config.Config
+	db  *db.Postgres
 }
 
 var _ IAuth = &Auth{}
 
 // NewAuth return *Auth which implement repo.IAuth.
-func NewAuth(db *db.Postgres) *Auth {
+func NewAuth(cfg config.Config, db *db.Postgres) *Auth {
 	return &Auth{
-		db: db,
+		cfg: cfg,
+		db:  db,
 	}
 }
 

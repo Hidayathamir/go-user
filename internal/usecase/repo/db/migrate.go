@@ -3,7 +3,6 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	"path/filepath"
 	"time"
 
 	"github.com/Hidayathamir/go-user/config"
@@ -12,11 +11,11 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// MigrateUp migrate database using internal/usecase/repo/db/schema_migration.
-func MigrateUp() error {
+// MigrateUp migrate database using schemaMigrationPath.
+func MigrateUp(cfg config.Config, schemaMigrationPath string) error {
 	url := fmt.Sprintf(
 		"postgres://%s:%s@%s:%d/%s",
-		config.PG.Username, config.PG.Password, config.PG.Host, config.PG.Port, config.PG.DBName,
+		cfg.PG.Username, cfg.PG.Password, cfg.PG.Host, cfg.PG.Port, cfg.PG.DBName,
 	)
 
 	db, err := sql.Open("pgx", url)
@@ -34,7 +33,10 @@ func MigrateUp() error {
 
 	var countMigrationApplied int
 	for i := 0; i < 10; i++ {
-		countMigrationApplied, err = migrate.Exec(db, "postgres", getFileMigrationSource(), migrate.Up)
+		countMigrationApplied, err = migrate.Exec(
+			db, "postgres",
+			&migrate.FileMigrationSource{Dir: schemaMigrationPath}, migrate.Up,
+		)
 		if err == nil {
 			break
 		}
@@ -53,11 +55,4 @@ func MigrateUp() error {
 	logrus.Infof("migrate done, %d migration applied 🟢", countMigrationApplied)
 
 	return nil
-}
-
-func getFileMigrationSource() *migrate.FileMigrationSource {
-	migrations := &migrate.FileMigrationSource{
-		Dir: filepath.Join("internal", "usecase", "repo", "db", "schema_migration"),
-	}
-	return migrations
 }

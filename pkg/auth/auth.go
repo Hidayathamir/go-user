@@ -3,7 +3,7 @@ package auth
 
 import (
 	"fmt"
-	"strconv"
+	"strings"
 	"time"
 
 	"github.com/Hidayathamir/go-user/config"
@@ -22,14 +22,14 @@ const (
 )
 
 // GenerateUserJWTToken return jwt string.
-func GenerateUserJWTToken(userID int64) string {
-	expireIn := time.Hour * time.Duration(config.JWT.ExpireHour)
+func GenerateUserJWTToken(userID int64, cfg config.Config) string {
+	expireIn := time.Hour * time.Duration(cfg.JWT.ExpireHour)
 	token := jwt.NewWithClaims(signingMethod, jwt.MapClaims{
-		keyUserID: strconv.FormatInt(userID, 10),
+		keyUserID: userID,
 		"exp":     time.Now().Add(expireIn).Unix(),
 	})
 
-	tokenString, err := token.SignedString([]byte(config.JWT.SignedKey))
+	tokenString, err := token.SignedString([]byte(cfg.JWT.SignedKey))
 	if err != nil {
 		logrus.Warnf("jwt.Token.SigndString: %v", err)
 	}
@@ -40,9 +40,10 @@ func GenerateUserJWTToken(userID int64) string {
 }
 
 // ValidateUserJWTToken -.
-func ValidateUserJWTToken(tokenString string) (jwt.MapClaims, error) {
+func ValidateUserJWTToken(cfg config.Config, tokenString string) (jwt.MapClaims, error) {
+	tokenString = strings.ReplaceAll(tokenString, "Bearer ", "")
 	keyFunc := func(*jwt.Token) (interface{}, error) {
-		return []byte(config.JWT.SignedKey), nil
+		return []byte(cfg.JWT.SignedKey), nil
 	}
 
 	token, err := jwt.Parse(tokenString, keyFunc)
@@ -72,18 +73,25 @@ func ValidateUserJWTToken(tokenString string) (jwt.MapClaims, error) {
 }
 
 // GetUserIDFromJWTClaims return userID from jwt.MapClaims.
-func GetUserIDFromJWTClaims(claims jwt.MapClaims) (int, error) {
+func GetUserIDFromJWTClaims(claims jwt.MapClaims) (int64, error) {
 	userIDAny, ok := claims[keyUserID]
 	if !ok {
 		return 0, errors.New("jwt.MapClaims[keyUserID]")
 	}
 
-	userID, ok := userIDAny.(int)
-	if !ok {
-		return 0, errors.New("userIDAny.(int)")
+	if v, ok := userIDAny.(int); ok {
+		return int64(v), nil
+	} else if v, ok := userIDAny.(int32); ok {
+		return int64(v), nil
+	} else if v, ok := userIDAny.(int64); ok {
+		return v, nil
+	} else if v, ok := userIDAny.(float32); ok {
+		return int64(v), nil
+	} else if v, ok := userIDAny.(float64); ok {
+		return int64(v), nil
 	}
 
-	return userID, nil
+	return 0, errors.New("type assert user id in jwt map claims as int, int64, int32, float64, float32")
 }
 
 // GenerateHashPassword generate hashed password.

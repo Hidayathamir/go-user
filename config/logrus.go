@@ -6,15 +6,15 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func initLogrusConfig() error {
-	logrusLevel, err := logrus.ParseLevel(string(Logger.LogLevel))
+func initLogrusConfig(cfg Config) error {
+	logrusLevel, err := logrus.ParseLevel(string(cfg.Logger.LogLevel))
 	if err != nil {
 		return fmt.Errorf("logrus.ParseLevel: %w", err)
 	}
 
 	logrus.SetLevel(logrusLevel)
 
-	if App.Environment == envProd {
+	if cfg.App.Environment == envProd {
 		logrus.SetFormatter(&logrus.JSONFormatter{})
 	} else {
 		logrus.SetFormatter(&logrus.TextFormatter{})

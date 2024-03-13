@@ -3,6 +3,7 @@ package app
 
 import (
 	"flag"
+	"path/filepath"
 
 	"github.com/Hidayathamir/go-user/config"
 	"github.com/Hidayathamir/go-user/internal/controller/http"
@@ -15,24 +16,37 @@ import (
 func Run() {
 	arg := parseArgs()
 
-	err := config.Init(arg.isLoadEnv)
-	if err != nil {
-		logrus.Fatalf("config.Init: %v", err)
-	}
+	cfg := initConfig(arg.isLoadEnv)
 
-	handleCommandLineArgsMigrate(arg.isIncludeMigrate)
+	handleCommandLineArgsMigrate(cfg, arg.isIncludeMigrate)
 
 	table.Init()
 
-	db, err := db.NewPostgresPoolConnection()
+	db, err := db.NewPostgresPoolConnection(cfg)
 	if err != nil {
 		logrus.Fatalf("db.NewPostgresPoolConnection: %v", err)
 	}
 
-	err = http.RunServer(db)
+	err = http.RunServer(cfg, db)
 	if err != nil {
 		logrus.Fatalf("http.RunServer: %v", err)
 	}
+}
+
+func initConfig(isLoadEnv bool) config.Config {
+	var cfgLoader config.Loader
+	if isLoadEnv {
+		cfgLoader = &config.EnvLoader{}
+	} else {
+		cfgLoader = &config.YamlLoader{Path: "./config/config.yml"}
+	}
+
+	cfg, err := config.Init(cfgLoader)
+	if err != nil {
+		logrus.Fatalf("config.Init: %v", err)
+	}
+
+	return cfg
 }
 
 type arg struct {
@@ -52,9 +66,10 @@ func parseArgs() arg {
 }
 
 // handleCommandLineArgsMigrate do db migration then exit if args migrate exists.
-func handleCommandLineArgsMigrate(isIncludeMigrate bool) {
+func handleCommandLineArgsMigrate(cfg config.Config, isIncludeMigrate bool) {
 	if isIncludeMigrate {
-		err := db.MigrateUp()
+		schemaMigrationPath := filepath.Join("internal", "usecase", "repo", "db", "schema_migration")
+		err := db.MigrateUp(cfg, schemaMigrationPath)
 		if err != nil {
 			logrus.Fatalf("db.MigrateUp: %v", err)
 		}

@@ -19,17 +19,17 @@ type Postgres struct {
 }
 
 // NewPostgresPoolConnection return postgres pool connection.
-func NewPostgresPoolConnection() (*Postgres, error) {
+func NewPostgresPoolConnection(cfg config.Config) (*Postgres, error) {
 	url := fmt.Sprintf(
 		"postgres://%s:%s@%s:%d/%s",
-		config.PG.Username, config.PG.Password, config.PG.Host, config.PG.Port, config.PG.DBName,
+		cfg.PG.Username, cfg.PG.Password, cfg.PG.Host, cfg.PG.Port, cfg.PG.DBName,
 	)
 
 	poolConfig, err := pgxpool.ParseConfig(url)
 	if err != nil {
 		return nil, fmt.Errorf("pgxpool.ParseConfig: %w", err)
 	}
-	poolConfig.MaxConns = int32(config.PG.PoolMax)
+	poolConfig.MaxConns = int32(cfg.PG.PoolMax)
 
 	pg := &Postgres{
 		Builder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),

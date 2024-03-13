@@ -12,12 +12,12 @@ import (
 )
 
 // RunServer run http server.
-func RunServer(db *db.Postgres) error {
+func RunServer(cfg config.Config, db *db.Postgres) error {
 	ginEngine := gin.New()
 
-	registerRouter(ginEngine, db)
+	registerRouter(cfg, ginEngine, db)
 
-	addr := net.JoinHostPort(config.HTTP.Host, strconv.Itoa(config.HTTP.Port))
+	addr := net.JoinHostPort(cfg.HTTP.Host, strconv.Itoa(cfg.HTTP.Port))
 	err := ginEngine.Run(addr)
 	if err != nil {
 		return fmt.Errorf("gin.Engine.Run: %w", err)

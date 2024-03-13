@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/Hidayathamir/go-user/config"
 	"github.com/Hidayathamir/go-user/internal/dto"
 	"github.com/Hidayathamir/go-user/internal/usecase"
 	"github.com/gin-gonic/gin"
@@ -11,11 +12,13 @@ import (
 
 // Auth is controller HTTP for authentication related.
 type Auth struct {
+	cfg         config.Config
 	usecaseAuth usecase.IAuth
 }
 
-func newAuth(usecaseAuth usecase.IAuth) *Auth {
+func newAuth(cfg config.Config, usecaseAuth usecase.IAuth) *Auth {
 	return &Auth{
+		cfg:         cfg,
 		usecaseAuth: usecaseAuth,
 	}
 }

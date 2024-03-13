@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/Hidayathamir/go-user/config"
 	"github.com/Hidayathamir/go-user/internal/dto"
 	"github.com/Hidayathamir/go-user/internal/usecase"
 	"github.com/gin-gonic/gin"
@@ -11,11 +12,13 @@ import (
 
 // Profile is controller HTTP for profile related.
 type Profile struct {
+	cfg            config.Config
 	usecaseProfile usecase.IProfile
 }
 
-func newProfile(usecaseProfile usecase.IProfile) *Profile {
+func newProfile(cfg config.Config, usecaseProfile usecase.IProfile) *Profile {
 	return &Profile{
+		cfg:            cfg,
 		usecaseProfile: usecaseProfile,
 	}
 }

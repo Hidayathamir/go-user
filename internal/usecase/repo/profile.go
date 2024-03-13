@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/Hidayathamir/go-user/config"
 	"github.com/Hidayathamir/go-user/internal/entity"
 	"github.com/Hidayathamir/go-user/internal/entity/table"
 	"github.com/Hidayathamir/go-user/internal/usecase/repo/db"
@@ -21,15 +22,17 @@ type IProfile interface {
 
 // Profile implement IProfile.
 type Profile struct {
-	db *db.Postgres
+	cfg config.Config
+	db  *db.Postgres
 }
 
 var _ IProfile = &Profile{}
 
 // NewProfile return *Profile which implement repo.IProfile.
-func NewProfile(db *db.Postgres) *Profile {
+func NewProfile(cfg config.Config, db *db.Postgres) *Profile {
 	return &Profile{
-		db: db,
+		cfg: cfg,
+		db:  db,
 	}
 }
 

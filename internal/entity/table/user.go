@@ -14,6 +14,13 @@ type user struct {
 	Password  string
 	CreatedAt string
 	UpdatedAt string
+
+	Constraint userConstraint
+}
+
+type userConstraint struct {
+	UserPk string
+	UserUn string
 }
 
 func (u *user) String() string {
@@ -37,5 +44,9 @@ func initTableUser() {
 		Password:  "password",
 		CreatedAt: "created_at",
 		UpdatedAt: "updated_at",
+		Constraint: userConstraint{
+			UserPk: "user_pk",
+			UserUn: "user_un",
+		},
 	}
 }

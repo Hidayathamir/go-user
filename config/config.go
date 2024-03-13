@@ -3,81 +3,42 @@ package config
 
 import (
 	"fmt"
-
-	"github.com/ilyakaznacheev/cleanenv"
-	"github.com/sirupsen/logrus"
 )
 
-// configuration list. Got panic? did you run Init?
-var (
-	App    *app
-	HTTP   *http
-	Logger *logger
-	PG     *pg
-	JWT    *jwt
-)
+// Init initiate configurations either from config yml or env var.
+func Init(cfgLoader Loader) (Config, error) {
+	cfg := Config{}
 
-// Init initiate configurations from `./config/config.yml` file. If isLoadEnv
-// true then override using env var.
-func Init(isLoadEnv bool) error {
-	if App != nil && HTTP != nil && Logger != nil && PG != nil && JWT != nil {
-		logrus.Warn("config already initialized")
-		return nil
-	}
-
-	cfg, err := loadConfig(isLoadEnv)
+	err := cfgLoader.loadConfig(&cfg)
 	if err != nil {
-		return fmt.Errorf("loadConfig: %w", err)
-	}
-
-	App = &cfg.App
-	HTTP = &cfg.HTTP
-	Logger = &cfg.Logger
-	PG = &cfg.PG
-	JWT = &cfg.JWT
-
-	err = initLogrusConfig()
-	if err != nil {
-		return fmt.Errorf("initLogrusConfig: %w", err)
-	}
-
-	initGinConfig()
-
-	return nil
-}
-
-func loadConfig(isLoadEnv bool) (config, error) {
-	cfg := config{}
-
-	err := cleanenv.ReadConfig("./config/config.yml", &cfg)
-	if err != nil {
-		return config{}, fmt.Errorf("cleanenv.ReadConfig: %w", err)
-	}
-
-	if isLoadEnv {
-		err := cleanenv.ReadEnv(&cfg)
-		if err != nil {
-			return config{}, fmt.Errorf("cleanenv.ReadEnv: %w", err)
-		}
+		return Config{}, fmt.Errorf("ConfigLoader.loadConfig: %w", err)
 	}
 
 	err = cfg.validate()
 	if err != nil {
-		return config{}, fmt.Errorf("config.Validate: %w", err)
+		return Config{}, fmt.Errorf("config.Validate: %w", err)
 	}
+
+	err = initLogrusConfig(cfg)
+	if err != nil {
+		return Config{}, fmt.Errorf("initLogrusConfig: %w", err)
+	}
+
+	initGinConfig(cfg)
 
 	return cfg, nil
 }
 
-type config struct {
-	App    app    `yaml:"app"      env-required:"true"`
-	HTTP   http   `yaml:"http"     env-required:"true"`
+// Config holds all config.
+type Config struct {
+	App    App    `yaml:"app"      env-required:"true"`
+	HTTP   HTTP   `yaml:"http"     env-required:"true"`
 	Logger logger `yaml:"logger"   env-required:"true"`
-	PG     pg     `yaml:"postgres" env-required:"true"`
-	JWT    jwt    `yaml:"jwt"      env-required:"true"`
+	PG     PG     `yaml:"postgres" env-required:"true"`
+	JWT    JWT    `yaml:"jwt"      env-required:"true"`
 }
 
-func (c *config) validate() error {
+func (c *Config) validate() error {
 	err := c.App.Environment.validate()
 	if err != nil {
 		return fmt.Errorf("config.app.Environment.validate: %w", err)
@@ -108,13 +69,15 @@ func (e env) validate() error {
 	return nil
 }
 
-type app struct {
+// App hold app configuration.
+type App struct {
 	Name        string `yaml:"name"        env-required:"true" env:"APP_NAME"`
 	Version     string `yaml:"version"     env-required:"true" env:"APP_VERSION"`
 	Environment env    `yaml:"environment" env-required:"true" env:"APP_ENVIRONMENT"`
 }
 
-type http struct {
+// HTTP hold HTTP configuration.
+type HTTP struct {
 	Host string `yaml:"host" env-required:"true" env:"HTTP_HOST"`
 	Port int    `yaml:"port" env-required:"true" env:"HTTP_PORT"`
 }
@@ -135,7 +98,8 @@ type logger struct {
 	LogLevel logLevel `yaml:"log_level" env-required:"true" env:"LOGGER_LOG_LEVEL"`
 }
 
-type pg struct {
+// PG hold postgres configuration.
+type PG struct {
 	PoolMax  int    `yaml:"pool_max" env-required:"true" env:"POSTGRES_POOL_MAX"`
 	Username string `yaml:"username" env-required:"true" env:"POSTGRES_USERNAME"`
 	Password string `yaml:"password" env-required:"true" env:"POSTGRES_PASSWORD"`
@@ -144,7 +108,8 @@ type pg struct {
 	DBName   string `yaml:"db_name"  env-required:"true" env:"POSTGRES_DB_NAME"`
 }
 
-type jwt struct {
+// JWT hold JWT configuration.
+type JWT struct {
 	ExpireHour int    `yaml:"expire_hour" env-required:"true" env:"JWT_EXPIRE_HOUR"`
 	SignedKey  string `yaml:"signed_key"  env-required:"true" env:"JWT_SIGNED_KEY"`
 }

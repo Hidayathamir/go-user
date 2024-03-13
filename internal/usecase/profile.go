@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/Hidayathamir/go-user/config"
 	"github.com/Hidayathamir/go-user/internal/dto"
 	"github.com/Hidayathamir/go-user/internal/usecase/repo"
 )
@@ -18,14 +19,16 @@ type IProfile interface {
 
 // Profile implement IProfile.
 type Profile struct {
+	cfg         config.Config
 	repoProfile repo.IProfile
 }
 
 var _ IProfile = &Profile{}
 
 // NewProfile return *Profile which implement IProfile.
-func NewProfile(repoProfile repo.IProfile) *Profile {
+func NewProfile(cfg config.Config, repoProfile repo.IProfile) *Profile {
 	return &Profile{
+		cfg:         cfg,
 		repoProfile: repoProfile,
 	}
 }

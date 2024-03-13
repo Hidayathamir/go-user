@@ -25,10 +25,10 @@ go-run:
 air:
 	air -c .air.toml
 
-# Run integration test.
-go-integration-test:
+# Run test integration.
+go-test-integration:
 	go clean -testcache && \
-	go test -v ./integration-test/...
+	go test -v ./internal/controller/... -run TestIntegration
 
 ###################################
 

@@ -2,23 +2,36 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
+	"github.com/Hidayathamir/go-user/config"
 	"github.com/Hidayathamir/go-user/internal/dto"
+	"github.com/Hidayathamir/go-user/internal/entity/table"
 	"github.com/Hidayathamir/go-user/internal/usecase/repo"
 	"github.com/Hidayathamir/go-user/pkg/auth"
+	"github.com/jackc/pgerrcode"
+	"github.com/jackc/pgx/v5/pgconn"
+)
+
+var (
+	// ErrWrongPassword occurs when user login with wrong password.
+	ErrWrongPassword = errors.New("wrong password")
+	// ErrDuplicateUsername occurs when register user but username already exists.
+	ErrDuplicateUsername = errors.New("duplicate username")
 )
 
 // IAuth contains abstraction of usecase authentication.
 type IAuth interface {
 	// RegisterUser register new user.
-	RegisterUser(ctx context.Context, req dto.ReqRegisterUser) (int64, error)
+	RegisterUser(ctx context.Context, req dto.ReqRegisterUser) (userID int64, err error)
 	// LoginUser validate username and password, return jwt string and error.
-	LoginUser(ctx context.Context, req dto.ReqLoginUser) (string, error)
+	LoginUser(ctx context.Context, req dto.ReqLoginUser) (userJWT string, err error)
 }
 
 // Auth implement IAuth.
 type Auth struct {
+	cfg         config.Config
 	repoAuth    repo.IAuth
 	repoProfile repo.IProfile
 }
@@ -26,8 +39,9 @@ type Auth struct {
 var _ IAuth = &Auth{}
 
 // NewAuth return *Auth which implement IAuth.
-func NewAuth(repoAuth repo.IAuth, repoProfile repo.IProfile) *Auth {
+func NewAuth(cfg config.Config, repoAuth repo.IAuth, repoProfile repo.IProfile) *Auth {
 	return &Auth{
+		cfg:         cfg,
 		repoAuth:    repoAuth,
 		repoProfile: repoProfile,
 	}
@@ -37,7 +51,9 @@ func NewAuth(repoAuth repo.IAuth, repoProfile repo.IProfile) *Auth {
 func (a *Auth) LoginUser(ctx context.Context, req dto.ReqLoginUser) (string, error) {
 	err := req.Validate()
 	if err != nil {
-		return "", fmt.Errorf("dto.ReqLoginUser.Validate: %w", err)
+		err := fmt.Errorf("dto.ReqLoginUser.Validate: %w", err)
+		err = fmt.Errorf("%w: %w", ErrRequestInvalid, err)
+		return "", err
 	}
 
 	user, err := a.repoProfile.GetProfileByUsername(ctx, req.Username)
@@ -47,10 +63,12 @@ func (a *Auth) LoginUser(ctx context.Context, req dto.ReqLoginUser) (string, err
 
 	err = auth.CompareHashAndPassword(user.Password, req.Password)
 	if err != nil {
-		return "", fmt.Errorf("auth.CompareHashAndPassword: %w", err)
+		err := fmt.Errorf("auth.CompareHashAndPassword: %w", err)
+		err = fmt.Errorf("%w: %w", ErrWrongPassword, err)
+		return "", err
 	}
 
-	userJWT := auth.GenerateUserJWTToken(user.ID)
+	userJWT := auth.GenerateUserJWTToken(user.ID, a.cfg)
 
 	return userJWT, nil
 }
@@ -59,7 +77,9 @@ func (a *Auth) LoginUser(ctx context.Context, req dto.ReqLoginUser) (string, err
 func (a *Auth) RegisterUser(ctx context.Context, req dto.ReqRegisterUser) (int64, error) {
 	err := req.Validate()
 	if err != nil {
-		return 0, fmt.Errorf("dto.ReqRegisterUser.Validate: %w", err)
+		err := fmt.Errorf("dto.ReqRegisterUser.Validate: %w", err)
+		err = fmt.Errorf("%w: %w", ErrRequestInvalid, err)
+		return 0, err
 	}
 
 	user := req.ToEntityUser()
@@ -70,6 +90,14 @@ func (a *Auth) RegisterUser(ctx context.Context, req dto.ReqRegisterUser) (int64
 
 	userID, err := a.repoAuth.RegisterUser(ctx, user)
 	if err != nil {
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) {
+			isErrDuplicateUsername := pgErr.Code == pgerrcode.UniqueViolation &&
+				pgErr.ConstraintName == table.User.Constraint.UserUn
+			if isErrDuplicateUsername {
+				return 0, fmt.Errorf("%w: %w", ErrDuplicateUsername, err)
+			}
+		}
 		return 0, fmt.Errorf("Auth.repoAuth.RegisterUser: %w", err)
 	}
 
