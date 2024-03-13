@@ -8,17 +8,11 @@ import (
 	"github.com/Hidayathamir/go-user/config"
 	"github.com/Hidayathamir/go-user/internal/dto"
 	"github.com/Hidayathamir/go-user/internal/entity/table"
+	"github.com/Hidayathamir/go-user/internal/pkg/auth"
 	"github.com/Hidayathamir/go-user/internal/usecase/repo"
-	"github.com/Hidayathamir/go-user/pkg/auth"
+	"github.com/Hidayathamir/go-user/pkg/gouser"
 	"github.com/jackc/pgerrcode"
 	"github.com/jackc/pgx/v5/pgconn"
-)
-
-var (
-	// ErrWrongPassword occurs when user login with wrong password.
-	ErrWrongPassword = errors.New("wrong password")
-	// ErrDuplicateUsername occurs when register user but username already exists.
-	ErrDuplicateUsername = errors.New("duplicate username")
 )
 
 // IAuth contains abstraction of usecase authentication.
@@ -52,8 +46,7 @@ func (a *Auth) LoginUser(ctx context.Context, req dto.ReqLoginUser) (string, err
 	err := req.Validate()
 	if err != nil {
 		err := fmt.Errorf("dto.ReqLoginUser.Validate: %w", err)
-		err = fmt.Errorf("%w: %w", ErrRequestInvalid, err)
-		return "", err
+		return "", fmt.Errorf("%w: %w", gouser.ErrRequestInvalid, err)
 	}
 
 	user, err := a.repoProfile.GetProfileByUsername(ctx, req.Username)
@@ -64,8 +57,7 @@ func (a *Auth) LoginUser(ctx context.Context, req dto.ReqLoginUser) (string, err
 	err = auth.CompareHashAndPassword(user.Password, req.Password)
 	if err != nil {
 		err := fmt.Errorf("auth.CompareHashAndPassword: %w", err)
-		err = fmt.Errorf("%w: %w", ErrWrongPassword, err)
-		return "", err
+		return "", fmt.Errorf("%w: %w", gouser.ErrWrongPassword, err)
 	}
 
 	userJWT := auth.GenerateUserJWTToken(user.ID, a.cfg)
@@ -78,8 +70,7 @@ func (a *Auth) RegisterUser(ctx context.Context, req dto.ReqRegisterUser) (int64
 	err := req.Validate()
 	if err != nil {
 		err := fmt.Errorf("dto.ReqRegisterUser.Validate: %w", err)
-		err = fmt.Errorf("%w: %w", ErrRequestInvalid, err)
-		return 0, err
+		return 0, fmt.Errorf("%w: %w", gouser.ErrRequestInvalid, err)
 	}
 
 	user := req.ToEntityUser()
@@ -95,7 +86,7 @@ func (a *Auth) RegisterUser(ctx context.Context, req dto.ReqRegisterUser) (int64
 			isErrDuplicateUsername := pgErr.Code == pgerrcode.UniqueViolation &&
 				pgErr.ConstraintName == table.User.Constraint.UserUn
 			if isErrDuplicateUsername {
-				return 0, fmt.Errorf("%w: %w", ErrDuplicateUsername, err)
+				return 0, fmt.Errorf("%w: %w", gouser.ErrDuplicateUsername, err)
 			}
 		}
 		return 0, fmt.Errorf("Auth.repoAuth.RegisterUser: %w", err)

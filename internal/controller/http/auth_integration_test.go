@@ -5,10 +5,11 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/Hidayathamir/go-user/internal/pkg/auth"
 	"github.com/Hidayathamir/go-user/internal/usecase"
 	"github.com/Hidayathamir/go-user/internal/usecase/repo"
 	"github.com/Hidayathamir/go-user/internal/usecase/repo/db"
-	"github.com/Hidayathamir/go-user/pkg/auth"
+	"github.com/Hidayathamir/go-user/pkg/gouser"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -36,12 +37,12 @@ func TestIntegrationAuthLoginUserRegistered(t *testing.T) {
 		password := uuid.NewString()
 		resBodyRegister := registerUserWithAssertSuccess(t, controllerAuth, username, password)
 		resBodyLogin := loginUserWithAssertSuccess(t, cfg, controllerAuth, username, password)
-		jwtClaims, err := auth.ValidateUserJWTToken(cfg, resBodyLogin.Data)
-		require.NoError(t, err)
-		userID, err := auth.GetUserIDFromJWTClaims(jwtClaims)
-		require.NoError(t, err)
-		assert.Equal(t, resBodyRegister.Data, userID, "user id in user jwt does not equal with user id when register")
-		assert.Nil(t, resBodyLogin.Error)
+		t.Run("user id in user jwt should equal with user id when register", func(t *testing.T) {
+			userID, err := auth.GetUserIDFromJWTTokenString(cfg, resBodyLogin.Data)
+			require.NoError(t, err)
+			assert.Equal(t, resBodyRegister.Data, userID)
+			assert.Nil(t, resBodyLogin.Error)
+		})
 	})
 }
 
@@ -66,11 +67,11 @@ func TestIntegrationAuthLoginUserRegisteredWrongPassword(t *testing.T) { //nolin
 
 		resBodyByte, httpStatusCode := loginUser(controllerAuth, username, uuid.NewString())
 		assert.Equal(t, http.StatusBadRequest, httpStatusCode)
-		resBodyLogin := ResLoginUserError{}
+		resBodyLogin := resError{}
 		require.NoError(t, json.Unmarshal(resBodyByte, &resBodyLogin))
 		assert.Nil(t, resBodyLogin.Data)
 		assert.NotEmpty(t, resBodyLogin.Error)
-		assert.Contains(t, resBodyLogin.Error, usecase.ErrWrongPassword.Error())
+		assert.Contains(t, resBodyLogin.Error, gouser.ErrWrongPassword.Error())
 	})
 }
 
@@ -92,10 +93,10 @@ func TestIntegrationAuthLoginUserNotRegistered(t *testing.T) {
 
 		resBodyByte, httpStatusCode := loginUser(controllerAuth, uuid.NewString(), uuid.NewString())
 		assert.Equal(t, http.StatusBadRequest, httpStatusCode)
-		resBodyLogin := ResLoginUserError{}
+		resBodyLogin := resError{}
 		require.NoError(t, json.Unmarshal(resBodyByte, &resBodyLogin))
 		assert.Nil(t, resBodyLogin.Data)
-		assert.NotNil(t, resBodyLogin.Error)
+		assert.NotEmpty(t, resBodyLogin.Error)
 		assert.Contains(t, resBodyLogin.Error, pgx.ErrNoRows.Error())
 	})
 }
@@ -119,20 +120,20 @@ func TestIntegrationAuthLoginUserRequestInvalid(t *testing.T) { //nolint:dupl
 		t.Run("request username empty should error", func(t *testing.T) {
 			resBodyByte, httpStatusCode := loginUser(controllerAuth, "", uuid.NewString())
 			assert.Equal(t, http.StatusBadRequest, httpStatusCode)
-			resBodyLogin := ResLoginUserError{}
+			resBodyLogin := resError{}
 			require.NoError(t, json.Unmarshal(resBodyByte, &resBodyLogin))
 			assert.Nil(t, resBodyLogin.Data)
-			assert.NotNil(t, resBodyLogin.Error)
-			assert.Contains(t, resBodyLogin.Error, usecase.ErrRequestInvalid.Error())
+			assert.NotEmpty(t, resBodyLogin.Error)
+			assert.Contains(t, resBodyLogin.Error, gouser.ErrRequestInvalid.Error())
 		})
 		t.Run("request password empty should error", func(t *testing.T) {
 			resBodyByte, httpStatusCode := loginUser(controllerAuth, uuid.NewString(), "")
 			assert.Equal(t, http.StatusBadRequest, httpStatusCode)
-			resBodyLogin := ResLoginUserError{}
+			resBodyLogin := resError{}
 			require.NoError(t, json.Unmarshal(resBodyByte, &resBodyLogin))
 			assert.Nil(t, resBodyLogin.Data)
-			assert.NotNil(t, resBodyLogin.Error)
-			assert.Contains(t, resBodyLogin.Error, usecase.ErrRequestInvalid.Error())
+			assert.NotEmpty(t, resBodyLogin.Error)
+			assert.Contains(t, resBodyLogin.Error, gouser.ErrRequestInvalid.Error())
 		})
 	})
 }
@@ -178,11 +179,11 @@ func TestIntegrationAuthRegisterUserDuplicate(t *testing.T) { //nolint:dupl
 
 		resBodyByte, httpStatusCode := registerUser(controllerAuth, username, uuid.NewString())
 		assert.Equal(t, http.StatusBadRequest, httpStatusCode)
-		resBodyRegister := ResRegisterUserError{}
+		resBodyRegister := resError{}
 		require.NoError(t, json.Unmarshal(resBodyByte, &resBodyRegister))
 		assert.Nil(t, resBodyRegister.Data)
-		assert.NotNil(t, resBodyRegister.Error)
-		assert.Contains(t, resBodyRegister.Error, usecase.ErrDuplicateUsername.Error())
+		assert.NotEmpty(t, resBodyRegister.Error)
+		assert.Contains(t, resBodyRegister.Error, gouser.ErrDuplicateUsername.Error())
 	})
 }
 
@@ -205,20 +206,20 @@ func TestIntegrationAuthRegisterUserRequestInvalid(t *testing.T) { //nolint:dupl
 		t.Run("request username empty should error", func(t *testing.T) {
 			resBodyByte, httpStatusCode := registerUser(controllerAuth, "", uuid.NewString())
 			assert.Equal(t, http.StatusBadRequest, httpStatusCode)
-			resBodyRegister := ResRegisterUserError{}
+			resBodyRegister := resError{}
 			require.NoError(t, json.Unmarshal(resBodyByte, &resBodyRegister))
 			assert.Nil(t, resBodyRegister.Data)
-			assert.NotNil(t, resBodyRegister.Error)
-			assert.Contains(t, resBodyRegister.Error, usecase.ErrRequestInvalid.Error())
+			assert.NotEmpty(t, resBodyRegister.Error)
+			assert.Contains(t, resBodyRegister.Error, gouser.ErrRequestInvalid.Error())
 		})
 		t.Run("request password empty should error", func(t *testing.T) {
 			resBodyByte, httpStatusCode := registerUser(controllerAuth, uuid.NewString(), "")
 			assert.Equal(t, http.StatusBadRequest, httpStatusCode)
-			resBodyRegister := ResRegisterUserError{}
+			resBodyRegister := resError{}
 			require.NoError(t, json.Unmarshal(resBodyByte, &resBodyRegister))
 			assert.Nil(t, resBodyRegister.Data)
-			assert.NotNil(t, resBodyRegister.Error)
-			assert.Contains(t, resBodyRegister.Error, usecase.ErrRequestInvalid.Error())
+			assert.NotEmpty(t, resBodyRegister.Error)
+			assert.Contains(t, resBodyRegister.Error, gouser.ErrRequestInvalid.Error())
 		})
 	})
 }

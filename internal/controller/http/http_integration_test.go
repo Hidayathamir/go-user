@@ -13,9 +13,10 @@ import (
 
 	"github.com/Hidayathamir/go-user/config"
 	"github.com/Hidayathamir/go-user/internal/entity/table"
+	"github.com/Hidayathamir/go-user/internal/pkg/auth"
+	"github.com/Hidayathamir/go-user/internal/pkg/header"
+	"github.com/Hidayathamir/go-user/internal/pkg/jutil"
 	"github.com/Hidayathamir/go-user/internal/usecase/repo/db"
-	"github.com/Hidayathamir/go-user/pkg/auth"
-	"github.com/Hidayathamir/go-user/pkg/jutil"
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
 	"github.com/stretchr/testify/assert"
@@ -103,14 +104,16 @@ func initTestIntegration(t *testing.T) config.Config {
 	return cfg
 }
 
-type ResRegisterUserSuccess struct {
-	Data  int64 `json:"data"` // userID
-	Error any   `json:"error"`
-}
-
-type ResRegisterUserError struct {
+type resError struct {
 	Data  any    `json:"data"`
 	Error string `json:"error"`
+}
+
+//////////////////////////////////////////
+
+type resRegisterUserSuccess struct {
+	Data  int64 `json:"data"` // userID
+	Error any   `json:"error"`
 }
 
 // registerUser registers user return raw response and http status code.
@@ -130,10 +133,10 @@ func registerUser(controllerAuth *Auth, username string, password string) (resBo
 
 // registerUserWithAssertSuccess registers user then validate, return response
 // body register success.
-func registerUserWithAssertSuccess(t *testing.T, controllerAuth *Auth, username string, password string) ResRegisterUserSuccess {
+func registerUserWithAssertSuccess(t *testing.T, controllerAuth *Auth, username string, password string) resRegisterUserSuccess {
 	resBodyByte, httpStatusCode := registerUser(controllerAuth, username, password)
 	assert.Equal(t, http.StatusOK, httpStatusCode)
-	resBody := ResRegisterUserSuccess{}
+	resBody := resRegisterUserSuccess{}
 	require.NoError(t, json.Unmarshal(resBodyByte, &resBody))
 	assert.NotEmpty(t, resBody.Data)
 	assert.IsType(t, int64(1), resBody.Data)
@@ -141,14 +144,9 @@ func registerUserWithAssertSuccess(t *testing.T, controllerAuth *Auth, username 
 	return resBody
 }
 
-type ResLoginUserSuccess struct {
+type resLoginUserSuccess struct {
 	Data  string `json:"data"` // userJWT
 	Error any    `json:"error"`
-}
-
-type ResLoginUserError struct {
-	Data  any    `json:"data"`
-	Error string `json:"error"`
 }
 
 // loginUser login user return raw response and http status code.
@@ -168,14 +166,34 @@ func loginUser(controllerAuth *Auth, username string, password string) (resBody 
 
 // loginUserWithAssertSuccess login user then validate, return response body
 // login success.
-func loginUserWithAssertSuccess(t *testing.T, cfg config.Config, controllerAuth *Auth, username string, password string) ResLoginUserSuccess {
+func loginUserWithAssertSuccess(t *testing.T, cfg config.Config, controllerAuth *Auth, username string, password string) resLoginUserSuccess {
 	resBodyByte, httpStatusCode := loginUser(controllerAuth, username, password)
 	assert.Equal(t, http.StatusOK, httpStatusCode)
-	resBody := ResLoginUserSuccess{}
+	resBody := resLoginUserSuccess{}
 	require.NoError(t, json.Unmarshal(resBodyByte, &resBody))
 	assert.NotEmpty(t, resBody.Data)
 	assert.Contains(t, resBody.Data, "Bearer")
-	_, err := auth.ValidateUserJWTToken(cfg, resBody.Data)
+	_, err := auth.GetUserIDFromJWTTokenString(cfg, resBody.Data)
 	require.NoError(t, err)
 	return resBody
+}
+
+type resUpdatePofileSuccess struct {
+	Data  string `json:"data"`
+	Error any    `json:"error"`
+}
+
+// updateProfileByUserID update user profile by id return raw response and http status code.
+func updateProfileByUserID(controllerProfile *Profile, userJWT string, newPassword string) (resBody []byte, httpStatusCode int) {
+	rr := httptest.NewRecorder()
+	ctx, _ := gin.CreateTestContext(rr)
+	reqBody := bytes.NewReader([]byte(jutil.ToJSONString(map[string]string{
+		"password": newPassword,
+	})))
+	ctx.Request = httptest.NewRequest(http.MethodPut, "/", reqBody)
+	ctx.Request.Header.Set(header.Authorization, userJWT)
+
+	controllerProfile.updateProfileByUserID(ctx)
+
+	return rr.Body.Bytes(), rr.Code
 }

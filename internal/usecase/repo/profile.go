@@ -8,6 +8,7 @@ import (
 	"github.com/Hidayathamir/go-user/internal/entity"
 	"github.com/Hidayathamir/go-user/internal/entity/table"
 	"github.com/Hidayathamir/go-user/internal/usecase/repo/db"
+	"github.com/Hidayathamir/go-user/pkg/gouser"
 	sq "github.com/Masterminds/squirrel"
 	"github.com/jackc/pgx/v5"
 )
@@ -16,8 +17,8 @@ import (
 type IProfile interface {
 	// GetProfileByUsername return user profile by username.
 	GetProfileByUsername(ctx context.Context, username string) (entity.User, error)
-	// UpdateProfileByUsername update user profile by username.
-	UpdateProfileByUsername(ctx context.Context, user entity.User) error
+	// UpdateProfileByUserID update user profile by user id.
+	UpdateProfileByUserID(ctx context.Context, user entity.User) error
 }
 
 // Profile implement IProfile.
@@ -64,8 +65,8 @@ func (p *Profile) GetProfileByUsername(ctx context.Context, username string) (en
 	return user, nil
 }
 
-// UpdateProfileByUsername update user profile by username.
-func (p *Profile) UpdateProfileByUsername(ctx context.Context, user entity.User) error {
+// UpdateProfileByUserID update user profile by user id.
+func (p *Profile) UpdateProfileByUserID(ctx context.Context, user entity.User) error {
 	set := sq.Eq{}
 
 	if user.Password != "" {
@@ -76,11 +77,15 @@ func (p *Profile) UpdateProfileByUsername(ctx context.Context, user entity.User)
 		Update(table.User.String()).
 		SetMap(set).
 		Where(sq.Eq{
-			table.User.Username: user.Username,
+			table.User.ID: user.ID,
 		}).
 		ToSql()
 	if err != nil {
-		return fmt.Errorf("Profile.db.Builder.ToSql: %w", err)
+		err := fmt.Errorf("Profile.db.Builder.ToSql: %w", err)
+		if len(set) == 0 {
+			return fmt.Errorf("%w: %w", gouser.ErrNothingToBeUpdate, err)
+		}
+		return err
 	}
 
 	commandTag, err := p.db.Pool.Exec(ctx, sql, args...)

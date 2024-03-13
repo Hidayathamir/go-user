@@ -25,27 +25,23 @@ func (r ResGetProfileByUsername) LoadEntityUser(user entity.User) ResGetProfileB
 	}
 }
 
-// ReqUpdateProfileByUsername -.
-type ReqUpdateProfileByUsername struct {
-	Username string `json:"username"`
+// ReqUpdateProfileByUserID -.
+type ReqUpdateProfileByUserID struct {
+	UserJWT  string `json:"-"`
 	Password string `json:"password"`
 }
 
-// Validate validate ReqUpdateProfileByUsername.
-func (r ReqUpdateProfileByUsername) Validate() error {
-	if r.Username == "" {
-		return errors.New("ReqUpdateProfileByUsername.Username can not be empty")
-	}
-	if r.Password == "" {
-		return errors.New("ReqUpdateProfileByUsername.Password can not be empty")
+// Validate validate ReqUpdateProfileByUserID.
+func (r ReqUpdateProfileByUserID) Validate() error {
+	if r.UserJWT == "" {
+		return errors.New("ReqUpdateProfileByUserID.UserJWT can not be empty")
 	}
 	return nil
 }
 
-// ToEntityUser transform ReqUpdateProfileByUsername to entity.User.
-func (r ReqUpdateProfileByUsername) ToEntityUser() entity.User {
+// ToEntityUser transform ReqUpdateProfileByUserID to entity.User.
+func (r ReqUpdateProfileByUserID) ToEntityUser() entity.User {
 	return entity.User{
-		Username: r.Username,
 		Password: r.Password,
 	}
 }

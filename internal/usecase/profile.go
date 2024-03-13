@@ -6,15 +6,17 @@ import (
 
 	"github.com/Hidayathamir/go-user/config"
 	"github.com/Hidayathamir/go-user/internal/dto"
+	"github.com/Hidayathamir/go-user/internal/pkg/auth"
 	"github.com/Hidayathamir/go-user/internal/usecase/repo"
+	"github.com/Hidayathamir/go-user/pkg/gouser"
 )
 
 // IProfile contains abstraction of usecase profile.
 type IProfile interface {
 	// GetProfileByUsername return user profile by username.
 	GetProfileByUsername(ctx context.Context, username string) (dto.ResGetProfileByUsername, error)
-	// UpdateProfileByUsername update user profile by username.
-	UpdateProfileByUsername(ctx context.Context, req dto.ReqUpdateProfileByUsername) error
+	// UpdateProfileByUserID update user profile by user id.
+	UpdateProfileByUserID(ctx context.Context, req dto.ReqUpdateProfileByUserID) error
 }
 
 // Profile implement IProfile.
@@ -46,16 +48,32 @@ func (p *Profile) GetProfileByUsername(ctx context.Context, username string) (dt
 	return res, nil
 }
 
-// UpdateProfileByUsername update user profile by username.
-func (p *Profile) UpdateProfileByUsername(ctx context.Context, req dto.ReqUpdateProfileByUsername) error {
+// UpdateProfileByUserID update user profile by user id.
+func (p *Profile) UpdateProfileByUserID(ctx context.Context, req dto.ReqUpdateProfileByUserID) error {
 	err := req.Validate()
 	if err != nil {
-		return fmt.Errorf("dto.ReqUpdateProfileByUsername.Validate: %w", err)
+		err := fmt.Errorf("dto.ReqUpdateProfileByUserID.Validate: %w", err)
+		return fmt.Errorf("%w: %w", gouser.ErrRequestInvalid, err)
 	}
 
-	err = p.repoProfile.UpdateProfileByUsername(ctx, req.ToEntityUser())
+	userID, err := auth.GetUserIDFromJWTTokenString(p.cfg, req.UserJWT)
 	if err != nil {
-		return fmt.Errorf("Profile.repoProfile.UpdateProfileByUsername: %w", err)
+		return fmt.Errorf("auth.GetUserIDFromJWTTokenString: %w", err)
+	}
+
+	user := req.ToEntityUser()
+	user.ID = userID
+
+	if user.Password != "" {
+		user.Password, err = auth.GenerateHashPassword(user.Password)
+		if err != nil {
+			return fmt.Errorf("auth.GenerateHashPassword: %w", err)
+		}
+	}
+
+	err = p.repoProfile.UpdateProfileByUserID(ctx, user)
+	if err != nil {
+		return fmt.Errorf("Profile.repoProfile.UpdateProfileByUserID: %w", err)
 	}
 
 	return nil

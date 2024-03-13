@@ -7,14 +7,11 @@ import (
 	"time"
 
 	"github.com/Hidayathamir/go-user/config"
+	"github.com/Hidayathamir/go-user/pkg/gouser"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"
-)
-
-var (
-	signingMethod = jwt.SigningMethodHS256
 )
 
 const (
@@ -24,7 +21,7 @@ const (
 // GenerateUserJWTToken return jwt string.
 func GenerateUserJWTToken(userID int64, cfg config.Config) string {
 	expireIn := time.Hour * time.Duration(cfg.JWT.ExpireHour)
-	token := jwt.NewWithClaims(signingMethod, jwt.MapClaims{
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		keyUserID: userID,
 		"exp":     time.Now().Add(expireIn).Unix(),
 	})
@@ -39,29 +36,19 @@ func GenerateUserJWTToken(userID int64, cfg config.Config) string {
 	return tokenString
 }
 
-// ValidateUserJWTToken -.
-func ValidateUserJWTToken(cfg config.Config, tokenString string) (jwt.MapClaims, error) {
+// validateUserJWTToken parses and validates and verifies JWT token string.
+func validateUserJWTToken(cfg config.Config, tokenString string) (jwt.MapClaims, error) {
 	tokenString = strings.ReplaceAll(tokenString, "Bearer ", "")
-	keyFunc := func(*jwt.Token) (interface{}, error) {
+	keyFunc := func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("token.Method.(*jwt.SigningMethodHMAC): %v", token.Header["alg"])
+		}
 		return []byte(cfg.JWT.SignedKey), nil
 	}
 
 	token, err := jwt.Parse(tokenString, keyFunc)
 	if err != nil {
-		err = fmt.Errorf("jwt.Parse: %w", err)
-		if errors.Is(err, jwt.ErrTokenMalformed) {
-			return jwt.MapClaims{}, fmt.Errorf("auth is not a token: %w", err)
-		}
-		if errors.Is(err, jwt.ErrTokenSignatureInvalid) {
-			return jwt.MapClaims{}, fmt.Errorf("invalid signature: %w", err)
-		}
-		if errors.Is(err, jwt.ErrTokenExpired) {
-			return jwt.MapClaims{}, fmt.Errorf("token expired: %w", err)
-		}
-		if errors.Is(err, jwt.ErrTokenNotValidYet) {
-			return jwt.MapClaims{}, fmt.Errorf("token not valid yet: %w", err)
-		}
-		return jwt.MapClaims{}, err
+		return jwt.MapClaims{}, fmt.Errorf("jwt.Parse: %w", err)
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
@@ -72,8 +59,8 @@ func ValidateUserJWTToken(cfg config.Config, tokenString string) (jwt.MapClaims,
 	return claims, nil
 }
 
-// GetUserIDFromJWTClaims return userID from jwt.MapClaims.
-func GetUserIDFromJWTClaims(claims jwt.MapClaims) (int64, error) {
+// getUserIDFromJWTClaims return userID from jwt.MapClaims.
+func getUserIDFromJWTClaims(claims jwt.MapClaims) (int64, error) {
 	userIDAny, ok := claims[keyUserID]
 	if !ok {
 		return 0, errors.New("jwt.MapClaims[keyUserID]")
@@ -92,6 +79,22 @@ func GetUserIDFromJWTClaims(claims jwt.MapClaims) (int64, error) {
 	}
 
 	return 0, errors.New("type assert user id in jwt map claims as int, int64, int32, float64, float32")
+}
+
+// GetUserIDFromJWTTokenString return userID from JWT token string.
+func GetUserIDFromJWTTokenString(cfg config.Config, tokenString string) (int64, error) {
+	claims, err := validateUserJWTToken(cfg, tokenString)
+	if err != nil {
+		err := fmt.Errorf("ValidateUserJWTToken: %w", err)
+		return 0, fmt.Errorf("%w: %w", gouser.ErrJWTAuth, err)
+	}
+
+	userID, err := getUserIDFromJWTClaims(claims)
+	if err != nil {
+		return 0, fmt.Errorf("GetUserIDFromJWTClaims: %w", err)
+	}
+
+	return userID, nil
 }
 
 // GenerateHashPassword generate hashed password.

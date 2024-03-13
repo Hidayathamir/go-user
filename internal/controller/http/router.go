@@ -28,6 +28,6 @@ func registerRouterV1(cfg config.Config, routerV1 *gin.RouterGroup, db *db.Postg
 	userGroup := routerV1.Group("users")
 	{
 		userGroup.GET(":username", cProfile.getProfileByUsername)
-		userGroup.PUT(":username", cProfile.updateProfileByUsername)
+		userGroup.PUT("", cProfile.updateProfileByUserID)
 	}
 }

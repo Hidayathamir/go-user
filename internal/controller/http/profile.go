@@ -6,6 +6,7 @@ import (
 
 	"github.com/Hidayathamir/go-user/config"
 	"github.com/Hidayathamir/go-user/internal/dto"
+	"github.com/Hidayathamir/go-user/internal/pkg/header"
 	"github.com/Hidayathamir/go-user/internal/usecase"
 	"github.com/gin-gonic/gin"
 )
@@ -33,8 +34,8 @@ func (p *Profile) getProfileByUsername(c *gin.Context) {
 	writeResponse(c, http.StatusOK, user, nil)
 }
 
-func (p *Profile) updateProfileByUsername(c *gin.Context) {
-	req := dto.ReqUpdateProfileByUsername{}
+func (p *Profile) updateProfileByUserID(c *gin.Context) {
+	req := dto.ReqUpdateProfileByUserID{}
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		err := fmt.Errorf("gin.Context.ShouldBindJSON: %w", err)
@@ -42,11 +43,11 @@ func (p *Profile) updateProfileByUsername(c *gin.Context) {
 		return
 	}
 
-	req.Username = c.Param("username")
+	req.UserJWT = c.GetHeader(header.Authorization)
 
-	err = p.usecaseProfile.UpdateProfileByUsername(c, req)
+	err = p.usecaseProfile.UpdateProfileByUserID(c, req)
 	if err != nil {
-		err := fmt.Errorf("Profile.usecaseProfile.UpdateProfileByUsername: %w", err)
+		err := fmt.Errorf("Profile.usecaseProfile.UpdateProfileByUserID: %w", err)
 		writeResponse(c, http.StatusBadRequest, nil, err)
 		return
 	}

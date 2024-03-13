@@ -8,8 +8,8 @@ import (
 	"github.com/Hidayathamir/go-user/config"
 	"github.com/Hidayathamir/go-user/internal/entity"
 	"github.com/Hidayathamir/go-user/internal/entity/table"
+	"github.com/Hidayathamir/go-user/internal/pkg/query"
 	"github.com/Hidayathamir/go-user/internal/usecase/repo/db"
-	"github.com/Hidayathamir/go-user/pkg/query"
 )
 
 // IAuth contains abstraction of repo authentication.
