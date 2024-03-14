@@ -10,6 +10,7 @@ run:
 
 linters:
   enable:
+    - depguard
     - errcheck
     - gosimple
     - govet
@@ -100,7 +101,6 @@ linters:
     - wrapcheck
     - zerologlint
   disable:
-    - depguard
     - exhaustruct
     - gochecknoglobals
     - goerr113
@@ -126,3 +126,20 @@ linters-settings:
       rules:
         json: snake
         yaml: snake
+  depguard:
+    rules:
+      controller_layer_only:
+        list-mode: lax
+        files:
+          - "**/internal/usecase/**"
+        deny:
+          - pkg: github.com/gin-gonic/gin
+            desc: "usecase and repo layer should not know implementation in controller layer"
+      repo_layer_only:
+        list-mode: lax
+        files:
+          - "**/internal/controller/**"
+          - "**/internal/usecase/**/"
+        deny:
+          - pkg: github.com/jackc/pgx
+            desc: "controller and usecase layer should not know implementation in repo layer"
