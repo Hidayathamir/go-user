@@ -11,6 +11,8 @@ import (
 	"github.com/Hidayathamir/go-user/pkg/gouser"
 )
 
+//go:generate mockgen -source=auth.go -destination=mockusecase/auth.go -package=mockusecase
+
 // IAuth contains abstraction of usecase authentication.
 type IAuth interface {
 	// RegisterUser register new user.
