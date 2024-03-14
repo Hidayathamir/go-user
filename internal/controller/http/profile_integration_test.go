@@ -139,7 +139,7 @@ func TestIntegrationProfileGetProfileByUsernameKnownUser(t *testing.T) {
 		username := "hidayat"
 		resBodyRegister := registerUserWithAssertSuccess(t, controllerAuth, username, "mypassword")
 
-		resBodyByte, httpStatusCode := getProfileByUsername(controllerProfile, uuid.NewString())
+		resBodyByte, httpStatusCode := getProfileByUsername(controllerProfile, username)
 
 		assert.Equal(t, http.StatusOK, httpStatusCode)
 		resBodyGetProfile := resGetProfileByUsernameSuccess{}
