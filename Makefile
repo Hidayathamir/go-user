@@ -35,29 +35,3 @@ go-test-integration:
 # For deployment. Run postgres container also build and run go app container.
 deploy:
 	docker compose up --build
-
-###################################
-
-# Run auth integration test using docker.
-docker-auth-integration-test:
-	docker \
-		compose -f ./integration-test/auth_integration_test_docker_compose.yml \
-		up --build --abort-on-container-exit --exit-code-from auth-integration-test-go-user && \
-	docker \
-		compose -f ./integration-test/auth_integration_test_docker_compose.yml \
-		down && \
-	docker rmi auth-integration-test-go-user-app auth-integration-test-go-user
-
-docker-profile-integration-test:
-	docker \
-		compose -f ./integration-test/profile_integration_test_docker_compose.yml \
-		up --build --abort-on-container-exit --exit-code-from profile-integration-test-go-user && \
-	docker \
-		compose -f ./integration-test/profile_integration_test_docker_compose.yml \
-		down && \
-	docker rmi profile-integration-test-go-user-app profile-integration-test-go-user
-
-docker-integration-test:
-	make docker-auth-integration-test && \
-	make docker-profile-integration-test && \
-	echo "\n\tintegration test success\n"

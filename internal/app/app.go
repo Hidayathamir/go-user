@@ -33,7 +33,7 @@ func Run() {
 func initConfig(isLoadEnv bool) config.Config {
 	var cfgLoader config.Loader
 	if isLoadEnv {
-		cfgLoader = &config.EnvLoader{}
+		cfgLoader = &config.EnvLoader{YAMLPath: "./config/config.yml"}
 	} else {
 		cfgLoader = &config.YamlLoader{Path: "./config/config.yml"}
 	}

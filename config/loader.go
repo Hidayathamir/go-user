@@ -29,10 +29,20 @@ func (y *YamlLoader) loadConfig(cfg *Config) error {
 var _ Loader = &EnvLoader{}
 
 // EnvLoader load config from env var.
-type EnvLoader struct{}
+type EnvLoader struct {
+	// YAMLPath will read yaml config first then read env var. If you do not
+	// specify then env var should have all required config.
+	YAMLPath string
+}
 
-func (*EnvLoader) loadConfig(cfg *Config) error {
-	err := cleanenv.ReadEnv(&cfg)
+func (e *EnvLoader) loadConfig(cfg *Config) error {
+	if e.YAMLPath != "" {
+		err := cleanenv.ReadConfig(e.YAMLPath, cfg)
+		if err != nil {
+			return fmt.Errorf("cleanenv.ReadConfig: %w", err)
+		}
+	}
+	err := cleanenv.ReadEnv(cfg)
 	if err != nil {
 		return fmt.Errorf("cleanenv.ReadEnv: %w", err)
 	}
