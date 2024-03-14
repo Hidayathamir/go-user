@@ -11,6 +11,8 @@ import (
 	"github.com/Hidayathamir/go-user/pkg/gouser"
 )
 
+//go:generate mockgen -source=profile.go -destination=mockusecase/profile.go -package=mockusecase
+
 // IProfile contains abstraction of usecase profile.
 type IProfile interface {
 	// GetProfileByUsername return user profile by username.

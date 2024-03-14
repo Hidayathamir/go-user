@@ -45,7 +45,7 @@ func TestIntegrationAuthLoginUserRegistered(t *testing.T) {
 	})
 }
 
-func TestIntegrationAuthLoginUserRegisteredWrongPassword(t *testing.T) { //nolint:dupl
+func TestIntegrationAuthLoginUserRegisteredWrongPassword(t *testing.T) {
 	t.Parallel()
 
 	cfg := initTestIntegration(t)
@@ -100,7 +100,7 @@ func TestIntegrationAuthLoginUserNotRegistered(t *testing.T) {
 	})
 }
 
-func TestIntegrationAuthLoginUserRequestInvalid(t *testing.T) { //nolint:dupl
+func TestIntegrationAuthLoginUserRequestInvalid(t *testing.T) {
 	t.Parallel()
 
 	cfg := initTestIntegration(t)
@@ -157,7 +157,7 @@ func TestIntegrationAuthRegisterUserNew(t *testing.T) {
 	})
 }
 
-func TestIntegrationAuthRegisterUserDuplicate(t *testing.T) { //nolint:dupl
+func TestIntegrationAuthRegisterUserDuplicate(t *testing.T) {
 	t.Parallel()
 
 	cfg := initTestIntegration(t)
@@ -186,7 +186,7 @@ func TestIntegrationAuthRegisterUserDuplicate(t *testing.T) { //nolint:dupl
 	})
 }
 
-func TestIntegrationAuthRegisterUserRequestInvalid(t *testing.T) { //nolint:dupl
+func TestIntegrationAuthRegisterUserRequestInvalid(t *testing.T) {
 	t.Parallel()
 
 	cfg := initTestIntegration(t)

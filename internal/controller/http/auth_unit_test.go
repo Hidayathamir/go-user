@@ -27,6 +27,7 @@ func TestUnitAuthLoginUser(t *testing.T) {
 		usecaseAuth *mockusecase.MockIAuth
 	}
 	type args struct {
+		params    gin.Params
 		reqHeader gin.H
 		reqBody   gin.H
 	}
@@ -35,7 +36,7 @@ func TestUnitAuthLoginUser(t *testing.T) {
 		mock     func(f fields)
 		args     args
 		wantCode int
-		wantBody gin.H
+		wantBody baseResponse
 	}{
 		{
 			name: "login user success",
@@ -49,16 +50,14 @@ func TestUnitAuthLoginUser(t *testing.T) {
 					Return("Bearer dummyUserJWT", nil)
 			},
 			args: args{
+				params:    gin.Params{},
 				reqHeader: gin.H{},
-				reqBody: gin.H{
-					"username": "hidayat",
-					"password": "mypassword",
-				},
+				reqBody:   gin.H{"username": "hidayat", "password": "mypassword"},
 			},
 			wantCode: http.StatusOK,
-			wantBody: gin.H{
-				"data":  "Bearer dummyUserJWT",
-				"error": nil,
+			wantBody: baseResponse{
+				Data:  "Bearer dummyUserJWT",
+				Error: nil,
 			},
 		},
 		{
@@ -73,20 +72,18 @@ func TestUnitAuthLoginUser(t *testing.T) {
 					Return("", assert.AnError)
 			},
 			args: args{
+				params:    gin.Params{},
 				reqHeader: gin.H{},
-				reqBody: gin.H{
-					"username": "hidayat",
-					"password": "mypassword",
-				},
+				reqBody:   gin.H{"username": "hidayat", "password": "mypassword"},
 			},
 			wantCode: http.StatusBadRequest,
-			wantBody: gin.H{
-				"data":  nil,
-				"error": fmt.Errorf("Auth.usecaseAuth.LoginUser: %w", assert.AnError).Error(),
+			wantBody: baseResponse{
+				Data:  nil,
+				Error: fmt.Errorf("Auth.usecaseAuth.LoginUser: %w", assert.AnError).Error(),
 			},
 		},
 	}
-	for _, tt := range tests { //nolint:dupl
+	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
@@ -110,6 +107,7 @@ func TestUnitAuthLoginUser(t *testing.T) {
 				req.Header.Set(k, fmt.Sprintf("%v", v))
 			}
 			ctx.Request = req
+			ctx.Params = append(ctx.Params, tt.args.params...)
 
 			a.loginUser(ctx)
 
@@ -129,6 +127,7 @@ func TestUnitAuthRegisterUser(t *testing.T) {
 		usecaseAuth *mockusecase.MockIAuth
 	}
 	type args struct {
+		params    gin.Params
 		reqHeader gin.H
 		reqBody   gin.H
 	}
@@ -137,7 +136,7 @@ func TestUnitAuthRegisterUser(t *testing.T) {
 		mock     func(f fields)
 		args     args
 		wantCode int
-		wantBody gin.H
+		wantBody baseResponse
 	}{
 		{
 			name: "register user success",
@@ -158,9 +157,9 @@ func TestUnitAuthRegisterUser(t *testing.T) {
 				},
 			},
 			wantCode: http.StatusOK,
-			wantBody: gin.H{
-				"data":  int64(442),
-				"error": nil,
+			wantBody: baseResponse{
+				Data:  int64(442),
+				Error: nil,
 			},
 		},
 		{
@@ -182,13 +181,13 @@ func TestUnitAuthRegisterUser(t *testing.T) {
 				},
 			},
 			wantCode: http.StatusBadRequest,
-			wantBody: gin.H{
-				"data":  nil,
-				"error": fmt.Errorf("Auth.usecaseAuth.RegisterUser: %w", assert.AnError).Error(),
+			wantBody: baseResponse{
+				Data:  nil,
+				Error: fmt.Errorf("Auth.usecaseAuth.RegisterUser: %w", assert.AnError).Error(),
 			},
 		},
 	}
-	for _, tt := range tests { //nolint:dupl
+	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
@@ -212,6 +211,7 @@ func TestUnitAuthRegisterUser(t *testing.T) {
 				req.Header.Set(k, fmt.Sprintf("%v", v))
 			}
 			ctx.Request = req
+			ctx.Params = append(ctx.Params, tt.args.params...)
 
 			a.registerUser(ctx)
 

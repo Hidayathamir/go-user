@@ -30,6 +30,11 @@ go-test-integration:
 	go clean -testcache && \
 	go test -v ./internal/controller/... -run TestIntegration
 
+# Run test unit.
+go-test-unit:
+	go clean -testcache && \
+	go test -v ./internal/controller/... -run TestUnit
+
 ###################################
 
 # For deployment. Run postgres container also build and run go app container.
