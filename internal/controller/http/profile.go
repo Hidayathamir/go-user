@@ -28,10 +28,10 @@ func (p *Profile) getProfileByUsername(c *gin.Context) {
 	user, err := p.usecaseProfile.GetProfileByUsername(c, c.Param("username"))
 	if err != nil {
 		err := fmt.Errorf("Profile.usecaseProfile.GetProfileByUsername: %w", err)
-		writeResponse(c, http.StatusBadRequest, nil, err)
+		c.JSON(http.StatusBadRequest, setResponseBody(nil, err))
 		return
 	}
-	writeResponse(c, http.StatusOK, user, nil)
+	c.JSON(http.StatusOK, setResponseBody(user, err))
 }
 
 func (p *Profile) updateProfileByUserID(c *gin.Context) {
@@ -39,7 +39,7 @@ func (p *Profile) updateProfileByUserID(c *gin.Context) {
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		err := fmt.Errorf("gin.Context.ShouldBindJSON: %w", err)
-		writeResponse(c, http.StatusBadRequest, nil, err)
+		c.JSON(http.StatusBadRequest, setResponseBody(nil, err))
 		return
 	}
 
@@ -48,9 +48,9 @@ func (p *Profile) updateProfileByUserID(c *gin.Context) {
 	err = p.usecaseProfile.UpdateProfileByUserID(c, req)
 	if err != nil {
 		err := fmt.Errorf("Profile.usecaseProfile.UpdateProfileByUserID: %w", err)
-		writeResponse(c, http.StatusBadRequest, nil, err)
+		c.JSON(http.StatusBadRequest, setResponseBody(nil, err))
 		return
 	}
 
-	writeResponse(c, http.StatusOK, "ok", nil)
+	c.JSON(http.StatusOK, setResponseBody("ok", err))
 }

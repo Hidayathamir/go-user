@@ -54,10 +54,7 @@ func TestUnitAuthLoginUser(t *testing.T) {
 				},
 			},
 			wantCode: http.StatusOK,
-			wantBody: baseResponse{
-				Data:  "Bearer dummyUserJWT",
-				Error: nil,
-			},
+			wantBody: setResponseBody("Bearer dummyUserJWT", nil),
 		},
 		{
 			name: "login user error",
@@ -77,10 +74,7 @@ func TestUnitAuthLoginUser(t *testing.T) {
 				},
 			},
 			wantCode: http.StatusBadRequest,
-			wantBody: baseResponse{
-				Data:  nil,
-				Error: fmt.Errorf("Auth.usecaseAuth.LoginUser: %w", assert.AnError).Error(),
-			},
+			wantBody: setResponseBody(nil, fmt.Errorf("Auth.usecaseAuth.LoginUser: %w", assert.AnError)),
 		},
 	}
 	for _, tt := range tests {
@@ -150,10 +144,7 @@ func TestUnitAuthRegisterUser(t *testing.T) {
 				},
 			},
 			wantCode: http.StatusOK,
-			wantBody: baseResponse{
-				Data:  int64(442),
-				Error: nil,
-			},
+			wantBody: setResponseBody(int64(442), nil),
 		},
 		{
 			name: "register user error",
@@ -173,10 +164,7 @@ func TestUnitAuthRegisterUser(t *testing.T) {
 				},
 			},
 			wantCode: http.StatusBadRequest,
-			wantBody: baseResponse{
-				Data:  nil,
-				Error: fmt.Errorf("Auth.usecaseAuth.RegisterUser: %w", assert.AnError).Error(),
-			},
+			wantBody: setResponseBody(nil, fmt.Errorf("Auth.usecaseAuth.RegisterUser: %w", assert.AnError)),
 		},
 	}
 	for _, tt := range tests {

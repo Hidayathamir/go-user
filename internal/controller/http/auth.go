@@ -28,18 +28,18 @@ func (a *Auth) loginUser(c *gin.Context) {
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		err := fmt.Errorf("gin.Context.ShouldBindJSON: %w", err)
-		writeResponse(c, http.StatusBadRequest, nil, err)
+		c.JSON(http.StatusBadRequest, setResponseBody(nil, err))
 		return
 	}
 
 	userJWT, err := a.usecaseAuth.LoginUser(c, req)
 	if err != nil {
 		err := fmt.Errorf("Auth.usecaseAuth.LoginUser: %w", err)
-		writeResponse(c, http.StatusBadRequest, nil, err)
+		c.JSON(http.StatusBadRequest, setResponseBody(nil, err))
 		return
 	}
 
-	writeResponse(c, http.StatusOK, userJWT, nil)
+	c.JSON(http.StatusOK, setResponseBody(userJWT, nil))
 }
 
 func (a *Auth) registerUser(c *gin.Context) {
@@ -47,16 +47,16 @@ func (a *Auth) registerUser(c *gin.Context) {
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		err := fmt.Errorf("gin.Context.ShouldBindJSON: %w", err)
-		writeResponse(c, http.StatusBadRequest, nil, err)
+		c.JSON(http.StatusBadRequest, setResponseBody(nil, err))
 		return
 	}
 
 	userID, err := a.usecaseAuth.RegisterUser(c, req)
 	if err != nil {
 		err := fmt.Errorf("Auth.usecaseAuth.RegisterUser: %w", err)
-		writeResponse(c, http.StatusBadRequest, nil, err)
+		c.JSON(http.StatusBadRequest, setResponseBody(nil, err))
 		return
 	}
 
-	writeResponse(c, http.StatusOK, userID, nil)
+	c.JSON(http.StatusOK, setResponseBody(userID, nil))
 }

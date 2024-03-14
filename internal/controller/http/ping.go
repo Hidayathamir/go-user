@@ -7,5 +7,5 @@ import (
 )
 
 func ping(c *gin.Context) {
-	writeResponse(c, http.StatusOK, "ping success", nil)
+	c.JSON(http.StatusOK, setResponseBody("ping success", nil))
 }

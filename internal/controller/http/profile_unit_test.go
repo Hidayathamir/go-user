@@ -63,15 +63,15 @@ func TestUnitProfileGetProfileByUsername(t *testing.T) {
 				},
 			},
 			wantCode: http.StatusOK,
-			wantBody: baseResponse{
-				Data: dto.ResGetProfileByUsername{
+			wantBody: setResponseBody(
+				dto.ResGetProfileByUsername{
 					ID:        23,
 					Username:  "hidayat",
 					CreatedAt: time.Time{},
 					UpdatedAt: time.Time{},
 				},
-				Error: nil,
-			},
+				nil,
+			),
 		},
 	}
 	for _, tt := range tests {
@@ -144,10 +144,7 @@ func TestProfileUpdateProfileByUserID(t *testing.T) {
 				},
 			},
 			wantCode: http.StatusOK,
-			wantBody: baseResponse{
-				Data:  "ok",
-				Error: nil,
-			},
+			wantBody: setResponseBody("ok", nil),
 		},
 		{
 			name: "update profile error",
@@ -169,10 +166,7 @@ func TestProfileUpdateProfileByUserID(t *testing.T) {
 				},
 			},
 			wantCode: http.StatusBadRequest,
-			wantBody: baseResponse{
-				Data:  nil,
-				Error: fmt.Errorf("Profile.usecaseProfile.UpdateProfileByUserID: %w", assert.AnError).Error(),
-			},
+			wantBody: setResponseBody(nil, fmt.Errorf("Profile.usecaseProfile.UpdateProfileByUserID: %w", assert.AnError)),
 		},
 	}
 	for _, tt := range tests {
