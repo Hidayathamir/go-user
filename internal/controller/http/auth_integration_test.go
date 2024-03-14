@@ -12,7 +12,6 @@ import (
 	"github.com/Hidayathamir/go-user/pkg/gouser"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -97,7 +96,7 @@ func TestIntegrationAuthLoginUserNotRegistered(t *testing.T) {
 		require.NoError(t, json.Unmarshal(resBodyByte, &resBodyLogin))
 		assert.Nil(t, resBodyLogin.Data)
 		assert.NotEmpty(t, resBodyLogin.Error)
-		assert.Contains(t, resBodyLogin.Error, pgx.ErrNoRows.Error())
+		assert.Contains(t, resBodyLogin.Error, gouser.ErrUnknownUsername.Error())
 	})
 }
 

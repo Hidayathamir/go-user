@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -10,6 +11,9 @@ import (
 	"github.com/Hidayathamir/go-user/internal/entity/table"
 	"github.com/Hidayathamir/go-user/internal/pkg/query"
 	"github.com/Hidayathamir/go-user/internal/usecase/repo/db"
+	"github.com/Hidayathamir/go-user/pkg/gouser"
+	"github.com/jackc/pgerrcode"
+	"github.com/jackc/pgx/v5/pgconn"
 )
 
 // IAuth contains abstraction of repo authentication.
@@ -57,7 +61,18 @@ func (a *Auth) RegisterUser(ctx context.Context, user entity.User) (int64, error
 	var userID int64
 	err = a.db.Pool.QueryRow(ctx, sql, args...).Scan(&userID)
 	if err != nil {
-		return 0, fmt.Errorf("Auth.db.Pool.QueryRow.Scan: %w", err)
+		err := fmt.Errorf("Auth.db.Pool.QueryRow.Scan: %w", err)
+
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) {
+			isErrDuplicateUsername := pgErr.Code == pgerrcode.UniqueViolation &&
+				pgErr.ConstraintName == table.User.Constraint.UserUn
+			if isErrDuplicateUsername {
+				return 0, fmt.Errorf("%w: %w", gouser.ErrDuplicateUsername, err)
+			}
+		}
+
+		return 0, err
 	}
 
 	return userID, nil

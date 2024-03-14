@@ -14,4 +14,6 @@ var (
 	ErrWrongPassword = errors.New("wrong password")
 	// ErrDuplicateUsername occurs when register user but username already exists.
 	ErrDuplicateUsername = errors.New("duplicate username")
+	// ErrUnknownUsername occurs when username does not exists.
+	ErrUnknownUsername = errors.New("unknown username")
 )

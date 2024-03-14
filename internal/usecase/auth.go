@@ -2,17 +2,13 @@ package usecase
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/Hidayathamir/go-user/config"
 	"github.com/Hidayathamir/go-user/internal/dto"
-	"github.com/Hidayathamir/go-user/internal/entity/table"
 	"github.com/Hidayathamir/go-user/internal/pkg/auth"
 	"github.com/Hidayathamir/go-user/internal/usecase/repo"
 	"github.com/Hidayathamir/go-user/pkg/gouser"
-	"github.com/jackc/pgerrcode"
-	"github.com/jackc/pgx/v5/pgconn"
 )
 
 // IAuth contains abstraction of usecase authentication.
@@ -81,14 +77,6 @@ func (a *Auth) RegisterUser(ctx context.Context, req dto.ReqRegisterUser) (int64
 
 	userID, err := a.repoAuth.RegisterUser(ctx, user)
 	if err != nil {
-		var pgErr *pgconn.PgError
-		if errors.As(err, &pgErr) {
-			isErrDuplicateUsername := pgErr.Code == pgerrcode.UniqueViolation &&
-				pgErr.ConstraintName == table.User.Constraint.UserUn
-			if isErrDuplicateUsername {
-				return 0, fmt.Errorf("%w: %w", gouser.ErrDuplicateUsername, err)
-			}
-		}
 		return 0, fmt.Errorf("Auth.repoAuth.RegisterUser: %w", err)
 	}
 

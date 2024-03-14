@@ -11,12 +11,13 @@ import (
 	"time"
 
 	"github.com/Hidayathamir/go-user/config"
+	"github.com/Hidayathamir/go-user/internal/dto"
 	"github.com/Hidayathamir/go-user/internal/pkg/auth"
 	"github.com/Hidayathamir/go-user/internal/pkg/header"
 	"github.com/Hidayathamir/go-user/internal/pkg/jutil"
+	"github.com/Hidayathamir/go-user/internal/usecase/repo"
 	"github.com/Hidayathamir/go-user/internal/usecase/repo/db"
 	"github.com/gin-gonic/gin"
-	"github.com/jackc/pgx/v5"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go"
@@ -63,10 +64,10 @@ func updateConfigPGPort(t *testing.T, cfg *config.Config, pgContainer *postgres.
 	dbURL, err := pgContainer.ConnectionString(context.Background())
 	require.NoError(t, err)
 
-	connConfig, err := pgx.ParseConfig(dbURL)
+	port, err := repo.GetPort(dbURL)
 	require.NoError(t, err)
 
-	cfg.PG.Port = int(connConfig.Port)
+	cfg.PG.Port = port
 }
 
 func dbMigrateUp(t *testing.T, cfg config.Config) {
@@ -185,6 +186,23 @@ func updateProfileByUserID(controllerProfile *Profile, userJWT string, newPasswo
 	ctx.Request.Header.Set(header.Authorization, userJWT)
 
 	controllerProfile.updateProfileByUserID(ctx)
+
+	return rr.Body.Bytes(), rr.Code
+}
+
+type resGetProfileByUsernameSuccess struct {
+	Data  dto.ResGetProfileByUsername `json:"data"`
+	Error any                         `json:"error"`
+}
+
+// getProfileByUsername get user profile by username return raw response and http status code.
+func getProfileByUsername(controllerProfile *Profile, username string) (resBody []byte, httpStatusCode int) {
+	rr := httptest.NewRecorder()
+	ctx, _ := gin.CreateTestContext(rr)
+	ctx.Request = httptest.NewRequest(http.MethodPut, "/", nil)
+	ctx.Params = append(ctx.Params, gin.Param{Key: "username", Value: username})
+
+	controllerProfile.getProfileByUsername(ctx)
 
 	return rr.Body.Bytes(), rr.Code
 }

@@ -116,3 +116,62 @@ func TestIntegrationProfileUpdateProfileRequestInvalid(t *testing.T) {
 		})
 	})
 }
+
+func TestIntegrationProfileGetProfileByUsernameKnownUser(t *testing.T) {
+	t.Parallel()
+
+	cfg := initTestIntegration(t)
+
+	t.Run("get profile known user should success", func(t *testing.T) {
+		pg, err := db.NewPostgresPoolConnection(cfg)
+		require.NoError(t, err)
+
+		repoAuth := repo.NewAuth(cfg, pg)
+		repoProfile := repo.NewProfile(cfg, pg)
+		usecaseAuth := usecase.NewAuth(cfg, repoAuth, repoProfile)
+		controllerAuth := newAuth(cfg, usecaseAuth)
+
+		usecaseProfile := usecase.NewProfile(cfg, repoProfile)
+		controllerProfile := newProfile(cfg, usecaseProfile)
+
+		gin.SetMode(gin.TestMode)
+
+		username := "hidayat"
+		resBodyRegister := registerUserWithAssertSuccess(t, controllerAuth, username, "mypassword")
+
+		resBodyByte, httpStatusCode := getProfileByUsername(controllerProfile, uuid.NewString())
+
+		assert.Equal(t, http.StatusOK, httpStatusCode)
+		resBodyGetProfile := resGetProfileByUsernameSuccess{}
+		require.NoError(t, json.Unmarshal(resBodyByte, &resBodyGetProfile))
+		assert.Equal(t, resBodyRegister.Data, resBodyGetProfile.Data.ID)
+		assert.Equal(t, username, resBodyGetProfile.Data.Username)
+		assert.Nil(t, resBodyGetProfile.Error)
+	})
+}
+
+func TestIntegrationProfileGetProfileByUsernameUnknownUser(t *testing.T) {
+	t.Parallel()
+
+	cfg := initTestIntegration(t)
+
+	t.Run("get profile unknown user should error", func(t *testing.T) {
+		pg, err := db.NewPostgresPoolConnection(cfg)
+		require.NoError(t, err)
+
+		repoProfile := repo.NewProfile(cfg, pg)
+		usecaseProfile := usecase.NewProfile(cfg, repoProfile)
+		controllerProfile := newProfile(cfg, usecaseProfile)
+
+		gin.SetMode(gin.TestMode)
+
+		resBodyByte, httpStatusCode := getProfileByUsername(controllerProfile, uuid.NewString())
+
+		assert.Equal(t, http.StatusBadRequest, httpStatusCode)
+		resBody := resError{}
+		require.NoError(t, json.Unmarshal(resBodyByte, &resBody))
+		assert.Nil(t, resBody.Data)
+		assert.NotEmpty(t, resBody.Error)
+		assert.Contains(t, resBody.Error, gouser.ErrUnknownUsername.Error())
+	})
+}
