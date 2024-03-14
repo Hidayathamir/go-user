@@ -27,9 +27,7 @@ func TestUnitAuthLoginUser(t *testing.T) {
 		usecaseAuth *mockusecase.MockIAuth
 	}
 	type args struct {
-		params    gin.Params
-		reqHeader gin.H
-		reqBody   gin.H
+		reqBody dto.ReqLoginUser
 	}
 	tests := []struct {
 		name     string
@@ -50,9 +48,10 @@ func TestUnitAuthLoginUser(t *testing.T) {
 					Return("Bearer dummyUserJWT", nil)
 			},
 			args: args{
-				params:    gin.Params{},
-				reqHeader: gin.H{},
-				reqBody:   gin.H{"username": "hidayat", "password": "mypassword"},
+				reqBody: dto.ReqLoginUser{
+					Username: "hidayat",
+					Password: "mypassword",
+				},
 			},
 			wantCode: http.StatusOK,
 			wantBody: baseResponse{
@@ -72,9 +71,10 @@ func TestUnitAuthLoginUser(t *testing.T) {
 					Return("", assert.AnError)
 			},
 			args: args{
-				params:    gin.Params{},
-				reqHeader: gin.H{},
-				reqBody:   gin.H{"username": "hidayat", "password": "mypassword"},
+				reqBody: dto.ReqLoginUser{
+					Username: "hidayat",
+					Password: "mypassword",
+				},
 			},
 			wantCode: http.StatusBadRequest,
 			wantBody: baseResponse{
@@ -103,11 +103,7 @@ func TestUnitAuthLoginUser(t *testing.T) {
 			ctx, _ := gin.CreateTestContext(rr)
 			reqBody, _ := json.Marshal(tt.args.reqBody)
 			req := httptest.NewRequest(http.MethodPost, "/", bytes.NewReader(reqBody))
-			for k, v := range tt.args.reqHeader {
-				req.Header.Set(k, fmt.Sprintf("%v", v))
-			}
 			ctx.Request = req
-			ctx.Params = append(ctx.Params, tt.args.params...)
 
 			a.loginUser(ctx)
 
@@ -127,9 +123,7 @@ func TestUnitAuthRegisterUser(t *testing.T) {
 		usecaseAuth *mockusecase.MockIAuth
 	}
 	type args struct {
-		params    gin.Params
-		reqHeader gin.H
-		reqBody   gin.H
+		reqBody dto.ReqRegisterUser
 	}
 	tests := []struct {
 		name     string
@@ -150,10 +144,9 @@ func TestUnitAuthRegisterUser(t *testing.T) {
 					Return(int64(442), nil)
 			},
 			args: args{
-				reqHeader: gin.H{},
-				reqBody: gin.H{
-					"username": "hidayat",
-					"password": "mypassword",
+				reqBody: dto.ReqRegisterUser{
+					Username: "hidayat",
+					Password: "mypassword",
 				},
 			},
 			wantCode: http.StatusOK,
@@ -174,10 +167,9 @@ func TestUnitAuthRegisterUser(t *testing.T) {
 					Return(int64(0), assert.AnError)
 			},
 			args: args{
-				reqHeader: gin.H{},
-				reqBody: gin.H{
-					"username": "hidayat",
-					"password": "mypassword",
+				reqBody: dto.ReqRegisterUser{
+					Username: "hidayat",
+					Password: "mypassword",
 				},
 			},
 			wantCode: http.StatusBadRequest,
@@ -207,11 +199,7 @@ func TestUnitAuthRegisterUser(t *testing.T) {
 			ctx, _ := gin.CreateTestContext(rr)
 			reqBody, _ := json.Marshal(tt.args.reqBody)
 			req := httptest.NewRequest(http.MethodPost, "/", bytes.NewReader(reqBody))
-			for k, v := range tt.args.reqHeader {
-				req.Header.Set(k, fmt.Sprintf("%v", v))
-			}
 			ctx.Request = req
-			ctx.Params = append(ctx.Params, tt.args.params...)
 
 			a.registerUser(ctx)
 

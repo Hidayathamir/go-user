@@ -11,6 +11,7 @@ import (
 
 	"github.com/Hidayathamir/go-user/config"
 	"github.com/Hidayathamir/go-user/internal/dto"
+	"github.com/Hidayathamir/go-user/internal/pkg/header"
 	"github.com/Hidayathamir/go-user/internal/pkg/jutil"
 	"github.com/Hidayathamir/go-user/internal/usecase/mockusecase"
 	"github.com/gin-gonic/gin"
@@ -28,9 +29,7 @@ func TestUnitProfileGetProfileByUsername(t *testing.T) {
 		usecaseProfile *mockusecase.MockIProfile
 	}
 	type args struct {
-		params    gin.Params
-		reqHeader gin.H
-		reqBody   gin.H
+		params gin.Params
 	}
 	tests := []struct {
 		name     string
@@ -62,8 +61,6 @@ func TestUnitProfileGetProfileByUsername(t *testing.T) {
 						Value: "hidayat",
 					},
 				},
-				reqHeader: gin.H{},
-				reqBody:   gin.H{},
 			},
 			wantCode: http.StatusOK,
 			wantBody: baseResponse{
@@ -95,15 +92,115 @@ func TestUnitProfileGetProfileByUsername(t *testing.T) {
 
 			rr := httptest.NewRecorder()
 			ctx, _ := gin.CreateTestContext(rr)
+			req := httptest.NewRequest(http.MethodGet, "/", nil)
+			ctx.Request = req
+			ctx.Params = append(ctx.Params, tt.args.params...)
+
+			p.getProfileByUsername(ctx)
+
+			assert.Equal(t, tt.wantCode, rr.Code)
+			assert.Equal(t, jutil.ToJSONString(tt.wantBody), rr.Body.String())
+		})
+	}
+}
+
+func TestProfileUpdateProfileByUserID(t *testing.T) {
+	t.Parallel()
+
+	gin.SetMode(gin.TestMode)
+
+	type fields struct {
+		cfg            config.Config
+		usecaseProfile *mockusecase.MockIProfile
+	}
+	type args struct {
+		reqHeader gin.H
+		reqBody   dto.ReqUpdateProfileByUserID
+	}
+	tests := []struct {
+		name     string
+		mock     func(f fields)
+		args     args
+		wantCode int
+		wantBody baseResponse
+	}{
+		{
+			name: "update profile success",
+			mock: func(f fields) {
+				f.usecaseProfile.
+					EXPECT().
+					UpdateProfileByUserID(gomock.Any(), dto.ReqUpdateProfileByUserID{
+						UserJWT:  "Bearer dummyUserJWT",
+						Password: "mypassword",
+					}).
+					Return(nil)
+			},
+			args: args{
+				reqHeader: gin.H{
+					header.Authorization: "Bearer dummyUserJWT",
+				},
+				reqBody: dto.ReqUpdateProfileByUserID{
+					Password: "mypassword",
+				},
+			},
+			wantCode: http.StatusOK,
+			wantBody: baseResponse{
+				Data:  "ok",
+				Error: nil,
+			},
+		},
+		{
+			name: "update profile error",
+			mock: func(f fields) {
+				f.usecaseProfile.
+					EXPECT().
+					UpdateProfileByUserID(gomock.Any(), dto.ReqUpdateProfileByUserID{
+						UserJWT:  "Bearer dummyUserJWT",
+						Password: "mypassword",
+					}).
+					Return(assert.AnError)
+			},
+			args: args{
+				reqHeader: gin.H{
+					header.Authorization: "Bearer dummyUserJWT",
+				},
+				reqBody: dto.ReqUpdateProfileByUserID{
+					Password: "mypassword",
+				},
+			},
+			wantCode: http.StatusBadRequest,
+			wantBody: baseResponse{
+				Data:  nil,
+				Error: fmt.Errorf("Profile.usecaseProfile.UpdateProfileByUserID: %w", assert.AnError).Error(),
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+
+			f := fields{
+				cfg:            config.Config{},
+				usecaseProfile: mockusecase.NewMockIProfile(ctrl),
+			}
+			tt.mock(f)
+
+			p := &Profile{
+				cfg:            f.cfg,
+				usecaseProfile: f.usecaseProfile,
+			}
+
+			rr := httptest.NewRecorder()
+			ctx, _ := gin.CreateTestContext(rr)
 			reqBody, _ := json.Marshal(tt.args.reqBody)
 			req := httptest.NewRequest(http.MethodGet, "/", bytes.NewReader(reqBody))
 			for k, v := range tt.args.reqHeader {
 				req.Header.Set(k, fmt.Sprintf("%v", v))
 			}
 			ctx.Request = req
-			ctx.Params = append(ctx.Params, tt.args.params...)
 
-			p.getProfileByUsername(ctx)
+			p.updateProfileByUserID(ctx)
 
 			assert.Equal(t, tt.wantCode, rr.Code)
 			assert.Equal(t, jutil.ToJSONString(tt.wantBody), rr.Body.String())
