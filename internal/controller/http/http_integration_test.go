@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"path/filepath"
@@ -12,7 +11,6 @@ import (
 	"time"
 
 	"github.com/Hidayathamir/go-user/config"
-	"github.com/Hidayathamir/go-user/internal/entity/table"
 	"github.com/Hidayathamir/go-user/internal/pkg/auth"
 	"github.com/Hidayathamir/go-user/internal/pkg/header"
 	"github.com/Hidayathamir/go-user/internal/pkg/jutil"
@@ -27,16 +25,23 @@ import (
 )
 
 func configInit(t *testing.T) config.Config {
+	t.Helper()
+
 	configYamlPath := filepath.Join("..", "..", "..", "config", "config.yml")
 	cfg, err := config.Init(&config.YamlLoader{Path: configYamlPath})
-	if err != nil {
-		t.Fatalf("config.Init: %v", err)
-	}
+	require.NoError(t, err)
 	return cfg
 }
 
-func createPGContainer(cfg config.Config) (*postgres.PostgresContainer, error) {
+type mute struct{}
+
+func (n mute) Printf(string, ...interface{}) {}
+
+func createPGContainer(t *testing.T, cfg config.Config) *postgres.PostgresContainer {
+	t.Helper()
+
 	pgContainer, err := postgres.RunContainer(context.Background(),
+		testcontainers.WithLogger(&mute{}),
 		testcontainers.WithImage("postgres:16"),
 		postgres.WithDatabase(cfg.PG.DBName),
 		postgres.WithUsername(cfg.PG.Username),
@@ -48,54 +53,36 @@ func createPGContainer(cfg config.Config) (*postgres.PostgresContainer, error) {
 				WithStartupTimeout(5*time.Second),
 		),
 	)
-	if err != nil {
-		return nil, fmt.Errorf("postgres.RunContainer: %w", err)
-	}
-
-	return pgContainer, nil
-}
-
-func terminatePGContainer(t *testing.T, pgContainer *postgres.PostgresContainer) func() {
-	return func() {
-		err := pgContainer.Terminate(context.Background())
-		if err != nil {
-			t.Fatalf("postgres.PostgresContainer.Terminate: %v", err)
-		}
-	}
+	require.NoError(t, err)
+	return pgContainer
 }
 
 func updateConfigPGPort(t *testing.T, cfg *config.Config, pgContainer *postgres.PostgresContainer) {
+	t.Helper()
+
 	dbURL, err := pgContainer.ConnectionString(context.Background())
-	if err != nil {
-		t.Fatalf("postgres.PostgresContainer.ConnectionString: %v", err)
-	}
+	require.NoError(t, err)
 
 	connConfig, err := pgx.ParseConfig(dbURL)
-	if err != nil {
-		t.Fatalf("pgx.ParseConfig: %v", err)
-	}
+	require.NoError(t, err)
 
 	cfg.PG.Port = int(connConfig.Port)
 }
 
 func dbMigrateUp(t *testing.T, cfg config.Config) {
+	t.Helper()
+
 	schemaMigrationPath := filepath.Join("..", "..", "..", "internal", "usecase", "repo", "db", "schema_migration")
-	err := db.MigrateUp(cfg, schemaMigrationPath)
-	if err != nil {
-		t.Fatalf("db.MigrateUp: %v", err)
-	}
+	require.NoError(t, db.MigrateUp(cfg, schemaMigrationPath))
 }
 
 func initTestIntegration(t *testing.T) config.Config {
+	t.Helper()
+
 	cfg := configInit(t)
 
-	table.Init()
-
-	pgContainer, err := createPGContainer(cfg)
-	if err != nil {
-		t.Fatalf("createPGContainer: %v", err)
-	}
-	t.Cleanup(terminatePGContainer(t, pgContainer))
+	pgContainer := createPGContainer(t, cfg)
+	t.Cleanup(func() { require.NoError(t, pgContainer.Terminate(context.Background())) })
 
 	updateConfigPGPort(t, &cfg, pgContainer)
 
@@ -134,6 +121,8 @@ func registerUser(controllerAuth *Auth, username string, password string) (resBo
 // registerUserWithAssertSuccess registers user then validate, return response
 // body register success.
 func registerUserWithAssertSuccess(t *testing.T, controllerAuth *Auth, username string, password string) resRegisterUserSuccess {
+	t.Helper()
+
 	resBodyByte, httpStatusCode := registerUser(controllerAuth, username, password)
 	assert.Equal(t, http.StatusOK, httpStatusCode)
 	resBody := resRegisterUserSuccess{}
@@ -167,6 +156,8 @@ func loginUser(controllerAuth *Auth, username string, password string) (resBody 
 // loginUserWithAssertSuccess login user then validate, return response body
 // login success.
 func loginUserWithAssertSuccess(t *testing.T, cfg config.Config, controllerAuth *Auth, username string, password string) resLoginUserSuccess {
+	t.Helper()
+
 	resBodyByte, httpStatusCode := loginUser(controllerAuth, username, password)
 	assert.Equal(t, http.StatusOK, httpStatusCode)
 	resBody := resLoginUserSuccess{}

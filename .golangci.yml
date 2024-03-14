@@ -1,62 +1,128 @@
+# all linters that not deprecate.
+
 # Refer to golangci-lint's example config file for more options and information:
 # https://github.com/golangci/golangci-lint/blob/master/.golangci.reference.yml
 
 run:
   tests: true
-  timeout: 5m
+  timeout: 10m
   modules-download-mode: readonly
 
 linters:
   enable:
     - errcheck
-    - goimports
-    - revive
+    - gosimple
     - govet
+    - ineffassign
     - staticcheck
+    - unused
+    - asasalint
+    - asciicheck
+    - bidichk
     - bodyclose
     - containedctx
+    - contextcheck
     - cyclop
+    - decorder
+    - dogsled
     - dupl
     - dupword
+    - durationcheck
     - errchkjson
     - errname
     - errorlint
+    - execinquery
+    - exhaustive
+    - exportloopref
     - forbidigo
     - forcetypeassert
     - funlen
+    - gci
+    - ginkgolinter
     - gocheckcompilerdirectives
     - gochecknoinits
+    - gochecksumtype
     - gocognit
+    - goconst
     - gocritic
     - gocyclo
     - godot
     - godox
     - gofmt
+    - gofumpt
+    - goheader
+    - goimports
     - gomnd
+    - gomoddirectives
+    - gomodguard
+    - goprintffuncname
     - gosec
     - gosmopolitan
     - grouper
     - importas
+    - inamedparam
+    - interfacebloat
     - ireturn
+    - loggercheck
     - maintidx
+    - makezero
+    - mirror
     - misspell
     - musttag
+    - nakedret
     - nestif
     - nilerr
+    - nilnil
     - noctx
     - nolintlint
     - perfsprint
+    - prealloc
     - predeclared
+    - promlinter
+    - protogetter
+    - reassign
+    - revive
+    - rowserrcheck
+    - sloglint
     - spancheck
+    - sqlclosecheck
+    - stylecheck
+    - tagliatelle
+    - tenv
+    - testableexamples
     - testifylint
+    - thelper
     - unconvert
     - unparam
     - usestdlibvars
     - wastedassign
     - whitespace
     - wrapcheck
+    - zerologlint
+  disable:
+    - depguard
+    - exhaustruct
+    - gochecknoglobals
+    - goerr113
+    - lll
+    - nlreturn
+    - nonamedreturns
+    - nosprintfhostport
+    - paralleltest
+    - tagalign
+    - testpackage
+    - tparallel
+    - varnamelen
+    - wsl
 
 issues:
   exclude-use-default: false
   max-issues-per-linter: 0
   max-same-issues: 0
+
+linters-settings:
+  tagliatelle:
+    case:
+      rules:
+        json: snake
+        yaml: snake

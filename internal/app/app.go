@@ -7,7 +7,6 @@ import (
 
 	"github.com/Hidayathamir/go-user/config"
 	"github.com/Hidayathamir/go-user/internal/controller/http"
-	"github.com/Hidayathamir/go-user/internal/entity/table"
 	"github.com/Hidayathamir/go-user/internal/usecase/repo/db"
 	"github.com/sirupsen/logrus"
 )
@@ -19,8 +18,6 @@ func Run() {
 	cfg := initConfig(arg.isLoadEnv)
 
 	handleCommandLineArgsMigrate(cfg, arg.isIncludeMigrate)
-
-	table.Init()
 
 	db, err := db.NewPostgresPoolConnection(cfg)
 	if err != nil {
