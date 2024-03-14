@@ -8,6 +8,7 @@ import (
 	"github.com/Hidayathamir/go-user/config"
 	"github.com/Hidayathamir/go-user/internal/controller/http"
 	"github.com/Hidayathamir/go-user/internal/usecase/repo/db"
+	"github.com/ilyakaznacheev/cleanenv"
 	"github.com/sirupsen/logrus"
 )
 
@@ -56,6 +57,8 @@ func parseArgs() arg {
 
 	flag.BoolVar(&a.isIncludeMigrate, "include-migrate", false, "is include migrate, if true will do migrate before run app, default false.")
 	flag.BoolVar(&a.isLoadEnv, "load-env", false, "is load env var, if true load env var and override config, default false.")
+
+	flag.Usage = cleanenv.FUsage(flag.CommandLine.Output(), &config.Config{}, nil, flag.Usage)
 
 	flag.Parse()
 

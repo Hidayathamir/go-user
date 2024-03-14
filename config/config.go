@@ -31,11 +31,11 @@ func Init(cfgLoader Loader) (Config, error) {
 
 // Config holds all config.
 type Config struct {
-	App    App    `yaml:"app"      env-required:"true"`
-	HTTP   HTTP   `yaml:"http"     env-required:"true"`
-	Logger logger `yaml:"logger"   env-required:"true"`
-	PG     PG     `yaml:"postgres" env-required:"true"`
-	JWT    JWT    `yaml:"jwt"      env-required:"true"`
+	App    App    `yaml:"app"      env-required:"true" env-prefix:"APP_"`
+	HTTP   HTTP   `yaml:"http"     env-required:"true" env-prefix:"HTTP_"`
+	Logger logger `yaml:"logger"   env-required:"true" env-prefix:"LOGGER_"`
+	PG     PG     `yaml:"postgres" env-required:"true" env-prefix:"POSTGRES_"`
+	JWT    JWT    `yaml:"jwt"      env-required:"true" env-prefix:"JWT_"`
 }
 
 func (c *Config) validate() error {
@@ -71,15 +71,15 @@ func (e env) validate() error {
 
 // App hold app configuration.
 type App struct {
-	Name        string `yaml:"name"        env-required:"true" env:"APP_NAME"`
-	Version     string `yaml:"version"     env-required:"true" env:"APP_VERSION"`
-	Environment env    `yaml:"environment" env-required:"true" env:"APP_ENVIRONMENT"`
+	Name        string `yaml:"name"        env-required:"true" env:"NAME"        env-description:"app service name"`
+	Version     string `yaml:"version"     env-required:"true" env:"VERSION"     env-description:"app service version"`
+	Environment env    `yaml:"environment" env-required:"true" env:"ENVIRONMENT" env-description:"app env mode, \"dev\" or \"prod\""`
 }
 
 // HTTP hold HTTP configuration.
 type HTTP struct {
-	Host string `yaml:"host" env-required:"true" env:"HTTP_HOST"`
-	Port int    `yaml:"port" env-required:"true" env:"HTTP_PORT"`
+	Host string `yaml:"host" env-required:"true" env:"HOST" env-description:"app http server host, e.g \"localhost\", \"0.0.0.0\""`
+	Port int    `yaml:"port" env-required:"true" env:"PORT" env-description:"app http server port, e.g 8080"`
 }
 
 type logLevel string
@@ -95,21 +95,21 @@ func (l logLevel) validate() error {
 }
 
 type logger struct {
-	LogLevel logLevel `yaml:"log_level" env-required:"true" env:"LOGGER_LOG_LEVEL"`
+	LogLevel logLevel `yaml:"log_level" env-required:"true" env:"LOG_LEVEL" env-description:"log level minimum, \"panic\", \"fatal\", \"error\", \"warn\", \"warning\", \"info\", \"debug\", \"trace\""`
 }
 
 // PG hold postgres configuration.
 type PG struct {
-	PoolMax  int    `yaml:"pool_max" env-required:"true" env:"POSTGRES_POOL_MAX"`
-	Username string `yaml:"username" env-required:"true" env:"POSTGRES_USERNAME"`
-	Password string `yaml:"password" env-required:"true" env:"POSTGRES_PASSWORD"`
-	Host     string `yaml:"host"     env-required:"true" env:"POSTGRES_HOST"`
-	Port     int    `yaml:"port"     env-required:"true" env:"POSTGRES_PORT"`
-	DBName   string `yaml:"db_name"  env-required:"true" env:"POSTGRES_DB_NAME"`
+	PoolMax  int    `yaml:"pool_max" env-required:"true" env:"POOL_MAX" env-description:"maximum size of postgres pool connection, e.g 10"`
+	Username string `yaml:"username" env-required:"true" env:"USERNAME" env-description:"postgres user"`
+	Password string `yaml:"password" env-required:"true" env:"PASSWORD" env-description:"postgres password"`
+	Host     string `yaml:"host"     env-required:"true" env:"HOST"     env-description:"postgres host"`
+	Port     int    `yaml:"port"     env-required:"true" env:"PORT"     env-description:"postgres port"`
+	DBName   string `yaml:"db_name"  env-required:"true" env:"DB_NAME"  env-description:"postgres database name"`
 }
 
 // JWT hold JWT configuration.
 type JWT struct {
-	ExpireHour int    `yaml:"expire_hour" env-required:"true" env:"JWT_EXPIRE_HOUR"`
-	SignedKey  string `yaml:"signed_key"  env-required:"true" env:"JWT_SIGNED_KEY"`
+	ExpireHour int    `yaml:"expire_hour" env-required:"true" env:"EXPIRE_HOUR" env-description:"jwt expire in hour, e.g 24 for 1 day"`
+	SignedKey  string `yaml:"signed_key"  env-required:"true" env:"SIGNED_KEY"  env-description:"jwt signed key"`
 }
