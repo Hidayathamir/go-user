@@ -17,6 +17,108 @@ import (
 	"go.uber.org/mock/gomock"
 )
 
+func TestUnitAuthLoginUser(t *testing.T) {
+	t.Parallel()
+
+	gin.SetMode(gin.TestMode)
+
+	type fields struct {
+		cfg         config.Config
+		usecaseAuth *mockusecase.MockIAuth
+	}
+	type args struct {
+		reqHeader gin.H
+		reqBody   gin.H
+	}
+	tests := []struct {
+		name     string
+		mock     func(f fields)
+		args     args
+		wantCode int
+		wantBody gin.H
+	}{
+		{
+			name: "login user success",
+			mock: func(f fields) {
+				f.usecaseAuth.
+					EXPECT().
+					LoginUser(gomock.Any(), dto.ReqLoginUser{
+						Username: "hidayat",
+						Password: "mypassword",
+					}).
+					Return("Bearer dummyUserJWT", nil)
+			},
+			args: args{
+				reqHeader: gin.H{},
+				reqBody: gin.H{
+					"username": "hidayat",
+					"password": "mypassword",
+				},
+			},
+			wantCode: http.StatusOK,
+			wantBody: gin.H{
+				"data":  "Bearer dummyUserJWT",
+				"error": nil,
+			},
+		},
+		{
+			name: "login user error",
+			mock: func(f fields) {
+				f.usecaseAuth.
+					EXPECT().
+					LoginUser(gomock.Any(), dto.ReqLoginUser{
+						Username: "hidayat",
+						Password: "mypassword",
+					}).
+					Return("", assert.AnError)
+			},
+			args: args{
+				reqHeader: gin.H{},
+				reqBody: gin.H{
+					"username": "hidayat",
+					"password": "mypassword",
+				},
+			},
+			wantCode: http.StatusBadRequest,
+			wantBody: gin.H{
+				"data":  nil,
+				"error": fmt.Errorf("Auth.usecaseAuth.LoginUser: %w", assert.AnError).Error(),
+			},
+		},
+	}
+	for _, tt := range tests { //nolint:dupl
+		t.Run(tt.name, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+
+			f := fields{
+				cfg:         config.Config{},
+				usecaseAuth: mockusecase.NewMockIAuth(ctrl),
+			}
+			tt.mock(f)
+
+			a := &Auth{
+				cfg:         f.cfg,
+				usecaseAuth: f.usecaseAuth,
+			}
+
+			rr := httptest.NewRecorder()
+			ctx, _ := gin.CreateTestContext(rr)
+			reqBody, _ := json.Marshal(tt.args.reqBody)
+			req := httptest.NewRequest(http.MethodPost, "/", bytes.NewReader(reqBody))
+			for k, v := range tt.args.reqHeader {
+				req.Header.Set(k, fmt.Sprintf("%v", v))
+			}
+			ctx.Request = req
+
+			a.loginUser(ctx)
+
+			assert.Equal(t, tt.wantCode, rr.Code)
+			assert.Equal(t, jutil.ToJSONString(tt.wantBody), rr.Body.String())
+		})
+	}
+}
+
 func TestUnitAuthRegisterUser(t *testing.T) {
 	t.Parallel()
 
@@ -86,7 +188,7 @@ func TestUnitAuthRegisterUser(t *testing.T) {
 			},
 		},
 	}
-	for _, tt := range tests {
+	for _, tt := range tests { //nolint:dupl
 		t.Run(tt.name, func(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
@@ -105,7 +207,7 @@ func TestUnitAuthRegisterUser(t *testing.T) {
 			rr := httptest.NewRecorder()
 			ctx, _ := gin.CreateTestContext(rr)
 			reqBody, _ := json.Marshal(tt.args.reqBody)
-			req := httptest.NewRequest(http.MethodGet, "/", bytes.NewReader(reqBody))
+			req := httptest.NewRequest(http.MethodPost, "/", bytes.NewReader(reqBody))
 			for k, v := range tt.args.reqHeader {
 				req.Header.Set(k, fmt.Sprintf("%v", v))
 			}
