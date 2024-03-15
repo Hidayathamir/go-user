@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"github.com/Hidayathamir/go-user/config"
-	"github.com/Hidayathamir/go-user/internal/dto"
 	"github.com/Hidayathamir/go-user/internal/pkg/auth"
 	"github.com/Hidayathamir/go-user/internal/pkg/header"
 	"github.com/Hidayathamir/go-user/internal/pkg/jutil"
@@ -92,17 +91,7 @@ func initTestIntegration(t *testing.T) config.Config {
 	return cfg
 }
 
-type resError struct {
-	Data  any    `json:"data"`
-	Error string `json:"error"`
-}
-
 //////////////////////////////////////////
-
-type resRegisterUserSuccess struct {
-	Data  int64 `json:"data"` // userID
-	Error any   `json:"error"`
-}
 
 // registerUser registers user return raw response and http status code.
 func registerUser(controllerAuth *Auth, username string, password string) (resBody []byte, httpStatusCode int) {
@@ -132,11 +121,6 @@ func registerUserWithAssertSuccess(t *testing.T, controllerAuth *Auth, username 
 	assert.IsType(t, int64(1), resBody.Data)
 	assert.Nil(t, resBody.Error)
 	return resBody
-}
-
-type resLoginUserSuccess struct {
-	Data  string `json:"data"` // userJWT
-	Error any    `json:"error"`
 }
 
 // loginUser login user return raw response and http status code.
@@ -170,11 +154,6 @@ func loginUserWithAssertSuccess(t *testing.T, cfg config.Config, controllerAuth 
 	return resBody
 }
 
-type resUpdatePofileSuccess struct {
-	Data  string `json:"data"`
-	Error any    `json:"error"`
-}
-
 // updateProfileByUserID update user profile by id return raw response and http status code.
 func updateProfileByUserID(controllerProfile *Profile, userJWT string, newPassword string) (resBody []byte, httpStatusCode int) {
 	rr := httptest.NewRecorder()
@@ -188,11 +167,6 @@ func updateProfileByUserID(controllerProfile *Profile, userJWT string, newPasswo
 	controllerProfile.updateProfileByUserID(ctx)
 
 	return rr.Body.Bytes(), rr.Code
-}
-
-type resGetProfileByUsernameSuccess struct {
-	Data  dto.ResGetProfileByUsername `json:"data"`
-	Error any                         `json:"error"`
 }
 
 // getProfileByUsername get user profile by username return raw response and http status code.
