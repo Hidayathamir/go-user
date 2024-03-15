@@ -24,6 +24,8 @@ import (
 	"github.com/testcontainers/testcontainers-go/wait"
 )
 
+// contains helper for integration test.
+
 func configInit(t *testing.T) config.Config {
 	t.Helper()
 

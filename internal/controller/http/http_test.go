@@ -2,6 +2,8 @@ package http
 
 import "github.com/Hidayathamir/go-user/internal/dto"
 
+// contains helper for unit test and integration test.
+
 type resError struct {
 	Data  any    `json:"data"`
 	Error string `json:"error"`
