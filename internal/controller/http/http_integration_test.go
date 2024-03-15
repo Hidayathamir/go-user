@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"path/filepath"
 	"testing"
 	"time"
@@ -29,8 +30,10 @@ import (
 func configInit(t *testing.T) config.Config {
 	t.Helper()
 
+	require.NoError(t, os.Setenv("LOGGER_LOG_LEVEL", "fatal"))
+
 	configYamlPath := filepath.Join("..", "..", "..", "config", "config.yml")
-	cfg, err := config.Init(&config.YamlLoader{Path: configYamlPath})
+	cfg, err := config.Init(&config.EnvLoader{YAMLPath: configYamlPath})
 	require.NoError(t, err)
 	return cfg
 }
