@@ -88,7 +88,7 @@ func TestUnitAuthLoginUser(t *testing.T) {
 		resBody := resError{}
 		require.NoError(t, json.Unmarshal(rr.Body.Bytes(), &resBody))
 		assert.Nil(t, resBody.Data)
-		assert.NotNil(t, resBody.Error)
+		assert.NotEmpty(t, resBody.Error)
 		assert.Contains(t, resBody.Error, assert.AnError.Error())
 	})
 }
@@ -165,7 +165,7 @@ func TestUnitAuthRegisterUser(t *testing.T) {
 		resBody := resError{}
 		require.NoError(t, json.Unmarshal(rr.Body.Bytes(), &resBody))
 		assert.Nil(t, resBody.Data)
-		assert.NotNil(t, resBody.Error)
+		assert.NotEmpty(t, resBody.Error)
 		assert.Contains(t, resBody.Error, assert.AnError.Error())
 	})
 }

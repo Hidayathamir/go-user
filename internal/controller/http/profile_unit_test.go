@@ -3,7 +3,6 @@ package http
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -12,10 +11,10 @@ import (
 	"github.com/Hidayathamir/go-user/config"
 	"github.com/Hidayathamir/go-user/internal/dto"
 	"github.com/Hidayathamir/go-user/internal/pkg/header"
-	"github.com/Hidayathamir/go-user/internal/pkg/jutil"
 	"github.com/Hidayathamir/go-user/internal/usecase/mockusecase"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 )
 
@@ -24,84 +23,78 @@ func TestUnitProfileGetProfileByUsername(t *testing.T) {
 
 	gin.SetMode(gin.TestMode)
 
-	type fields struct {
-		cfg            config.Config
-		usecaseProfile *mockusecase.MockIProfile
-	}
-	type args struct {
-		params gin.Params
-	}
-	tests := []struct {
-		name     string
-		mock     func(f fields)
-		args     args
-		wantCode int
-		wantBody baseResponse
-	}{
-		{
-			name: "get profile success",
-			mock: func(f fields) {
-				f.usecaseProfile.
-					EXPECT().
-					GetProfileByUsername(gomock.Any(), "hidayat").
-					Return(
-						dto.ResGetProfileByUsername{
-							ID:        23,
-							Username:  "hidayat",
-							CreatedAt: time.Time{},
-							UpdatedAt: time.Time{},
-						},
-						nil,
-					)
-			},
-			args: args{
-				params: gin.Params{
-					{
-						Key:   "username",
-						Value: "hidayat",
-					},
-				},
-			},
-			wantCode: http.StatusOK,
-			wantBody: setResponseBody(
-				dto.ResGetProfileByUsername{
-					ID:        23,
-					Username:  "hidayat",
-					CreatedAt: time.Time{},
-					UpdatedAt: time.Time{},
-				},
-				nil,
-			),
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ctrl := gomock.NewController(t)
-			defer ctrl.Finish()
+	t.Run("call usecase GetProfileByUsername success should return success", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
 
-			f := fields{
-				cfg:            config.Config{},
-				usecaseProfile: mockusecase.NewMockIProfile(ctrl),
-			}
-			tt.mock(f)
+		usecaseProfile := mockusecase.NewMockIProfile(ctrl)
 
-			p := &Profile{
-				cfg:            f.cfg,
-				usecaseProfile: f.usecaseProfile,
-			}
+		p := &Profile{
+			cfg:            config.Config{},
+			usecaseProfile: usecaseProfile,
+		}
 
-			rr := httptest.NewRecorder()
-			ctx, _ := gin.CreateTestContext(rr)
-			req := httptest.NewRequest(http.MethodGet, "/", nil)
-			ctx.Request = req
-			ctx.Params = append(ctx.Params, tt.args.params...)
-
-			p.getProfileByUsername(ctx)
-
-			assert.Equal(t, tt.wantCode, rr.Code)
-			assert.Equal(t, jutil.ToJSONString(tt.wantBody), rr.Body.String())
+		rr := httptest.NewRecorder()
+		ctx, _ := gin.CreateTestContext(rr)
+		req := httptest.NewRequest(http.MethodGet, "/", nil)
+		ctx.Request = req
+		ctx.Params = append(ctx.Params, gin.Param{
+			Key:   "username",
+			Value: "hidayat",
 		})
-	}
+
+		user := dto.ResGetProfileByUsername{
+			ID:        23,
+			Username:  "hidayat",
+			CreatedAt: time.Time{},
+			UpdatedAt: time.Time{},
+		}
+		usecaseProfile.EXPECT().
+			GetProfileByUsername(gomock.Any(), "hidayat").
+			Return(user, nil)
+
+		p.getProfileByUsername(ctx)
+
+		assert.Equal(t, http.StatusOK, rr.Code)
+		resBody := resGetProfileByUsernameSuccess{}
+		require.NoError(t, json.Unmarshal(rr.Body.Bytes(), &resBody))
+		assert.NotEmpty(t, resBody.Data)
+		assert.Equal(t, user, resBody.Data)
+		assert.Nil(t, resBody.Error)
+	})
+	t.Run("call usecase GetProfileByUsername error should return error", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
+
+		usecaseProfile := mockusecase.NewMockIProfile(ctrl)
+
+		p := &Profile{
+			cfg:            config.Config{},
+			usecaseProfile: usecaseProfile,
+		}
+
+		rr := httptest.NewRecorder()
+		ctx, _ := gin.CreateTestContext(rr)
+		req := httptest.NewRequest(http.MethodGet, "/", nil)
+		ctx.Request = req
+		ctx.Params = append(ctx.Params, gin.Param{
+			Key:   "username",
+			Value: "hidayat",
+		})
+
+		usecaseProfile.EXPECT().
+			GetProfileByUsername(gomock.Any(), "hidayat").
+			Return(dto.ResGetProfileByUsername{}, assert.AnError)
+
+		p.getProfileByUsername(ctx)
+
+		assert.Equal(t, http.StatusBadRequest, rr.Code)
+		resBody := resError{}
+		require.NoError(t, json.Unmarshal(rr.Body.Bytes(), &resBody))
+		assert.Nil(t, resBody.Data)
+		assert.NotEmpty(t, resBody.Error)
+		assert.Contains(t, resBody.Error, assert.AnError.Error())
+	})
 }
 
 func TestProfileUpdateProfileByUserID(t *testing.T) {
@@ -109,95 +102,74 @@ func TestProfileUpdateProfileByUserID(t *testing.T) {
 
 	gin.SetMode(gin.TestMode)
 
-	type fields struct {
-		cfg            config.Config
-		usecaseProfile *mockusecase.MockIProfile
-	}
-	type args struct {
-		reqHeader gin.H
-		reqBody   dto.ReqUpdateProfileByUserID
-	}
-	tests := []struct {
-		name     string
-		mock     func(f fields)
-		args     args
-		wantCode int
-		wantBody baseResponse
-	}{
-		{
-			name: "update profile success",
-			mock: func(f fields) {
-				f.usecaseProfile.
-					EXPECT().
-					UpdateProfileByUserID(gomock.Any(), dto.ReqUpdateProfileByUserID{
-						UserJWT:  "Bearer dummyUserJWT",
-						Password: "mypassword",
-					}).
-					Return(nil)
-			},
-			args: args{
-				reqHeader: gin.H{
-					header.Authorization: "Bearer dummyUserJWT",
-				},
-				reqBody: dto.ReqUpdateProfileByUserID{
-					Password: "mypassword",
-				},
-			},
-			wantCode: http.StatusOK,
-			wantBody: setResponseBody("ok", nil),
-		},
-		{
-			name: "update profile error",
-			mock: func(f fields) {
-				f.usecaseProfile.
-					EXPECT().
-					UpdateProfileByUserID(gomock.Any(), dto.ReqUpdateProfileByUserID{
-						UserJWT:  "Bearer dummyUserJWT",
-						Password: "mypassword",
-					}).
-					Return(assert.AnError)
-			},
-			args: args{
-				reqHeader: gin.H{
-					header.Authorization: "Bearer dummyUserJWT",
-				},
-				reqBody: dto.ReqUpdateProfileByUserID{
-					Password: "mypassword",
-				},
-			},
-			wantCode: http.StatusBadRequest,
-			wantBody: setResponseBody(nil, fmt.Errorf("Profile.usecaseProfile.UpdateProfileByUserID: %w", assert.AnError)),
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ctrl := gomock.NewController(t)
-			defer ctrl.Finish()
+	t.Run("call usecase UpdateProfileByUserID success should return success", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
 
-			f := fields{
-				cfg:            config.Config{},
-				usecaseProfile: mockusecase.NewMockIProfile(ctrl),
-			}
-			tt.mock(f)
+		usecaseProfile := mockusecase.NewMockIProfile(ctrl)
 
-			p := &Profile{
-				cfg:            f.cfg,
-				usecaseProfile: f.usecaseProfile,
-			}
+		p := &Profile{
+			cfg:            config.Config{},
+			usecaseProfile: usecaseProfile,
+		}
 
-			rr := httptest.NewRecorder()
-			ctx, _ := gin.CreateTestContext(rr)
-			reqBody, _ := json.Marshal(tt.args.reqBody)
-			req := httptest.NewRequest(http.MethodGet, "/", bytes.NewReader(reqBody))
-			for k, v := range tt.args.reqHeader {
-				req.Header.Set(k, fmt.Sprintf("%v", v))
-			}
-			ctx.Request = req
-
-			p.updateProfileByUserID(ctx)
-
-			assert.Equal(t, tt.wantCode, rr.Code)
-			assert.Equal(t, jutil.ToJSONString(tt.wantBody), rr.Body.String())
+		rr := httptest.NewRecorder()
+		ctx, _ := gin.CreateTestContext(rr)
+		reqBody, _ := json.Marshal(dto.ReqUpdateProfileByUserID{
+			Password: "newpassword",
 		})
-	}
+		req := httptest.NewRequest(http.MethodGet, "/", bytes.NewReader(reqBody))
+		req.Header.Set(header.Authorization, "Bearer dummyUserJWT")
+		ctx.Request = req
+
+		usecaseProfile.EXPECT().
+			UpdateProfileByUserID(gomock.Any(), dto.ReqUpdateProfileByUserID{
+				UserJWT:  "Bearer dummyUserJWT",
+				Password: "newpassword",
+			}).Return(nil)
+
+		p.updateProfileByUserID(ctx)
+
+		assert.Equal(t, http.StatusOK, rr.Code)
+		resBody := resUpdatePofileSuccess{}
+		require.NoError(t, json.Unmarshal(rr.Body.Bytes(), &resBody))
+		assert.NotEmpty(t, resBody.Data)
+		assert.Equal(t, "ok", resBody.Data)
+		assert.Nil(t, resBody.Error)
+	})
+	t.Run("call usecase UpdateProfileByUserID error should return error", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
+
+		usecaseProfile := mockusecase.NewMockIProfile(ctrl)
+
+		p := &Profile{
+			cfg:            config.Config{},
+			usecaseProfile: usecaseProfile,
+		}
+
+		rr := httptest.NewRecorder()
+		ctx, _ := gin.CreateTestContext(rr)
+		reqBody, _ := json.Marshal(dto.ReqUpdateProfileByUserID{
+			Password: "newpassword",
+		})
+		req := httptest.NewRequest(http.MethodGet, "/", bytes.NewReader(reqBody))
+		req.Header.Set(header.Authorization, "Bearer dummyUserJWT")
+		ctx.Request = req
+
+		usecaseProfile.EXPECT().
+			UpdateProfileByUserID(gomock.Any(), dto.ReqUpdateProfileByUserID{
+				UserJWT:  "Bearer dummyUserJWT",
+				Password: "newpassword",
+			}).Return(assert.AnError)
+
+		p.updateProfileByUserID(ctx)
+
+		assert.Equal(t, http.StatusBadRequest, rr.Code)
+		resBody := resError{}
+		require.NoError(t, json.Unmarshal(rr.Body.Bytes(), &resBody))
+		assert.Nil(t, resBody.Data)
+		assert.NotEmpty(t, resBody.Error)
+		assert.Contains(t, resBody.Error, assert.AnError.Error())
+	})
 }
