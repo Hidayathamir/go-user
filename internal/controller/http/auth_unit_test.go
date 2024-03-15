@@ -22,6 +22,8 @@ func TestUnitAuthLoginUser(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	t.Run("call usecase LoginUser success should return success", func(t *testing.T) {
+		t.Parallel()
+
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
@@ -57,6 +59,8 @@ func TestUnitAuthLoginUser(t *testing.T) {
 		assert.Nil(t, resBody.Error)
 	})
 	t.Run("call usecase LoginUser error should return error", func(t *testing.T) {
+		t.Parallel()
+
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
@@ -99,6 +103,8 @@ func TestUnitAuthRegisterUser(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	t.Run("call usecase RegisterUser success should return success", func(t *testing.T) {
+		t.Parallel()
+
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
@@ -134,6 +140,8 @@ func TestUnitAuthRegisterUser(t *testing.T) {
 		assert.Nil(t, resBody.Error)
 	})
 	t.Run("call usecase RegisterUser error should return error", func(t *testing.T) {
+		t.Parallel()
+
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 

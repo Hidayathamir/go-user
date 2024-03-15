@@ -24,6 +24,8 @@ func TestUnitProfileGetProfileByUsername(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	t.Run("call usecase GetProfileByUsername success should return success", func(t *testing.T) {
+		t.Parallel()
+
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
@@ -63,6 +65,8 @@ func TestUnitProfileGetProfileByUsername(t *testing.T) {
 		assert.Nil(t, resBody.Error)
 	})
 	t.Run("call usecase GetProfileByUsername error should return error", func(t *testing.T) {
+		t.Parallel()
+
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
@@ -103,6 +107,8 @@ func TestProfileUpdateProfileByUserID(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	t.Run("call usecase UpdateProfileByUserID success should return success", func(t *testing.T) {
+		t.Parallel()
+
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
@@ -138,6 +144,8 @@ func TestProfileUpdateProfileByUserID(t *testing.T) {
 		assert.Nil(t, resBody.Error)
 	})
 	t.Run("call usecase UpdateProfileByUserID error should return error", func(t *testing.T) {
+		t.Parallel()
+
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
