@@ -14,6 +14,8 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
+//go:generate mockgen -source=profile.go -destination=mockrepo/profile.go -package=mockrepo
+
 // IProfile contains abstraction of repo profile.
 type IProfile interface {
 	// GetProfileByUsername return user profile by username.

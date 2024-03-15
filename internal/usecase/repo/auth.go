@@ -16,6 +16,8 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
+//go:generate mockgen -source=auth.go -destination=mockrepo/auth.go -package=mockrepo
+
 // IAuth contains abstraction of repo authentication.
 type IAuth interface {
 	// RegisterUser register new user.
