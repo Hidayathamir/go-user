@@ -39,6 +39,7 @@ type mute struct{}
 
 func (n mute) Printf(string, ...interface{}) {}
 
+// createPGContainer create pg container.
 func createPGContainer(t *testing.T, cfg config.Config) *postgres.PostgresContainer {
 	t.Helper()
 
@@ -59,6 +60,7 @@ func createPGContainer(t *testing.T, cfg config.Config) *postgres.PostgresContai
 	return pgContainer
 }
 
+// updateConfigPGPort update config port based on pg container, do db migrations.
 func updateConfigPGPort(t *testing.T, cfg *config.Config, pgContainer *postgres.PostgresContainer) {
 	t.Helper()
 
@@ -71,6 +73,7 @@ func updateConfigPGPort(t *testing.T, cfg *config.Config, pgContainer *postgres.
 	cfg.PG.Port = port
 }
 
+// dbMigrateUp do db migrations.
 func dbMigrateUp(t *testing.T, cfg config.Config) {
 	t.Helper()
 
@@ -78,6 +81,8 @@ func dbMigrateUp(t *testing.T, cfg config.Config) {
 	require.NoError(t, db.MigrateUp(cfg, schemaMigrationPath))
 }
 
+// initTestIntegration init config, create pg container, update config port
+// based on pg container, do db migrations.
 func initTestIntegration(t *testing.T) config.Config {
 	t.Helper()
 
