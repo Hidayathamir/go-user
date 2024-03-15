@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/Hidayathamir/go-user/config"
@@ -39,6 +40,11 @@ func NewProfile(cfg config.Config, repoProfile repo.IProfile) *Profile {
 
 // GetProfileByUsername return user profile by username.
 func (p *Profile) GetProfileByUsername(ctx context.Context, username string) (dto.ResGetProfileByUsername, error) {
+	if username == "" {
+		err := errors.New("username can not be empty")
+		return dto.ResGetProfileByUsername{}, fmt.Errorf("%w: %w", gouser.ErrRequestInvalid, err)
+	}
+
 	user, err := p.repoProfile.GetProfileByUsername(ctx, username)
 	if err != nil {
 		return dto.ResGetProfileByUsername{}, fmt.Errorf("Profile.repoProfile.GetProfileByUsername: %w", err)
