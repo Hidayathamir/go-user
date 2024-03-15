@@ -32,11 +32,13 @@ func Run() {
 }
 
 func initConfig(isLoadEnv bool) config.Config {
+	yamlPath := filepath.Join("config", "config.yml")
+
 	var cfgLoader config.Loader
 	if isLoadEnv {
-		cfgLoader = &config.EnvLoader{YAMLPath: "./config/config.yml"}
+		cfgLoader = &config.EnvLoader{YAMLPath: yamlPath}
 	} else {
-		cfgLoader = &config.YamlLoader{Path: "./config/config.yml"}
+		cfgLoader = &config.YamlLoader{Path: yamlPath}
 	}
 
 	cfg, err := config.Init(cfgLoader)
