@@ -16,12 +16,14 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestIntegrationAuthLoginUserRegistered(t *testing.T) {
+func TestIntegrationAuthLoginUser(t *testing.T) {
 	t.Parallel()
 
-	cfg := initTestIntegration(t)
-
 	t.Run("user registered try login should success", func(t *testing.T) {
+		t.Parallel()
+
+		cfg := initTestIntegration(t)
+
 		pg, err := db.NewPostgresPoolConnection(cfg)
 		require.NoError(t, err)
 
@@ -43,14 +45,11 @@ func TestIntegrationAuthLoginUserRegistered(t *testing.T) {
 			assert.Nil(t, resBodyLogin.Error)
 		})
 	})
-}
-
-func TestIntegrationAuthLoginUserRegisteredWrongPassword(t *testing.T) {
-	t.Parallel()
-
-	cfg := initTestIntegration(t)
-
 	t.Run("user registered try login with wrong password should error", func(t *testing.T) {
+		t.Parallel()
+
+		cfg := initTestIntegration(t)
+
 		pg, err := db.NewPostgresPoolConnection(cfg)
 		require.NoError(t, err)
 
@@ -72,14 +71,11 @@ func TestIntegrationAuthLoginUserRegisteredWrongPassword(t *testing.T) {
 		assert.NotEmpty(t, resBodyLogin.Error)
 		assert.Contains(t, resBodyLogin.Error, gouser.ErrWrongPassword.Error())
 	})
-}
-
-func TestIntegrationAuthLoginUserNotRegistered(t *testing.T) {
-	t.Parallel()
-
-	cfg := initTestIntegration(t)
-
 	t.Run("user not registered try login should error", func(t *testing.T) {
+		t.Parallel()
+
+		cfg := initTestIntegration(t)
+
 		pg, err := db.NewPostgresPoolConnection(cfg)
 		require.NoError(t, err)
 
@@ -98,14 +94,11 @@ func TestIntegrationAuthLoginUserNotRegistered(t *testing.T) {
 		assert.NotEmpty(t, resBodyLogin.Error)
 		assert.Contains(t, resBodyLogin.Error, gouser.ErrUnknownUsername.Error())
 	})
-}
+	t.Run("login try user but request invalid should error", func(t *testing.T) {
+		t.Parallel()
 
-func TestIntegrationAuthLoginUserRequestInvalid(t *testing.T) {
-	t.Parallel()
+		cfg := initTestIntegration(t)
 
-	cfg := initTestIntegration(t)
-
-	t.Run("login user but request invalid should error", func(t *testing.T) {
 		pg, err := db.NewPostgresPoolConnection(cfg)
 		require.NoError(t, err)
 
@@ -137,12 +130,14 @@ func TestIntegrationAuthLoginUserRequestInvalid(t *testing.T) {
 	})
 }
 
-func TestIntegrationAuthRegisterUserNew(t *testing.T) {
+func TestIntegrationAuthRegisterUser(t *testing.T) {
 	t.Parallel()
 
-	cfg := initTestIntegration(t)
-
 	t.Run("register new user should success", func(t *testing.T) {
+		t.Parallel()
+
+		cfg := initTestIntegration(t)
+
 		pg, err := db.NewPostgresPoolConnection(cfg)
 		require.NoError(t, err)
 
@@ -155,14 +150,11 @@ func TestIntegrationAuthRegisterUserNew(t *testing.T) {
 
 		registerUserWithAssertSuccess(t, controllerAuth, uuid.NewString(), uuid.NewString())
 	})
-}
-
-func TestIntegrationAuthRegisterUserDuplicate(t *testing.T) {
-	t.Parallel()
-
-	cfg := initTestIntegration(t)
-
 	t.Run("register user but duplicate username should error", func(t *testing.T) {
+		t.Parallel()
+
+		cfg := initTestIntegration(t)
+
 		pg, err := db.NewPostgresPoolConnection(cfg)
 		require.NoError(t, err)
 
@@ -184,14 +176,11 @@ func TestIntegrationAuthRegisterUserDuplicate(t *testing.T) {
 		assert.NotEmpty(t, resBodyRegister.Error)
 		assert.Contains(t, resBodyRegister.Error, gouser.ErrDuplicateUsername.Error())
 	})
-}
-
-func TestIntegrationAuthRegisterUserRequestInvalid(t *testing.T) {
-	t.Parallel()
-
-	cfg := initTestIntegration(t)
-
 	t.Run("register user but request invalid should error", func(t *testing.T) {
+		t.Parallel()
+
+		cfg := initTestIntegration(t)
+
 		pg, err := db.NewPostgresPoolConnection(cfg)
 		require.NoError(t, err)
 

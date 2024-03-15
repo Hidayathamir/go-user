@@ -18,9 +18,11 @@ import (
 func TestIntegrationProfileUpdateProfileByUserID(t *testing.T) {
 	t.Parallel()
 
-	cfg := initTestIntegration(t)
-
 	t.Run("registered user update profile should success", func(t *testing.T) {
+		t.Parallel()
+
+		cfg := initTestIntegration(t)
+
 		pg, err := db.NewPostgresPoolConnection(cfg)
 		require.NoError(t, err)
 
@@ -62,14 +64,11 @@ func TestIntegrationProfileUpdateProfileByUserID(t *testing.T) {
 			assert.Contains(t, resBodyLogin2.Error, gouser.ErrWrongPassword.Error())
 		})
 	})
-}
-
-func TestIntegrationProfileUpdateProfileRequestInvalid(t *testing.T) {
-	t.Parallel()
-
-	cfg := initTestIntegration(t)
-
 	t.Run("update profile but request invalid should error", func(t *testing.T) {
+		t.Parallel()
+
+		cfg := initTestIntegration(t)
+
 		pg, err := db.NewPostgresPoolConnection(cfg)
 		require.NoError(t, err)
 
@@ -117,12 +116,14 @@ func TestIntegrationProfileUpdateProfileRequestInvalid(t *testing.T) {
 	})
 }
 
-func TestIntegrationProfileGetProfileByUsernameKnownUser(t *testing.T) {
+func TestIntegrationProfileGetProfileByUsername(t *testing.T) {
 	t.Parallel()
 
-	cfg := initTestIntegration(t)
-
 	t.Run("get profile known user should success", func(t *testing.T) {
+		t.Parallel()
+
+		cfg := initTestIntegration(t)
+
 		pg, err := db.NewPostgresPoolConnection(cfg)
 		require.NoError(t, err)
 
@@ -148,14 +149,11 @@ func TestIntegrationProfileGetProfileByUsernameKnownUser(t *testing.T) {
 		assert.Equal(t, username, resBodyGetProfile.Data.Username)
 		assert.Nil(t, resBodyGetProfile.Error)
 	})
-}
-
-func TestIntegrationProfileGetProfileByUsernameUnknownUser(t *testing.T) {
-	t.Parallel()
-
-	cfg := initTestIntegration(t)
-
 	t.Run("get profile unknown user should error", func(t *testing.T) {
+		t.Parallel()
+
+		cfg := initTestIntegration(t)
+
 		pg, err := db.NewPostgresPoolConnection(cfg)
 		require.NoError(t, err)
 
