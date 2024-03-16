@@ -51,10 +51,14 @@ func TestIntegrationProfileUpdateProfileByUserID(t *testing.T) {
 		assert.Nil(t, resBody.Error)
 
 		t.Run("after update profile should able to login with new password", func(t *testing.T) {
+			gin.SetMode(gin.TestMode)
+
 			loginUserWithAssertSuccess(t, cfg, controllerAuth, username, newPassword)
 		})
 
 		t.Run("after update profile should not able to login with old password", func(t *testing.T) {
+			gin.SetMode(gin.TestMode)
+
 			resBodyByte, httpStatusCode = loginUser(controllerAuth, username, oldPassword)
 			assert.Equal(t, http.StatusBadRequest, httpStatusCode)
 			resBodyLogin2 := resError{}
