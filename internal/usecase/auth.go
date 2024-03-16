@@ -7,7 +7,7 @@ import (
 	"github.com/Hidayathamir/go-user/config"
 	"github.com/Hidayathamir/go-user/internal/dto"
 	"github.com/Hidayathamir/go-user/internal/pkg/auth"
-	"github.com/Hidayathamir/go-user/internal/usecase/repo"
+	"github.com/Hidayathamir/go-user/internal/repo"
 	"github.com/Hidayathamir/go-user/pkg/gouser"
 )
 

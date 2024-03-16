@@ -6,6 +6,8 @@ import (
 	"github.com/Masterminds/squirrel"
 )
 
+// contains helper for unit test.
+
 // https://github.com/pashagolub/pgxmock?tab=readme-ov-file#matching-arguments-like-timetime
 type anyTime struct{}
 

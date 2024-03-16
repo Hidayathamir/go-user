@@ -9,7 +9,7 @@ import (
 	"github.com/Hidayathamir/go-user/internal/dto"
 	"github.com/Hidayathamir/go-user/internal/entity"
 	"github.com/Hidayathamir/go-user/internal/pkg/auth"
-	"github.com/Hidayathamir/go-user/internal/usecase/repo/mockrepo"
+	"github.com/Hidayathamir/go-user/internal/repo/mockrepo"
 	"github.com/Hidayathamir/go-user/pkg/gouser"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"

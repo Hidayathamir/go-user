@@ -1,4 +1,4 @@
-// Package gouser contains constants for go-user application.
+// Package gouser -.
 package gouser
 
 import "errors"

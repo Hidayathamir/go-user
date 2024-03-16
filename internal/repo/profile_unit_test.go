@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/Hidayathamir/go-user/config"
+	"github.com/Hidayathamir/go-user/internal/db"
 	"github.com/Hidayathamir/go-user/internal/entity"
-	"github.com/Hidayathamir/go-user/internal/usecase/repo/db"
 	"github.com/Hidayathamir/go-user/pkg/gouser"
 	"github.com/jackc/pgx/v5"
 	"github.com/pashagolub/pgxmock/v3"

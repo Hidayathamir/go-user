@@ -2,9 +2,9 @@ package http
 
 import (
 	"github.com/Hidayathamir/go-user/config"
+	"github.com/Hidayathamir/go-user/internal/db"
+	"github.com/Hidayathamir/go-user/internal/repo"
 	"github.com/Hidayathamir/go-user/internal/usecase"
-	"github.com/Hidayathamir/go-user/internal/usecase/repo"
-	"github.com/Hidayathamir/go-user/internal/usecase/repo/db"
 )
 
 func injectionAuth(cfg config.Config, db *db.Postgres) *Auth {

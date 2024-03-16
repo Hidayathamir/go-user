@@ -12,11 +12,11 @@ import (
 	"time"
 
 	"github.com/Hidayathamir/go-user/config"
+	"github.com/Hidayathamir/go-user/internal/db"
 	"github.com/Hidayathamir/go-user/internal/pkg/auth"
 	"github.com/Hidayathamir/go-user/internal/pkg/header"
 	"github.com/Hidayathamir/go-user/internal/pkg/jutil"
-	"github.com/Hidayathamir/go-user/internal/usecase/repo"
-	"github.com/Hidayathamir/go-user/internal/usecase/repo/db"
+	"github.com/Hidayathamir/go-user/internal/repo"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -80,7 +80,7 @@ func updateConfigPGPort(t *testing.T, cfg *config.Config, pgContainer *postgres.
 func dbMigrateUp(t *testing.T, cfg config.Config) {
 	t.Helper()
 
-	schemaMigrationPath := filepath.Join("..", "..", "..", "internal", "usecase", "repo", "db", "schema_migration")
+	schemaMigrationPath := filepath.Join("..", "..", "..", "internal", "db", "schema_migration")
 	require.NoError(t, db.MigrateUp(cfg, schemaMigrationPath))
 }
 
