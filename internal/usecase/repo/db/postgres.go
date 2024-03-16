@@ -8,14 +8,24 @@ import (
 
 	"github.com/Hidayathamir/go-user/config"
 	"github.com/Masterminds/squirrel"
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/sirupsen/logrus"
 )
 
+// IPgxPool use this as dependency instead of *pgxpool.Pool so we can mock for
+// unit test. Add method when needed.
+type IPgxPool interface {
+	Ping(ctx context.Context) error
+	QueryRow(ctx context.Context, sql string, args ...any) pgx.Row
+	Exec(ctx context.Context, sql string, arguments ...any) (pgconn.CommandTag, error)
+}
+
 // Postgres -.
 type Postgres struct {
 	Builder squirrel.StatementBuilderType
-	Pool    *pgxpool.Pool
+	Pool    IPgxPool // use IPgxPool instead *pgxpool.Pool
 }
 
 // NewPostgresPoolConnection return postgres pool connection.
