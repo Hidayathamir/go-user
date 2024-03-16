@@ -31,3 +31,48 @@ For presentation layer: Some people call it controller (in our case), delivery, 
 For business layer: Some people call it usecase (in our case), service, domain, or application.
 
 For data access layer: Some people call it repo/repository (in our case), or persistence.
+
+# Get Started
+
+## Run application
+
+Run postgres container.
+
+```
+make compose-up-postgres
+```
+
+Run go app.
+
+```
+make go-run
+```
+
+
+## Run test
+
+Test can be without the need to run the application.
+
+Run test integration.
+
+```
+make go-test-integration
+```
+
+Run test unit.
+
+```
+make go-test-unit
+```
+
+## Run for deployment
+
+For deployment. Run postgres container also build and run go app container.
+
+```
+make deploy
+```
+
+## Other command
+
+See `Makefile`.
