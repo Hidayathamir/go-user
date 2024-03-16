@@ -1,2 +1,2 @@
-// Package repo is abstract storage (sql/nosql) that business logic works with.
+// Package repo contains the data access layer.
 package repo

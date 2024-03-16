@@ -1,2 +1,2 @@
-// Package entity defines entities.
+// Package entity contains the domain model.
 package entity

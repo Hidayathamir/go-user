@@ -1,2 +1,2 @@
-// Package usecase contains business logic.
+// Package usecase contains the application business layer.
 package usecase
