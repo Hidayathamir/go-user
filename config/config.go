@@ -33,6 +33,7 @@ func Init(cfgLoader Loader) (Config, error) {
 type Config struct {
 	App    App    `yaml:"app"      env-required:"true" env-prefix:"APP_"`
 	HTTP   HTTP   `yaml:"http"     env-required:"true" env-prefix:"HTTP_"`
+	GRPC   GRPC   `yaml:"grpc"     env-required:"true" env-prefix:"GRPC_"`
 	Logger logger `yaml:"logger"   env-required:"true" env-prefix:"LOGGER_"`
 	PG     PG     `yaml:"postgres" env-required:"true" env-prefix:"POSTGRES_"`
 	JWT    JWT    `yaml:"jwt"      env-required:"true" env-prefix:"JWT_"`
@@ -80,6 +81,12 @@ type App struct {
 type HTTP struct {
 	Host string `yaml:"host" env-required:"true" env:"HOST" env-description:"app http server host, e.g \"localhost\", \"0.0.0.0\""`
 	Port int    `yaml:"port" env-required:"true" env:"PORT" env-description:"app http server port, e.g 8080"`
+}
+
+// GRPC hold GRPC configuration.
+type GRPC struct {
+	Host string `yaml:"host" env-required:"true" env:"HOST" env-description:"app grpc server host, e.g \"localhost\", \"0.0.0.0\""`
+	Port int    `yaml:"port" env-required:"true" env:"PORT" env-description:"app grpc server port, e.g 9090"`
 }
 
 type logLevel string
