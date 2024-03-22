@@ -8,6 +8,7 @@ import (
 	"github.com/Hidayathamir/go-user/config"
 	"github.com/Hidayathamir/go-user/internal/dto"
 	"github.com/Hidayathamir/go-user/internal/entity"
+	"github.com/Hidayathamir/go-user/internal/pkg/auth"
 	"github.com/Hidayathamir/go-user/internal/repo/mockrepo"
 	"github.com/Hidayathamir/go-user/pkg/gouser"
 	"github.com/google/uuid"
@@ -120,7 +121,7 @@ func TestUnitProfileUpdateProfileByUserID(t *testing.T) {
 		repoProfile.EXPECT().UpdateProfileByUserID(gomock.Any(), gomock.Any()).Return(nil)
 
 		err := p.UpdateProfileByUserID(context.Background(), dto.ReqUpdateProfileByUserID{
-			UserJWT:  "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTA1OTY1MDEsInVzZXJfaWQiOjIzfQ.ssdbnErvk_3aKxu3dUmhEFfPr36dhxR7Yx_nvMKzPMs",
+			UserJWT:  auth.GenerateUserJWTToken(441, cfg),
 			Password: "dummypassword",
 		})
 
@@ -148,7 +149,7 @@ func TestUnitProfileUpdateProfileByUserID(t *testing.T) {
 			Return(assert.AnError)
 
 		err := p.UpdateProfileByUserID(context.Background(), dto.ReqUpdateProfileByUserID{
-			UserJWT:  "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTA1OTY1MDEsInVzZXJfaWQiOjIzfQ.ssdbnErvk_3aKxu3dUmhEFfPr36dhxR7Yx_nvMKzPMs",
+			UserJWT:  auth.GenerateUserJWTToken(2342, cfg),
 			Password: "dummypassword",
 		})
 
