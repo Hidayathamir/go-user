@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+option go_package = "github.com/Hidayathamir/gouser/pkg/gouser/grpc/pb";
+
+package pb;
+
+service Auth {
+  rpc LoginUser(ReqLoginUser) returns (ResLoginUser) {}
+  rpc RegisterUser(ReqRegisterUser) returns (ResRegisterUser) {}
+}
+
+message AuthEmpty {}
+
+message ReqLoginUser {
+  string username = 1;
+  string password = 2;
+}
+
+message ResLoginUser {
+  string user_jwt = 1;
+}
+
+message ReqRegisterUser {
+  string username = 1;
+  string password = 2;
+}
+
+message ResRegisterUser {
+  int64 user_id = 1;
+}

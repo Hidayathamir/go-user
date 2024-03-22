@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+option go_package = "github.com/Hidayathamir/gouser/pkg/gouser/grpc/pb";
+
+package pb;
+
+service Ping {
+  rpc Ping(PingEmpty) returns (ResPing) {}
+}
+
+message PingEmpty {}
+
+message ResPing {
+  string message = 1;
+}

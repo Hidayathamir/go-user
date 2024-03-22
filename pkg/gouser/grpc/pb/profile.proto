@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/Hidayathamir/gouser/pkg/gouser/grpc/pb";
+
+package pb;
+
+service Profile {
+  rpc GetProfileByUsername(ReqGetProfileByUsername) returns (ResGetProfileByUsername) {}
+  rpc UpdateProfileByUserID(ReqUpdateProfileByUserID) returns (ProfileEmpty) {}
+}
+
+message ProfileEmpty {}
+
+message ReqGetProfileByUsername {
+  string username = 1;
+}
+
+message ResGetProfileByUsername {
+  int64 id = 1;
+  string username = 2;
+  google.protobuf.Timestamp created_at = 3;
+  google.protobuf.Timestamp updated_at = 4;
+}
+
+message ReqUpdateProfileByUserID {
+  string user_jwt = 1;
+  string password = 2;
+}
