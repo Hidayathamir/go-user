@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.12.4
-// source: pkg/gouser/grpc/pb/auth.proto
+// source: pkg/gousergrpc/auth.proto
 
-package pb
+package gousergrpc
 
 import (
 	context "context"
@@ -36,7 +36,7 @@ func NewAuthClient(cc grpc.ClientConnInterface) AuthClient {
 
 func (c *authClient) LoginUser(ctx context.Context, in *ReqLoginUser, opts ...grpc.CallOption) (*ResLoginUser, error) {
 	out := new(ResLoginUser)
-	err := c.cc.Invoke(ctx, "/pb.Auth/LoginUser", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/gousergrpc.Auth/LoginUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +45,7 @@ func (c *authClient) LoginUser(ctx context.Context, in *ReqLoginUser, opts ...gr
 
 func (c *authClient) RegisterUser(ctx context.Context, in *ReqRegisterUser, opts ...grpc.CallOption) (*ResRegisterUser, error) {
 	out := new(ResRegisterUser)
-	err := c.cc.Invoke(ctx, "/pb.Auth/RegisterUser", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/gousergrpc.Auth/RegisterUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +94,7 @@ func _Auth_LoginUser_Handler(srv interface{}, ctx context.Context, dec func(inte
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Auth/LoginUser",
+		FullMethod: "/gousergrpc.Auth/LoginUser",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AuthServer).LoginUser(ctx, req.(*ReqLoginUser))
@@ -112,7 +112,7 @@ func _Auth_RegisterUser_Handler(srv interface{}, ctx context.Context, dec func(i
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Auth/RegisterUser",
+		FullMethod: "/gousergrpc.Auth/RegisterUser",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AuthServer).RegisterUser(ctx, req.(*ReqRegisterUser))
@@ -124,7 +124,7 @@ func _Auth_RegisterUser_Handler(srv interface{}, ctx context.Context, dec func(i
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Auth_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "pb.Auth",
+	ServiceName: "gousergrpc.Auth",
 	HandlerType: (*AuthServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -137,5 +137,5 @@ var Auth_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "pkg/gouser/grpc/pb/auth.proto",
+	Metadata: "pkg/gousergrpc/auth.proto",
 }

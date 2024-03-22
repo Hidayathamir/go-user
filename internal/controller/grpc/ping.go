@@ -3,17 +3,17 @@ package grpc
 import (
 	"context"
 
-	"github.com/Hidayathamir/go-user/pkg/gouser/grpc/pb"
+	"github.com/Hidayathamir/go-user/pkg/gousergrpc"
 )
 
 // Ping is controller GRPC for ping related.
 type Ping struct {
-	pb.UnimplementedPingServer
+	gousergrpc.UnimplementedPingServer
 }
 
-var _ pb.PingServer = &Ping{}
+var _ gousergrpc.PingServer = &Ping{}
 
 // Ping implements pb.PingServer.
-func (p *Ping) Ping(context.Context, *pb.PingEmpty) (*pb.ResPing, error) {
-	return &pb.ResPing{Message: "ping success"}, nil
+func (p *Ping) Ping(context.Context, *gousergrpc.PingEmpty) (*gousergrpc.ResPing, error) {
+	return &gousergrpc.ResPing{Message: "ping success"}, nil
 }

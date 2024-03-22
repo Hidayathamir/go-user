@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.12.4
-// source: pkg/gouser/grpc/pb/profile.proto
+// source: pkg/gousergrpc/profile.proto
 
-package pb
+package gousergrpc
 
 import (
 	context "context"
@@ -36,7 +36,7 @@ func NewProfileClient(cc grpc.ClientConnInterface) ProfileClient {
 
 func (c *profileClient) GetProfileByUsername(ctx context.Context, in *ReqGetProfileByUsername, opts ...grpc.CallOption) (*ResGetProfileByUsername, error) {
 	out := new(ResGetProfileByUsername)
-	err := c.cc.Invoke(ctx, "/pb.Profile/GetProfileByUsername", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/gousergrpc.Profile/GetProfileByUsername", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +45,7 @@ func (c *profileClient) GetProfileByUsername(ctx context.Context, in *ReqGetProf
 
 func (c *profileClient) UpdateProfileByUserID(ctx context.Context, in *ReqUpdateProfileByUserID, opts ...grpc.CallOption) (*ProfileEmpty, error) {
 	out := new(ProfileEmpty)
-	err := c.cc.Invoke(ctx, "/pb.Profile/UpdateProfileByUserID", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/gousergrpc.Profile/UpdateProfileByUserID", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +94,7 @@ func _Profile_GetProfileByUsername_Handler(srv interface{}, ctx context.Context,
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Profile/GetProfileByUsername",
+		FullMethod: "/gousergrpc.Profile/GetProfileByUsername",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ProfileServer).GetProfileByUsername(ctx, req.(*ReqGetProfileByUsername))
@@ -112,7 +112,7 @@ func _Profile_UpdateProfileByUserID_Handler(srv interface{}, ctx context.Context
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Profile/UpdateProfileByUserID",
+		FullMethod: "/gousergrpc.Profile/UpdateProfileByUserID",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ProfileServer).UpdateProfileByUserID(ctx, req.(*ReqUpdateProfileByUserID))
@@ -124,7 +124,7 @@ func _Profile_UpdateProfileByUserID_Handler(srv interface{}, ctx context.Context
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Profile_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "pb.Profile",
+	ServiceName: "gousergrpc.Profile",
 	HandlerType: (*ProfileServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -137,5 +137,5 @@ var Profile_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "pkg/gouser/grpc/pb/profile.proto",
+	Metadata: "pkg/gousergrpc/profile.proto",
 }

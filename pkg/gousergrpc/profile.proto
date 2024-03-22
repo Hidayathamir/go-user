@@ -2,9 +2,9 @@ syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/Hidayathamir/gouser/pkg/gouser/grpc/pb";
+option go_package = "github.com/Hidayathamir/gouser/pkg/gousergrpc";
 
-package pb;
+package gousergrpc;
 
 service Profile {
   rpc GetProfileByUsername(ReqGetProfileByUsername) returns (ResGetProfileByUsername) {}

@@ -7,18 +7,18 @@ import (
 	"github.com/Hidayathamir/go-user/config"
 	"github.com/Hidayathamir/go-user/internal/dto"
 	"github.com/Hidayathamir/go-user/internal/usecase"
-	"github.com/Hidayathamir/go-user/pkg/gouser/grpc/pb"
+	"github.com/Hidayathamir/go-user/pkg/gousergrpc"
 )
 
 // Auth is controller GRPC for authentication related.
 type Auth struct {
-	pb.UnimplementedAuthServer
+	gousergrpc.UnimplementedAuthServer
 
 	cfg         config.Config
 	usecaseAuth usecase.IAuth
 }
 
-var _ pb.AuthServer = &Auth{}
+var _ gousergrpc.AuthServer = &Auth{}
 
 func newAuth(cfg config.Config, usecaseAuth usecase.IAuth) *Auth {
 	return &Auth{
@@ -28,7 +28,7 @@ func newAuth(cfg config.Config, usecaseAuth usecase.IAuth) *Auth {
 }
 
 // LoginUser implements pb.AuthServer.
-func (a *Auth) LoginUser(c context.Context, r *pb.ReqLoginUser) (*pb.ResLoginUser, error) {
+func (a *Auth) LoginUser(c context.Context, r *gousergrpc.ReqLoginUser) (*gousergrpc.ResLoginUser, error) {
 	req := dto.ReqLoginUser{
 		Username: r.GetUsername(),
 		Password: r.GetPassword(),
@@ -40,7 +40,7 @@ func (a *Auth) LoginUser(c context.Context, r *pb.ReqLoginUser) (*pb.ResLoginUse
 		return nil, err
 	}
 
-	res := &pb.ResLoginUser{
+	res := &gousergrpc.ResLoginUser{
 		UserJwt: userJWT,
 	}
 
@@ -48,7 +48,7 @@ func (a *Auth) LoginUser(c context.Context, r *pb.ReqLoginUser) (*pb.ResLoginUse
 }
 
 // RegisterUser implements pb.AuthServer.
-func (a *Auth) RegisterUser(c context.Context, r *pb.ReqRegisterUser) (*pb.ResRegisterUser, error) {
+func (a *Auth) RegisterUser(c context.Context, r *gousergrpc.ReqRegisterUser) (*gousergrpc.ResRegisterUser, error) {
 	req := dto.ReqRegisterUser{
 		Username: r.GetUsername(),
 		Password: r.GetPassword(),
@@ -60,7 +60,7 @@ func (a *Auth) RegisterUser(c context.Context, r *pb.ReqRegisterUser) (*pb.ResRe
 		return nil, err
 	}
 
-	res := pb.ResRegisterUser{
+	res := gousergrpc.ResRegisterUser{
 		UserId: userID,
 	}
 

@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.12.4
-// source: pkg/gouser/grpc/pb/ping.proto
+// source: pkg/gousergrpc/ping.proto
 
-package pb
+package gousergrpc
 
 import (
 	context "context"
@@ -35,7 +35,7 @@ func NewPingClient(cc grpc.ClientConnInterface) PingClient {
 
 func (c *pingClient) Ping(ctx context.Context, in *PingEmpty, opts ...grpc.CallOption) (*ResPing, error) {
 	out := new(ResPing)
-	err := c.cc.Invoke(ctx, "/pb.Ping/Ping", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/gousergrpc.Ping/Ping", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +80,7 @@ func _Ping_Ping_Handler(srv interface{}, ctx context.Context, dec func(interface
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Ping/Ping",
+		FullMethod: "/gousergrpc.Ping/Ping",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PingServer).Ping(ctx, req.(*PingEmpty))
@@ -92,7 +92,7 @@ func _Ping_Ping_Handler(srv interface{}, ctx context.Context, dec func(interface
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Ping_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "pb.Ping",
+	ServiceName: "gousergrpc.Ping",
 	HandlerType: (*PingServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -101,5 +101,5 @@ var Ping_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "pkg/gouser/grpc/pb/ping.proto",
+	Metadata: "pkg/gousergrpc/ping.proto",
 }
