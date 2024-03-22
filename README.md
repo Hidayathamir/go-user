@@ -1,12 +1,13 @@
 # go-user
 
-This project provides Golang services built with Clean Architecture, featuring isolation integration tests using containers, and isolation unit tests with mocks.
+This project provides Golang services built with Clean Architecture, featuring isolation integration tests using containers, isolation unit tests with mocks, and database connection pooling.
 
 # Features
 
 - [x] Clean architecture implementation.
 - [x] Isolation integration tests using containers.
 - [x] Isolation unit tests with mock support.
+- [x] Database connection pooling.
 
 # Code structure
 
