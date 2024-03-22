@@ -7,6 +7,7 @@ import (
 
 	"github.com/Hidayathamir/go-user/config"
 	"github.com/Hidayathamir/go-user/internal/db"
+	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 )
 
@@ -22,6 +23,7 @@ func RunServer(cfg config.Config, db *db.Postgres) error {
 		return fmt.Errorf("net.Listen: %w", err)
 	}
 
+	logrus.WithField("address", addr).Info("run grpc server")
 	err = grpcServer.Serve(lis)
 	if err != nil {
 		return fmt.Errorf("grpc.Server.Serve: %w", err)

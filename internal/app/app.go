@@ -2,78 +2,46 @@
 package app
 
 import (
-	"flag"
-	"path/filepath"
-
 	"github.com/Hidayathamir/go-user/config"
+	"github.com/Hidayathamir/go-user/internal/controller/grpc"
 	"github.com/Hidayathamir/go-user/internal/controller/http"
 	"github.com/Hidayathamir/go-user/internal/db"
-	"github.com/ilyakaznacheev/cleanenv"
 	"github.com/sirupsen/logrus"
 )
 
 // Run application.
 func Run() {
-	arg := parseArgs()
+	arg := parseCLIArgs()
 
-	cfg := initConfig(arg.isLoadEnv)
+	cfg := initConfig(arg)
 
-	handleCommandLineArgsMigrate(cfg, arg.isIncludeMigrate)
+	handleCommandLineArgsMigrate(cfg, arg)
 
+	db := newDBPostgres(cfg)
+
+	go runGRPCServer(cfg, db)
+
+	runHTTPServer(cfg, db)
+}
+
+func newDBPostgres(cfg config.Config) *db.Postgres {
 	db, err := db.NewPostgresPoolConnection(cfg)
 	if err != nil {
 		logrus.Fatalf("db.NewPostgresPoolConnection: %v", err)
 	}
+	return db
+}
 
-	err = http.RunServer(cfg, db)
+func runGRPCServer(cfg config.Config, db *db.Postgres) {
+	err := grpc.RunServer(cfg, db)
+	if err != nil {
+		logrus.Fatalf("grpc.RunServer: %v", err)
+	}
+}
+
+func runHTTPServer(cfg config.Config, db *db.Postgres) {
+	err := http.RunServer(cfg, db)
 	if err != nil {
 		logrus.Fatalf("http.RunServer: %v", err)
-	}
-}
-
-func initConfig(isLoadEnv bool) config.Config {
-	yamlPath := filepath.Join("config", "config.yml")
-
-	var cfgLoader config.Loader
-	if isLoadEnv {
-		cfgLoader = &config.EnvLoader{YAMLPath: yamlPath}
-	} else {
-		cfgLoader = &config.YamlLoader{Path: yamlPath}
-	}
-
-	cfg, err := config.Init(cfgLoader)
-	if err != nil {
-		logrus.Fatalf("config.Init: %v", err)
-	}
-
-	return cfg
-}
-
-type arg struct {
-	isIncludeMigrate bool
-	isLoadEnv        bool
-}
-
-func parseArgs() arg {
-	a := arg{}
-
-	flag.BoolVar(&a.isIncludeMigrate, "include-migrate", false, "is include migrate, if true will do migrate before run app, default false.")
-	flag.BoolVar(&a.isLoadEnv, "load-env", false, "is load env var, if true load env var and override config, default false.")
-
-	flag.Usage = cleanenv.FUsage(flag.CommandLine.Output(), &config.Config{}, nil, flag.Usage)
-
-	flag.Parse()
-
-	return a
-}
-
-// handleCommandLineArgsMigrate do db migration then exit if args migrate exists.
-func handleCommandLineArgsMigrate(cfg config.Config, isIncludeMigrate bool) {
-	if isIncludeMigrate {
-		schemaMigrationPath := filepath.Join("internal", "db", "schema_migration")
-		err := db.MigrateUp(cfg, schemaMigrationPath)
-		if err != nil {
-			logrus.Fatalf("db.MigrateUp: %v", err)
-		}
 	}
 }
