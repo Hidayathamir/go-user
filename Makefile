@@ -28,12 +28,16 @@ air:
 # Run test integration.
 go-test-integration:
 	go clean -testcache && \
-	go test -v ./internal/controller/... -run TestIntegration
+	go test -v ./internal/controller/grpc -run TestIntegration && \
+	go test -v ./internal/controller/http -run TestIntegration
 
 # Run test unit.
 go-test-unit:
 	go clean -testcache && \
-	go test -v ./internal/... -run TestUnit
+	go test -v ./internal/controller/grpc -run TestUnit && \
+	go test -v ./internal/controller/http -run TestUnit && \
+	go test -v ./internal/usecase -run TestUnit && \
+	go test -v ./internal/repo -run TestUnit
 
 ###################################
 
