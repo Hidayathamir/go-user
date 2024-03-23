@@ -29,7 +29,9 @@ air:
 go-test-integration:
 	go clean -testcache && \
 	go test -v ./internal/controller/grpc -run TestIntegration && \
-	go test -v ./internal/controller/http -run TestIntegration
+	go test -v ./internal/controller/http -run TestIntegration && \
+	go test -cover ./internal/controller/grpc -run TestIntegration && \
+	go test -cover ./internal/controller/http -run TestIntegration
 
 # Run test unit.
 go-test-unit:
@@ -37,7 +39,11 @@ go-test-unit:
 	go test -v ./internal/controller/grpc -run TestUnit && \
 	go test -v ./internal/controller/http -run TestUnit && \
 	go test -v ./internal/usecase -run TestUnit && \
-	go test -v ./internal/repo -run TestUnit
+	go test -v ./internal/repo -run TestUnit && \
+	go test -cover ./internal/controller/grpc -run TestUnit && \
+	go test -cover ./internal/controller/http -run TestUnit && \
+	go test -cover ./internal/usecase -run TestUnit && \
+	go test -cover ./internal/repo -run TestUnit
 
 ###################################
 
