@@ -28,18 +28,18 @@ func (a *Auth) loginUser(c *gin.Context) {
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		err := fmt.Errorf("gin.Context.ShouldBindJSON: %w", err)
-		c.JSON(http.StatusBadRequest, setResponseBody(nil, err))
+		c.JSON(http.StatusBadRequest, ResError{Error: err.Error()})
 		return
 	}
 
 	resLoginUser, err := a.usecaseAuth.LoginUser(c, req)
 	if err != nil {
 		err := fmt.Errorf("Auth.usecaseAuth.LoginUser: %w", err)
-		c.JSON(http.StatusBadRequest, setResponseBody(nil, err))
+		c.JSON(http.StatusBadRequest, ResError{Error: err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, setResponseBody(resLoginUser, nil))
+	c.JSON(http.StatusOK, ResLoginUser{Data: resLoginUser})
 }
 
 func (a *Auth) registerUser(c *gin.Context) {
@@ -47,16 +47,16 @@ func (a *Auth) registerUser(c *gin.Context) {
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		err := fmt.Errorf("gin.Context.ShouldBindJSON: %w", err)
-		c.JSON(http.StatusBadRequest, setResponseBody(nil, err))
+		c.JSON(http.StatusBadRequest, ResError{Error: err.Error()})
 		return
 	}
 
 	resRegisterUser, err := a.usecaseAuth.RegisterUser(c, req)
 	if err != nil {
 		err := fmt.Errorf("Auth.usecaseAuth.RegisterUser: %w", err)
-		c.JSON(http.StatusBadRequest, setResponseBody(nil, err))
+		c.JSON(http.StatusBadRequest, ResError{Error: err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, setResponseBody(resRegisterUser, nil))
+	c.JSON(http.StatusOK, ResRegisterUser{Data: resRegisterUser})
 }

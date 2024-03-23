@@ -58,7 +58,7 @@ func TestUnitProfileGetProfileByUsername(t *testing.T) {
 		p.getProfileByUsername(ctx)
 
 		assert.Equal(t, http.StatusOK, rr.Code)
-		resBody := resGetProfileByUsernameSuccess{}
+		resBody := ResGetProfileByUsername{}
 		require.NoError(t, json.Unmarshal(rr.Body.Bytes(), &resBody))
 		assert.NotEmpty(t, resBody.Data)
 		assert.Equal(t, user, resBody.Data)
@@ -137,7 +137,7 @@ func TestProfileUpdateProfileByUserID(t *testing.T) {
 		p.updateProfileByUserID(ctx)
 
 		assert.Equal(t, http.StatusOK, rr.Code)
-		resBody := resUpdatePofileSuccess{}
+		resBody := ResUpdatePofile{}
 		require.NoError(t, json.Unmarshal(rr.Body.Bytes(), &resBody))
 		assert.NotEmpty(t, resBody.Data)
 		assert.Equal(t, "ok", resBody.Data)

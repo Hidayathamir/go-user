@@ -44,7 +44,7 @@ func TestIntegrationProfileUpdateProfileByUserID(t *testing.T) {
 		newPassword := uuid.NewString()
 		resBodyByte, httpStatusCode := updateProfileByUserID(controllerProfile, resBodyLogin.Data.UserJWT, newPassword)
 		assert.Equal(t, http.StatusOK, httpStatusCode)
-		resBody := resUpdatePofileSuccess{}
+		resBody := ResUpdatePofile{}
 		require.NoError(t, json.Unmarshal(resBodyByte, &resBody))
 		assert.NotEmpty(t, resBody.Data)
 		assert.Contains(t, resBody.Data, "ok")
@@ -147,7 +147,7 @@ func TestIntegrationProfileGetProfileByUsername(t *testing.T) {
 		resBodyByte, httpStatusCode := getProfileByUsername(controllerProfile, username)
 
 		assert.Equal(t, http.StatusOK, httpStatusCode)
-		resBodyGetProfile := resGetProfileByUsernameSuccess{}
+		resBodyGetProfile := ResGetProfileByUsername{}
 		require.NoError(t, json.Unmarshal(resBodyByte, &resBodyGetProfile))
 		assert.Equal(t, resBodyRegister.Data.UserID, resBodyGetProfile.Data.ID)
 		assert.Equal(t, username, resBodyGetProfile.Data.Username)
