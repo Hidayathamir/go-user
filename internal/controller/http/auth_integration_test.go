@@ -24,7 +24,7 @@ func TestIntegrationAuthLoginUser(t *testing.T) {
 
 		cfg := initTestIntegration(t)
 
-		pg, err := db.NewPostgresPoolConnection(cfg)
+		pg, err := db.NewPGPoolConn(cfg)
 		require.NoError(t, err)
 
 		repoAuth := repo.NewAuth(cfg, pg)
@@ -50,7 +50,7 @@ func TestIntegrationAuthLoginUser(t *testing.T) {
 
 		cfg := initTestIntegration(t)
 
-		pg, err := db.NewPostgresPoolConnection(cfg)
+		pg, err := db.NewPGPoolConn(cfg)
 		require.NoError(t, err)
 
 		repoAuth := repo.NewAuth(cfg, pg)
@@ -76,7 +76,7 @@ func TestIntegrationAuthLoginUser(t *testing.T) {
 
 		cfg := initTestIntegration(t)
 
-		pg, err := db.NewPostgresPoolConnection(cfg)
+		pg, err := db.NewPGPoolConn(cfg)
 		require.NoError(t, err)
 
 		repoAuth := repo.NewAuth(cfg, pg)
@@ -99,7 +99,7 @@ func TestIntegrationAuthLoginUser(t *testing.T) {
 
 		cfg := initTestIntegration(t)
 
-		pg, err := db.NewPostgresPoolConnection(cfg)
+		pg, err := db.NewPGPoolConn(cfg)
 		require.NoError(t, err)
 
 		repoAuth := repo.NewAuth(cfg, pg)
@@ -138,7 +138,7 @@ func TestIntegrationAuthRegisterUser(t *testing.T) {
 
 		cfg := initTestIntegration(t)
 
-		pg, err := db.NewPostgresPoolConnection(cfg)
+		pg, err := db.NewPGPoolConn(cfg)
 		require.NoError(t, err)
 
 		repoAuth := repo.NewAuth(cfg, pg)
@@ -155,7 +155,7 @@ func TestIntegrationAuthRegisterUser(t *testing.T) {
 
 		cfg := initTestIntegration(t)
 
-		pg, err := db.NewPostgresPoolConnection(cfg)
+		pg, err := db.NewPGPoolConn(cfg)
 		require.NoError(t, err)
 
 		repoAuth := repo.NewAuth(cfg, pg)
@@ -181,7 +181,7 @@ func TestIntegrationAuthRegisterUser(t *testing.T) {
 
 		cfg := initTestIntegration(t)
 
-		pg, err := db.NewPostgresPoolConnection(cfg)
+		pg, err := db.NewPGPoolConn(cfg)
 		require.NoError(t, err)
 
 		repoAuth := repo.NewAuth(cfg, pg)

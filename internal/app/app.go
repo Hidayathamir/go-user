@@ -25,7 +25,7 @@ func Run() {
 }
 
 func newDBPostgres(cfg config.Config) *db.Postgres {
-	db, err := db.NewPostgresPoolConnection(cfg)
+	db, err := db.NewPGPoolConn(cfg)
 	if err != nil {
 		logrus.Fatalf("db.NewPostgresPoolConnection: %v", err)
 	}
