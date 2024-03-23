@@ -100,7 +100,7 @@ func TestUnitAuthRegisterUser(t *testing.T) {
 		usecaseAuth.EXPECT().RegisterUser(gomock.Any(), dto.ReqRegisterUser{
 			Username: "hidayat",
 			Password: "mypassword",
-		}).Return(int64(323), nil)
+		}).Return(dto.ResRegisterUser{UserID: 323}, nil)
 
 		req := &gousergrpc.ReqRegisterUser{
 			Username: "hidayat",
@@ -128,7 +128,7 @@ func TestUnitAuthRegisterUser(t *testing.T) {
 		usecaseAuth.EXPECT().RegisterUser(gomock.Any(), dto.ReqRegisterUser{
 			Username: "hidayat",
 			Password: "mypassword",
-		}).Return(int64(0), assert.AnError)
+		}).Return(dto.ResRegisterUser{UserID: 0}, assert.AnError)
 
 		req := &gousergrpc.ReqRegisterUser{
 			Username: "hidayat",

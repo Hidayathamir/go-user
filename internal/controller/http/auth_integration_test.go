@@ -41,7 +41,7 @@ func TestIntegrationAuthLoginUser(t *testing.T) {
 		t.Run("user id in user jwt should equal with user id when register", func(t *testing.T) {
 			userID, err := auth.GetUserIDFromJWTTokenString(cfg, resBodyLogin.Data)
 			require.NoError(t, err)
-			assert.Equal(t, resBodyRegister.Data, userID)
+			assert.Equal(t, resBodyRegister.Data.UserID, userID)
 			assert.Nil(t, resBodyLogin.Error)
 		})
 	})
@@ -65,7 +65,7 @@ func TestIntegrationAuthLoginUser(t *testing.T) {
 
 		resBodyByte, httpStatusCode := loginUser(controllerAuth, username, uuid.NewString())
 		assert.Equal(t, http.StatusBadRequest, httpStatusCode)
-		resBodyLogin := resError{}
+		resBodyLogin := ResError{}
 		require.NoError(t, json.Unmarshal(resBodyByte, &resBodyLogin))
 		assert.Nil(t, resBodyLogin.Data)
 		assert.NotEmpty(t, resBodyLogin.Error)
@@ -88,7 +88,7 @@ func TestIntegrationAuthLoginUser(t *testing.T) {
 
 		resBodyByte, httpStatusCode := loginUser(controllerAuth, uuid.NewString(), uuid.NewString())
 		assert.Equal(t, http.StatusBadRequest, httpStatusCode)
-		resBodyLogin := resError{}
+		resBodyLogin := ResError{}
 		require.NoError(t, json.Unmarshal(resBodyByte, &resBodyLogin))
 		assert.Nil(t, resBodyLogin.Data)
 		assert.NotEmpty(t, resBodyLogin.Error)
@@ -112,7 +112,7 @@ func TestIntegrationAuthLoginUser(t *testing.T) {
 		t.Run("request username empty should error", func(t *testing.T) {
 			resBodyByte, httpStatusCode := loginUser(controllerAuth, "", uuid.NewString())
 			assert.Equal(t, http.StatusBadRequest, httpStatusCode)
-			resBodyLogin := resError{}
+			resBodyLogin := ResError{}
 			require.NoError(t, json.Unmarshal(resBodyByte, &resBodyLogin))
 			assert.Nil(t, resBodyLogin.Data)
 			assert.NotEmpty(t, resBodyLogin.Error)
@@ -121,7 +121,7 @@ func TestIntegrationAuthLoginUser(t *testing.T) {
 		t.Run("request password empty should error", func(t *testing.T) {
 			resBodyByte, httpStatusCode := loginUser(controllerAuth, uuid.NewString(), "")
 			assert.Equal(t, http.StatusBadRequest, httpStatusCode)
-			resBodyLogin := resError{}
+			resBodyLogin := ResError{}
 			require.NoError(t, json.Unmarshal(resBodyByte, &resBodyLogin))
 			assert.Nil(t, resBodyLogin.Data)
 			assert.NotEmpty(t, resBodyLogin.Error)
@@ -170,7 +170,7 @@ func TestIntegrationAuthRegisterUser(t *testing.T) {
 
 		resBodyByte, httpStatusCode := registerUser(controllerAuth, username, uuid.NewString())
 		assert.Equal(t, http.StatusBadRequest, httpStatusCode)
-		resBodyRegister := resError{}
+		resBodyRegister := ResError{}
 		require.NoError(t, json.Unmarshal(resBodyByte, &resBodyRegister))
 		assert.Nil(t, resBodyRegister.Data)
 		assert.NotEmpty(t, resBodyRegister.Error)
@@ -194,7 +194,7 @@ func TestIntegrationAuthRegisterUser(t *testing.T) {
 		t.Run("request username empty should error", func(t *testing.T) {
 			resBodyByte, httpStatusCode := registerUser(controllerAuth, "", uuid.NewString())
 			assert.Equal(t, http.StatusBadRequest, httpStatusCode)
-			resBodyRegister := resError{}
+			resBodyRegister := ResError{}
 			require.NoError(t, json.Unmarshal(resBodyByte, &resBodyRegister))
 			assert.Nil(t, resBodyRegister.Data)
 			assert.NotEmpty(t, resBodyRegister.Error)
@@ -203,7 +203,7 @@ func TestIntegrationAuthRegisterUser(t *testing.T) {
 		t.Run("request password empty should error", func(t *testing.T) {
 			resBodyByte, httpStatusCode := registerUser(controllerAuth, uuid.NewString(), "")
 			assert.Equal(t, http.StatusBadRequest, httpStatusCode)
-			resBodyRegister := resError{}
+			resBodyRegister := ResError{}
 			require.NoError(t, json.Unmarshal(resBodyByte, &resBodyRegister))
 			assert.Nil(t, resBodyRegister.Data)
 			assert.NotEmpty(t, resBodyRegister.Error)

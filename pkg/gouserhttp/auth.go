@@ -9,6 +9,7 @@ import (
 	"io"
 	"net/http"
 
+	controllerHTTP "github.com/Hidayathamir/go-user/internal/controller/http"
 	"github.com/Hidayathamir/go-user/pkg/h"
 	"github.com/sirupsen/logrus"
 )
@@ -80,7 +81,7 @@ func (a *AuthClient) RegisterUser(ctx context.Context, req ReqRegisterUser) (Res
 	}
 
 	if httpRes.StatusCode != http.StatusOK {
-		resErr := resError{}
+		resErr := controllerHTTP.ResError{}
 		err := json.Unmarshal(httpResBody, &resErr)
 		if err != nil {
 			return fail("json.Unmarshal", err)
@@ -88,9 +89,7 @@ func (a *AuthClient) RegisterUser(ctx context.Context, req ReqRegisterUser) (Res
 		return ResRegisterUser{}, errors.New(resErr.Error)
 	}
 
-	resBody := struct {
-		Data int64 `json:"data"`
-	}{}
+	resBody := controllerHTTP.ResRegisterUser{}
 
 	err = json.Unmarshal(httpResBody, &resBody)
 	if err != nil {
@@ -98,7 +97,7 @@ func (a *AuthClient) RegisterUser(ctx context.Context, req ReqRegisterUser) (Res
 	}
 
 	res := ResRegisterUser{
-		UserID: resBody.Data,
+		UserID: resBody.Data.UserID,
 	}
 
 	return res, nil

@@ -47,3 +47,8 @@ func (r ReqRegisterUser) ToEntityUser() entity.User {
 		Password: r.Password,
 	}
 }
+
+// ResRegisterUser -.
+type ResRegisterUser struct {
+	UserID int64 `json:"user_id"`
+}

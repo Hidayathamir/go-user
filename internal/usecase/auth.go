@@ -16,7 +16,7 @@ import (
 // IAuth contains abstraction of usecase authentication.
 type IAuth interface {
 	// RegisterUser register new user.
-	RegisterUser(ctx context.Context, req dto.ReqRegisterUser) (userID int64, err error)
+	RegisterUser(ctx context.Context, req dto.ReqRegisterUser) (dto.ResRegisterUser, error)
 	// LoginUser validate username and password, return jwt string and error.
 	LoginUser(ctx context.Context, req dto.ReqLoginUser) (userJWT string, err error)
 }
@@ -64,23 +64,27 @@ func (a *Auth) LoginUser(ctx context.Context, req dto.ReqLoginUser) (string, err
 }
 
 // RegisterUser register new user.
-func (a *Auth) RegisterUser(ctx context.Context, req dto.ReqRegisterUser) (int64, error) {
+func (a *Auth) RegisterUser(ctx context.Context, req dto.ReqRegisterUser) (dto.ResRegisterUser, error) {
 	err := req.Validate()
 	if err != nil {
 		err := fmt.Errorf("dto.ReqRegisterUser.Validate: %w", err)
-		return 0, fmt.Errorf("%w: %w", gouser.ErrRequestInvalid, err)
+		return dto.ResRegisterUser{}, fmt.Errorf("%w: %w", gouser.ErrRequestInvalid, err)
 	}
 
 	user := req.ToEntityUser()
 	user.Password, err = auth.GenerateHashPassword(user.Password)
 	if err != nil {
-		return 0, fmt.Errorf("auth.GenerateHashPassword: %w", err)
+		return dto.ResRegisterUser{}, fmt.Errorf("auth.GenerateHashPassword: %w", err)
 	}
 
 	userID, err := a.repoAuth.RegisterUser(ctx, user)
 	if err != nil {
-		return 0, fmt.Errorf("Auth.repoAuth.RegisterUser: %w", err)
+		return dto.ResRegisterUser{}, fmt.Errorf("Auth.repoAuth.RegisterUser: %w", err)
 	}
 
-	return userID, nil
+	res := dto.ResRegisterUser{
+		UserID: userID,
+	}
+
+	return res, nil
 }

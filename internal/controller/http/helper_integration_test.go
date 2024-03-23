@@ -13,6 +13,7 @@ import (
 
 	"github.com/Hidayathamir/go-user/config"
 	"github.com/Hidayathamir/go-user/internal/db"
+	"github.com/Hidayathamir/go-user/internal/dto"
 	"github.com/Hidayathamir/go-user/internal/pkg/auth"
 	"github.com/Hidayathamir/go-user/internal/pkg/header"
 	"github.com/Hidayathamir/go-user/internal/pkg/jutil"
@@ -120,15 +121,15 @@ func registerUser(controllerAuth *Auth, username string, password string) (resBo
 
 // registerUserWithAssertSuccess registers user then validate, return response
 // body register success.
-func registerUserWithAssertSuccess(t *testing.T, controllerAuth *Auth, username string, password string) resRegisterUserSuccess {
+func registerUserWithAssertSuccess(t *testing.T, controllerAuth *Auth, username string, password string) ResRegisterUser {
 	t.Helper()
 
 	resBodyByte, httpStatusCode := registerUser(controllerAuth, username, password)
 	assert.Equal(t, http.StatusOK, httpStatusCode)
-	resBody := resRegisterUserSuccess{}
+	resBody := ResRegisterUser{}
 	require.NoError(t, json.Unmarshal(resBodyByte, &resBody))
 	assert.NotEmpty(t, resBody.Data)
-	assert.IsType(t, int64(1), resBody.Data)
+	assert.IsType(t, dto.ResRegisterUser{}, resBody.Data)
 	assert.Nil(t, resBody.Error)
 	return resBody
 }

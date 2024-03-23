@@ -186,13 +186,13 @@ func TestUnitAuthRegisterUser(t *testing.T) {
 
 		repoAuth.EXPECT().RegisterUser(gomock.Any(), gomock.Any()).Return(int64(34), nil)
 
-		userID, err := a.RegisterUser(context.Background(), dto.ReqRegisterUser{
+		resRegisterUser, err := a.RegisterUser(context.Background(), dto.ReqRegisterUser{
 			Username: "hidayat",
 			Password: "mypassword",
 		})
 
-		assert.NotEmpty(t, userID)
-		assert.Equal(t, int64(34), userID)
+		assert.NotEmpty(t, resRegisterUser)
+		assert.Equal(t, int64(34), resRegisterUser.UserID)
 		require.NoError(t, err)
 	})
 	t.Run("call repo RegisterUser error should return error", func(t *testing.T) {
@@ -214,12 +214,12 @@ func TestUnitAuthRegisterUser(t *testing.T) {
 			RegisterUser(gomock.Any(), gomock.Any()).
 			Return(int64(0), assert.AnError)
 
-		userID, err := a.RegisterUser(context.Background(), dto.ReqRegisterUser{
+		resRegisterUser, err := a.RegisterUser(context.Background(), dto.ReqRegisterUser{
 			Username: "hidayat",
 			Password: "mypassword",
 		})
 
-		assert.Empty(t, userID)
+		assert.Empty(t, resRegisterUser)
 		require.Error(t, err)
 		require.ErrorIs(t, err, assert.AnError)
 	})
@@ -238,12 +238,12 @@ func TestUnitAuthRegisterUser(t *testing.T) {
 			repoProfile: repoProfile,
 		}
 
-		userID, err := a.RegisterUser(context.Background(), dto.ReqRegisterUser{
+		resRegisterUser, err := a.RegisterUser(context.Background(), dto.ReqRegisterUser{
 			Username: "hidayat",
 			Password: uuid.NewString() + uuid.NewString() + uuid.NewString(), // password > 72 bytes will error bcrypt
 		})
 
-		assert.Empty(t, userID)
+		assert.Empty(t, resRegisterUser)
 		require.Error(t, err)
 	})
 	t.Run("validate error should return error", func(t *testing.T) {
@@ -262,22 +262,22 @@ func TestUnitAuthRegisterUser(t *testing.T) {
 		}
 
 		t.Run("empty username should return error", func(t *testing.T) {
-			userID, err := a.RegisterUser(context.Background(), dto.ReqRegisterUser{
+			resRegisterUser, err := a.RegisterUser(context.Background(), dto.ReqRegisterUser{
 				Username: "",
 				Password: "mypassword",
 			})
 
-			assert.Empty(t, userID)
+			assert.Empty(t, resRegisterUser)
 			require.Error(t, err)
 			require.ErrorIs(t, err, gouser.ErrRequestInvalid)
 		})
 		t.Run("empty password should return error", func(t *testing.T) {
-			userID, err := a.RegisterUser(context.Background(), dto.ReqRegisterUser{
+			resRegisterUser, err := a.RegisterUser(context.Background(), dto.ReqRegisterUser{
 				Username: "",
 				Password: "mypassword",
 			})
 
-			assert.Empty(t, userID)
+			assert.Empty(t, resRegisterUser)
 			require.Error(t, err)
 			require.ErrorIs(t, err, gouser.ErrRequestInvalid)
 		})

@@ -54,14 +54,14 @@ func (a *Auth) RegisterUser(c context.Context, r *gousergrpc.ReqRegisterUser) (*
 		Password: r.GetPassword(),
 	}
 
-	userID, err := a.usecaseAuth.RegisterUser(c, req)
+	resRegisterUser, err := a.usecaseAuth.RegisterUser(c, req)
 	if err != nil {
 		err := fmt.Errorf("Auth.usecaseAuth.RegisterUser: %w", err)
 		return nil, err
 	}
 
 	res := gousergrpc.ResRegisterUser{
-		UserId: userID,
+		UserId: resRegisterUser.UserID,
 	}
 
 	return &res, nil

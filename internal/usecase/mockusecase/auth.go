@@ -56,10 +56,10 @@ func (mr *MockIAuthMockRecorder) LoginUser(ctx, req any) *gomock.Call {
 }
 
 // RegisterUser mocks base method.
-func (m *MockIAuth) RegisterUser(ctx context.Context, req dto.ReqRegisterUser) (int64, error) {
+func (m *MockIAuth) RegisterUser(ctx context.Context, req dto.ReqRegisterUser) (dto.ResRegisterUser, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "RegisterUser", ctx, req)
-	ret0, _ := ret[0].(int64)
+	ret0, _ := ret[0].(dto.ResRegisterUser)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

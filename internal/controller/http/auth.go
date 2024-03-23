@@ -51,12 +51,12 @@ func (a *Auth) registerUser(c *gin.Context) {
 		return
 	}
 
-	userID, err := a.usecaseAuth.RegisterUser(c, req)
+	resRegisterUser, err := a.usecaseAuth.RegisterUser(c, req)
 	if err != nil {
 		err := fmt.Errorf("Auth.usecaseAuth.RegisterUser: %w", err)
 		c.JSON(http.StatusBadRequest, setResponseBody(nil, err))
 		return
 	}
 
-	c.JSON(http.StatusOK, setResponseBody(userID, nil))
+	c.JSON(http.StatusOK, setResponseBody(resRegisterUser, nil))
 }

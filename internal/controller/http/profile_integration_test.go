@@ -61,7 +61,7 @@ func TestIntegrationProfileUpdateProfileByUserID(t *testing.T) {
 
 			resBodyByte, httpStatusCode = loginUser(controllerAuth, username, oldPassword)
 			assert.Equal(t, http.StatusBadRequest, httpStatusCode)
-			resBodyLogin2 := resError{}
+			resBodyLogin2 := ResError{}
 			require.NoError(t, json.Unmarshal(resBodyByte, &resBodyLogin2))
 			assert.Nil(t, resBodyLogin2.Data)
 			assert.NotEmpty(t, resBodyLogin2.Error)
@@ -85,7 +85,7 @@ func TestIntegrationProfileUpdateProfileByUserID(t *testing.T) {
 		t.Run("request header user jwt empty should error", func(t *testing.T) {
 			resBodyByte, httpStatusCode := updateProfileByUserID(controllerProfile, "", uuid.NewString())
 			assert.Equal(t, http.StatusBadRequest, httpStatusCode)
-			resBodyUpdate := resError{}
+			resBodyUpdate := ResError{}
 			require.NoError(t, json.Unmarshal(resBodyByte, &resBodyUpdate))
 			assert.Nil(t, resBodyUpdate.Data)
 			assert.NotEmpty(t, resBodyUpdate.Error)
@@ -94,7 +94,7 @@ func TestIntegrationProfileUpdateProfileByUserID(t *testing.T) {
 		t.Run("request header user jwt wrong should error", func(t *testing.T) {
 			resBodyByte, httpStatusCode := updateProfileByUserID(controllerProfile, "sdf", uuid.NewString())
 			assert.Equal(t, http.StatusBadRequest, httpStatusCode)
-			resBodyUpdate := resError{}
+			resBodyUpdate := ResError{}
 			require.NoError(t, json.Unmarshal(resBodyByte, &resBodyUpdate))
 			assert.Nil(t, resBodyUpdate.Data)
 			assert.NotEmpty(t, resBodyUpdate.Error)
@@ -111,7 +111,7 @@ func TestIntegrationProfileUpdateProfileByUserID(t *testing.T) {
 			resBodyLogin := loginUserWithAssertSuccess(t, cfg, controllerAuth, username, password)
 			resBodyByte, httpStatusCode := updateProfileByUserID(controllerProfile, resBodyLogin.Data, "")
 			assert.Equal(t, http.StatusBadRequest, httpStatusCode)
-			resBodyUpdate := resError{}
+			resBodyUpdate := ResError{}
 			require.NoError(t, json.Unmarshal(resBodyByte, &resBodyUpdate))
 			assert.Nil(t, resBodyUpdate.Data)
 			assert.NotEmpty(t, resBodyUpdate.Error)
@@ -149,7 +149,7 @@ func TestIntegrationProfileGetProfileByUsername(t *testing.T) {
 		assert.Equal(t, http.StatusOK, httpStatusCode)
 		resBodyGetProfile := resGetProfileByUsernameSuccess{}
 		require.NoError(t, json.Unmarshal(resBodyByte, &resBodyGetProfile))
-		assert.Equal(t, resBodyRegister.Data, resBodyGetProfile.Data.ID)
+		assert.Equal(t, resBodyRegister.Data.UserID, resBodyGetProfile.Data.ID)
 		assert.Equal(t, username, resBodyGetProfile.Data.Username)
 		assert.Nil(t, resBodyGetProfile.Error)
 	})
@@ -170,7 +170,7 @@ func TestIntegrationProfileGetProfileByUsername(t *testing.T) {
 		resBodyByte, httpStatusCode := getProfileByUsername(controllerProfile, uuid.NewString())
 
 		assert.Equal(t, http.StatusBadRequest, httpStatusCode)
-		resBody := resError{}
+		resBody := ResError{}
 		require.NoError(t, json.Unmarshal(resBodyByte, &resBody))
 		assert.Nil(t, resBody.Data)
 		assert.NotEmpty(t, resBody.Error)

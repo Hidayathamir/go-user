@@ -1,5 +1,11 @@
 package http
 
+// ResError -.
+type ResError struct {
+	Data  any    `json:"data"`
+	Error string `json:"error"`
+}
+
 type baseResponse struct {
 	Data  any `json:"data"`
 	Error any `json:"error"`

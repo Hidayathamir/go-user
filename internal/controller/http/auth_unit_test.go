@@ -89,7 +89,7 @@ func TestUnitAuthLoginUser(t *testing.T) {
 		a.loginUser(ctx)
 
 		assert.Equal(t, http.StatusBadRequest, rr.Code)
-		resBody := resError{}
+		resBody := ResError{}
 		require.NoError(t, json.Unmarshal(rr.Body.Bytes(), &resBody))
 		assert.Nil(t, resBody.Data)
 		assert.NotEmpty(t, resBody.Error)
@@ -128,15 +128,15 @@ func TestUnitAuthRegisterUser(t *testing.T) {
 		usecaseAuth.EXPECT().RegisterUser(gomock.Any(), dto.ReqRegisterUser{
 			Username: "hidayat",
 			Password: "mypassword",
-		}).Return(int64(323), nil)
+		}).Return(dto.ResRegisterUser{UserID: 323}, nil)
 
 		a.registerUser(ctx)
 
 		assert.Equal(t, http.StatusOK, rr.Code)
-		resBody := resRegisterUserSuccess{}
+		resBody := ResRegisterUser{}
 		require.NoError(t, json.Unmarshal(rr.Body.Bytes(), &resBody))
 		assert.NotEmpty(t, resBody.Data)
-		assert.Equal(t, int64(323), resBody.Data)
+		assert.Equal(t, int64(323), resBody.Data.UserID)
 		assert.Nil(t, resBody.Error)
 	})
 	t.Run("call usecase RegisterUser error should return error", func(t *testing.T) {
@@ -165,12 +165,12 @@ func TestUnitAuthRegisterUser(t *testing.T) {
 		usecaseAuth.EXPECT().RegisterUser(gomock.Any(), dto.ReqRegisterUser{
 			Username: "hidayat",
 			Password: "mypassword",
-		}).Return(int64(0), assert.AnError)
+		}).Return(dto.ResRegisterUser{UserID: 0}, assert.AnError)
 
 		a.registerUser(ctx)
 
 		assert.Equal(t, http.StatusBadRequest, rr.Code)
-		resBody := resError{}
+		resBody := ResError{}
 		require.NoError(t, json.Unmarshal(rr.Body.Bytes(), &resBody))
 		assert.Nil(t, resBody.Data)
 		assert.NotEmpty(t, resBody.Error)
