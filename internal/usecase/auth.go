@@ -17,8 +17,8 @@ import (
 type IAuth interface {
 	// RegisterUser register new user.
 	RegisterUser(ctx context.Context, req dto.ReqRegisterUser) (dto.ResRegisterUser, error)
-	// LoginUser validate username and password, return jwt string and error.
-	LoginUser(ctx context.Context, req dto.ReqLoginUser) (userJWT string, err error)
+	// LoginUser validate username and password.
+	LoginUser(ctx context.Context, req dto.ReqLoginUser) (dto.ResLoginUser, error)
 }
 
 // Auth implement IAuth.
@@ -39,28 +39,32 @@ func NewAuth(cfg config.Config, repoAuth repo.IAuth, repoProfile repo.IProfile) 
 	}
 }
 
-// LoginUser validate username and password, return jwt string and error.
-func (a *Auth) LoginUser(ctx context.Context, req dto.ReqLoginUser) (string, error) {
+// LoginUser validate username and password.
+func (a *Auth) LoginUser(ctx context.Context, req dto.ReqLoginUser) (dto.ResLoginUser, error) {
 	err := req.Validate()
 	if err != nil {
 		err := fmt.Errorf("dto.ReqLoginUser.Validate: %w", err)
-		return "", fmt.Errorf("%w: %w", gouser.ErrRequestInvalid, err)
+		return dto.ResLoginUser{}, fmt.Errorf("%w: %w", gouser.ErrRequestInvalid, err)
 	}
 
 	user, err := a.repoProfile.GetProfileByUsername(ctx, req.Username)
 	if err != nil {
-		return "", fmt.Errorf("Auth.repoProfile.GetProfileByUsername: %w", err)
+		return dto.ResLoginUser{}, fmt.Errorf("Auth.repoProfile.GetProfileByUsername: %w", err)
 	}
 
 	err = auth.CompareHashAndPassword(user.Password, req.Password)
 	if err != nil {
 		err := fmt.Errorf("auth.CompareHashAndPassword: %w", err)
-		return "", fmt.Errorf("%w: %w", gouser.ErrWrongPassword, err)
+		return dto.ResLoginUser{}, fmt.Errorf("%w: %w", gouser.ErrWrongPassword, err)
 	}
 
 	userJWT := auth.GenerateUserJWTToken(user.ID, a.cfg)
 
-	return userJWT, nil
+	res := dto.ResLoginUser{
+		UserJWT: userJWT,
+	}
+
+	return res, nil
 }
 
 // RegisterUser register new user.

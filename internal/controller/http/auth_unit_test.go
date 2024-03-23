@@ -47,15 +47,15 @@ func TestUnitAuthLoginUser(t *testing.T) {
 		usecaseAuth.EXPECT().LoginUser(gomock.Any(), dto.ReqLoginUser{
 			Username: "hidayat",
 			Password: "mypassword",
-		}).Return("Bearer dummyUserJWT", nil)
+		}).Return(dto.ResLoginUser{UserJWT: "Bearer dummyUserJWT"}, nil)
 
 		a.loginUser(ctx)
 
 		assert.Equal(t, http.StatusOK, rr.Code)
-		resBody := resLoginUserSuccess{}
+		resBody := ResLoginUser{}
 		require.NoError(t, json.Unmarshal(rr.Body.Bytes(), &resBody))
 		assert.NotEmpty(t, resBody.Data)
-		assert.Contains(t, resBody.Data, "dummyUserJWT")
+		assert.Contains(t, resBody.Data.UserJWT, "dummyUserJWT")
 		assert.Nil(t, resBody.Error)
 	})
 	t.Run("call usecase LoginUser error should return error", func(t *testing.T) {
@@ -84,7 +84,7 @@ func TestUnitAuthLoginUser(t *testing.T) {
 		usecaseAuth.EXPECT().LoginUser(gomock.Any(), dto.ReqLoginUser{
 			Username: "hidayat",
 			Password: "mypassword",
-		}).Return("", assert.AnError)
+		}).Return(dto.ResLoginUser{}, assert.AnError)
 
 		a.loginUser(ctx)
 

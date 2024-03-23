@@ -42,7 +42,7 @@ func TestIntegrationProfileUpdateProfileByUserID(t *testing.T) {
 		resBodyLogin := loginUserWithAssertSuccess(t, cfg, controllerAuth, username, oldPassword)
 
 		newPassword := uuid.NewString()
-		resBodyByte, httpStatusCode := updateProfileByUserID(controllerProfile, resBodyLogin.Data, newPassword)
+		resBodyByte, httpStatusCode := updateProfileByUserID(controllerProfile, resBodyLogin.Data.UserJWT, newPassword)
 		assert.Equal(t, http.StatusOK, httpStatusCode)
 		resBody := resUpdatePofileSuccess{}
 		require.NoError(t, json.Unmarshal(resBodyByte, &resBody))
@@ -109,7 +109,7 @@ func TestIntegrationProfileUpdateProfileByUserID(t *testing.T) {
 			password := uuid.NewString()
 			registerUserWithAssertSuccess(t, controllerAuth, username, password)
 			resBodyLogin := loginUserWithAssertSuccess(t, cfg, controllerAuth, username, password)
-			resBodyByte, httpStatusCode := updateProfileByUserID(controllerProfile, resBodyLogin.Data, "")
+			resBodyByte, httpStatusCode := updateProfileByUserID(controllerProfile, resBodyLogin.Data.UserJWT, "")
 			assert.Equal(t, http.StatusBadRequest, httpStatusCode)
 			resBodyUpdate := ResError{}
 			require.NoError(t, json.Unmarshal(resBodyByte, &resBodyUpdate))

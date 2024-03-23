@@ -32,14 +32,14 @@ func (a *Auth) loginUser(c *gin.Context) {
 		return
 	}
 
-	userJWT, err := a.usecaseAuth.LoginUser(c, req)
+	resLoginUser, err := a.usecaseAuth.LoginUser(c, req)
 	if err != nil {
 		err := fmt.Errorf("Auth.usecaseAuth.LoginUser: %w", err)
 		c.JSON(http.StatusBadRequest, setResponseBody(nil, err))
 		return
 	}
 
-	c.JSON(http.StatusOK, setResponseBody(userJWT, nil))
+	c.JSON(http.StatusOK, setResponseBody(resLoginUser, nil))
 }
 
 func (a *Auth) registerUser(c *gin.Context) {

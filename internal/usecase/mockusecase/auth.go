@@ -41,10 +41,10 @@ func (m *MockIAuth) EXPECT() *MockIAuthMockRecorder {
 }
 
 // LoginUser mocks base method.
-func (m *MockIAuth) LoginUser(ctx context.Context, req dto.ReqLoginUser) (string, error) {
+func (m *MockIAuth) LoginUser(ctx context.Context, req dto.ReqLoginUser) (dto.ResLoginUser, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "LoginUser", ctx, req)
-	ret0, _ := ret[0].(string)
+	ret0, _ := ret[0].(dto.ResLoginUser)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

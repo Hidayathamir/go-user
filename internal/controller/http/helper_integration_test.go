@@ -151,16 +151,16 @@ func loginUser(controllerAuth *Auth, username string, password string) (resBody 
 
 // loginUserWithAssertSuccess login user then validate, return response body
 // login success.
-func loginUserWithAssertSuccess(t *testing.T, cfg config.Config, controllerAuth *Auth, username string, password string) resLoginUserSuccess {
+func loginUserWithAssertSuccess(t *testing.T, cfg config.Config, controllerAuth *Auth, username string, password string) ResLoginUser {
 	t.Helper()
 
 	resBodyByte, httpStatusCode := loginUser(controllerAuth, username, password)
 	assert.Equal(t, http.StatusOK, httpStatusCode)
-	resBody := resLoginUserSuccess{}
+	resBody := ResLoginUser{}
 	require.NoError(t, json.Unmarshal(resBodyByte, &resBody))
 	assert.NotEmpty(t, resBody.Data)
-	assert.Contains(t, resBody.Data, "Bearer")
-	_, err := auth.GetUserIDFromJWTTokenString(cfg, resBody.Data)
+	assert.Contains(t, resBody.Data.UserJWT, "Bearer")
+	_, err := auth.GetUserIDFromJWTTokenString(cfg, resBody.Data.UserJWT)
 	require.NoError(t, err)
 	return resBody
 }

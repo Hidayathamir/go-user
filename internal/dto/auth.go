@@ -23,6 +23,11 @@ func (r ReqLoginUser) Validate() error {
 	return nil
 }
 
+// ResLoginUser -.
+type ResLoginUser struct {
+	UserJWT string `json:"user_jwt"`
+}
+
 // ReqRegisterUser -.
 type ReqRegisterUser struct {
 	Username string `json:"username"`

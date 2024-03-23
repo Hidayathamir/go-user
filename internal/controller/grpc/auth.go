@@ -34,14 +34,14 @@ func (a *Auth) LoginUser(c context.Context, r *gousergrpc.ReqLoginUser) (*gouser
 		Password: r.GetPassword(),
 	}
 
-	userJWT, err := a.usecaseAuth.LoginUser(c, req)
+	resLoginUser, err := a.usecaseAuth.LoginUser(c, req)
 	if err != nil {
 		err := fmt.Errorf("Auth.usecaseAuth.LoginUser: %w", err)
 		return nil, err
 	}
 
 	res := &gousergrpc.ResLoginUser{
-		UserJwt: userJWT,
+		UserJwt: resLoginUser.UserJWT,
 	}
 
 	return res, nil

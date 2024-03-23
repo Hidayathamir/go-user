@@ -39,7 +39,7 @@ func TestIntegrationAuthLoginUser(t *testing.T) {
 		resBodyRegister := registerUserWithAssertSuccess(t, controllerAuth, username, password)
 		resBodyLogin := loginUserWithAssertSuccess(t, cfg, controllerAuth, username, password)
 		t.Run("user id in user jwt should equal with user id when register", func(t *testing.T) {
-			userID, err := auth.GetUserIDFromJWTTokenString(cfg, resBodyLogin.Data)
+			userID, err := auth.GetUserIDFromJWTTokenString(cfg, resBodyLogin.Data.UserJWT)
 			require.NoError(t, err)
 			assert.Equal(t, resBodyRegister.Data.UserID, userID)
 			assert.Nil(t, resBodyLogin.Error)

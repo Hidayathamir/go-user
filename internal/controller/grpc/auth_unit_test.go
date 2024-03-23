@@ -35,7 +35,7 @@ func TestUnitAuthLoginUser(t *testing.T) {
 		usecaseAuth.EXPECT().LoginUser(gomock.Any(), dto.ReqLoginUser{
 			Username: "hidayat",
 			Password: "mypassword",
-		}).Return("Bearer dummyUserJWT", nil)
+		}).Return(dto.ResLoginUser{UserJWT: "Bearer dummyUserJWT"}, nil)
 
 		req := &gousergrpc.ReqLoginUser{
 			Username: "hidayat",
@@ -64,7 +64,7 @@ func TestUnitAuthLoginUser(t *testing.T) {
 		usecaseAuth.EXPECT().LoginUser(gomock.Any(), dto.ReqLoginUser{
 			Username: "hidayat",
 			Password: "mypassword",
-		}).Return("", assert.AnError)
+		}).Return(dto.ResLoginUser{}, assert.AnError)
 
 		req := &gousergrpc.ReqLoginUser{
 			Username: "hidayat",

@@ -49,15 +49,15 @@ func TestUnitAuthLoginUser(t *testing.T) {
 				UpdatedAt: time.Time{},
 			}, nil)
 
-		userJWT, err := a.LoginUser(context.Background(), dto.ReqLoginUser{
+		resLoginUser, err := a.LoginUser(context.Background(), dto.ReqLoginUser{
 			Username: "hidayat",
 			Password: "mypassword",
 		})
 
 		require.NoError(t, err)
-		assert.NotEmpty(t, userJWT)
-		assert.Contains(t, userJWT, "Bearer ")
-		userID, err := auth.GetUserIDFromJWTTokenString(cfg, userJWT)
+		assert.NotEmpty(t, resLoginUser)
+		assert.Contains(t, resLoginUser.UserJWT, "Bearer ")
+		userID, err := auth.GetUserIDFromJWTTokenString(cfg, resLoginUser.UserJWT)
 		require.NoError(t, err)
 		assert.Equal(t, int64(99), userID)
 	})
@@ -90,12 +90,12 @@ func TestUnitAuthLoginUser(t *testing.T) {
 				UpdatedAt: time.Time{},
 			}, nil)
 
-		userJWT, err := a.LoginUser(context.Background(), dto.ReqLoginUser{
+		resLoginUser, err := a.LoginUser(context.Background(), dto.ReqLoginUser{
 			Username: "hidayat",
 			Password: "wrongpassword",
 		})
 
-		assert.Empty(t, userJWT)
+		assert.Empty(t, resLoginUser)
 		require.Error(t, err)
 		require.ErrorIs(t, err, gouser.ErrWrongPassword)
 	})
@@ -122,12 +122,12 @@ func TestUnitAuthLoginUser(t *testing.T) {
 			GetProfileByUsername(gomock.Any(), "hidayat").
 			Return(entity.User{}, assert.AnError)
 
-		userJWT, err := a.LoginUser(context.Background(), dto.ReqLoginUser{
+		resLoginUser, err := a.LoginUser(context.Background(), dto.ReqLoginUser{
 			Username: "hidayat",
 			Password: "mypassword",
 		})
 
-		assert.Empty(t, userJWT)
+		assert.Empty(t, resLoginUser)
 		require.Error(t, err)
 		require.ErrorIs(t, err, assert.AnError)
 	})
@@ -144,22 +144,22 @@ func TestUnitAuthLoginUser(t *testing.T) {
 		}
 
 		t.Run("username empty should return error", func(t *testing.T) {
-			userJWT, err := a.LoginUser(context.Background(), dto.ReqLoginUser{
+			resLoginUser, err := a.LoginUser(context.Background(), dto.ReqLoginUser{
 				Username: "",
 				Password: "mypassword",
 			})
 
-			assert.Empty(t, userJWT)
+			assert.Empty(t, resLoginUser)
 			require.Error(t, err)
 			require.ErrorIs(t, err, gouser.ErrRequestInvalid)
 		})
 		t.Run("password empty should return error", func(t *testing.T) {
-			userJWT, err := a.LoginUser(context.Background(), dto.ReqLoginUser{
+			resLoginUser, err := a.LoginUser(context.Background(), dto.ReqLoginUser{
 				Username: "hidayat",
 				Password: "",
 			})
 
-			assert.Empty(t, userJWT)
+			assert.Empty(t, resLoginUser)
 			require.Error(t, err)
 			require.ErrorIs(t, err, gouser.ErrRequestInvalid)
 		})
