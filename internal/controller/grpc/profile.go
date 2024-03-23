@@ -28,7 +28,7 @@ func newProfile(cfg config.Config, usecaseProfile usecase.IProfile) *Profile {
 	}
 }
 
-// GetProfileByUsername implements pb.ProfileServer.
+// GetProfileByUsername implements gousergrpc.ProfileServer.
 func (p *Profile) GetProfileByUsername(c context.Context, r *gousergrpc.ReqGetProfileByUsername) (*gousergrpc.ResGetProfileByUsername, error) {
 	user, err := p.usecaseProfile.GetProfileByUsername(c, r.GetUsername())
 	if err != nil {
@@ -46,7 +46,7 @@ func (p *Profile) GetProfileByUsername(c context.Context, r *gousergrpc.ReqGetPr
 	return res, nil
 }
 
-// UpdateProfileByUserID implements pb.ProfileServer.
+// UpdateProfileByUserID implements gousergrpc.ProfileServer.
 func (p *Profile) UpdateProfileByUserID(c context.Context, r *gousergrpc.ReqUpdateProfileByUserID) (*gousergrpc.ProfileEmpty, error) {
 	req := dto.ReqUpdateProfileByUserID{
 		UserJWT:  r.GetUserJwt(),

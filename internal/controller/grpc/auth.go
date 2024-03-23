@@ -27,7 +27,7 @@ func newAuth(cfg config.Config, usecaseAuth usecase.IAuth) *Auth {
 	}
 }
 
-// LoginUser implements pb.AuthServer.
+// LoginUser implements gousergrpc.AuthServer.
 func (a *Auth) LoginUser(c context.Context, r *gousergrpc.ReqLoginUser) (*gousergrpc.ResLoginUser, error) {
 	req := dto.ReqLoginUser{
 		Username: r.GetUsername(),
@@ -47,7 +47,7 @@ func (a *Auth) LoginUser(c context.Context, r *gousergrpc.ReqLoginUser) (*gouser
 	return res, nil
 }
 
-// RegisterUser implements pb.AuthServer.
+// RegisterUser implements gousergrpc.AuthServer.
 func (a *Auth) RegisterUser(c context.Context, r *gousergrpc.ReqRegisterUser) (*gousergrpc.ResRegisterUser, error) {
 	req := dto.ReqRegisterUser{
 		Username: r.GetUsername(),
