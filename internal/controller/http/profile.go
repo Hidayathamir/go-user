@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/Hidayathamir/go-user/config"
+	"github.com/Hidayathamir/go-user/internal/pkg/header"
 	"github.com/Hidayathamir/go-user/internal/usecase"
-	"github.com/Hidayathamir/go-user/pkg/header"
 	"github.com/gin-gonic/gin"
 )
 

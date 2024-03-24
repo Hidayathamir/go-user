@@ -13,10 +13,10 @@ import (
 
 	"github.com/Hidayathamir/go-user/config"
 	"github.com/Hidayathamir/go-user/internal/pkg/auth"
+	"github.com/Hidayathamir/go-user/internal/pkg/header"
 	"github.com/Hidayathamir/go-user/internal/pkg/jutil"
 	"github.com/Hidayathamir/go-user/internal/repo"
 	"github.com/Hidayathamir/go-user/internal/repo/db"
-	"github.com/Hidayathamir/go-user/pkg/header"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

@@ -10,8 +10,8 @@ import (
 	"net/http"
 
 	controllerHTTP "github.com/Hidayathamir/go-user/internal/controller/http"
+	"github.com/Hidayathamir/go-user/internal/pkg/header"
 	"github.com/Hidayathamir/go-user/internal/usecase"
-	"github.com/Hidayathamir/go-user/pkg/header"
 	"github.com/sirupsen/logrus"
 )
 
