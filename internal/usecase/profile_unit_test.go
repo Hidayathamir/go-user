@@ -223,10 +223,11 @@ func TestUnitProfileUpdateProfileByUserID(t *testing.T) {
 		}
 
 		err := p.UpdateProfileByUserID(context.Background(), ReqUpdateProfileByUserID{
-			UserJWT:  "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTA1OTY1MDEsInVzZXJfaWQiOjIzfQ.ssdbnErvk_3aKxu3dUmhEFfPr36dhxR7Yx_nvMKzPMs",
+			UserJWT:  "Bearer " + auth.GenerateUserJWTToken(323, cfg),
 			Password: uuid.NewString() + uuid.NewString() + uuid.NewString(),
 		})
 
 		require.Error(t, err)
+		require.ErrorContains(t, err, "auth.GenerateHashPassword")
 	})
 }

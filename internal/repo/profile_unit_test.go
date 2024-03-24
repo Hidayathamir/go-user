@@ -70,8 +70,9 @@ func TestUnitProfileGetProfileByUsername(t *testing.T) {
 
 		user, err := p.GetProfileByUsername(context.Background(), "hidayat")
 
-		require.Error(t, err)
 		assert.Empty(t, user)
+		require.Error(t, err)
+		require.ErrorContains(t, err, "pgx.Rows.Scan")
 	})
 	t.Run("QueryRow Scan no row error should return error", func(t *testing.T) {
 		t.Parallel()
@@ -92,9 +93,9 @@ func TestUnitProfileGetProfileByUsername(t *testing.T) {
 
 		user, err := p.GetProfileByUsername(context.Background(), "hidayat")
 
+		assert.Empty(t, user)
 		require.Error(t, err)
 		require.ErrorIs(t, err, gouser.ErrUnknownUsername)
-		assert.Empty(t, user)
 	})
 }
 
@@ -148,6 +149,7 @@ func TestUnitProfileUpdateProfileByUserID(t *testing.T) {
 		})
 
 		require.Error(t, err)
+		require.ErrorContains(t, err, "Profile.db.Pool.Exec")
 	})
 	t.Run("RowsAffected 0 should return error", func(t *testing.T) {
 		t.Parallel()
