@@ -13,7 +13,7 @@ import (
 	context "context"
 	reflect "reflect"
 
-	dto "github.com/Hidayathamir/go-user/internal/dto"
+	usecase "github.com/Hidayathamir/go-user/internal/usecase"
 	gomock "go.uber.org/mock/gomock"
 )
 
@@ -41,10 +41,10 @@ func (m *MockIProfile) EXPECT() *MockIProfileMockRecorder {
 }
 
 // GetProfileByUsername mocks base method.
-func (m *MockIProfile) GetProfileByUsername(ctx context.Context, req dto.ReqGetProfileByUsername) (dto.ResGetProfileByUsername, error) {
+func (m *MockIProfile) GetProfileByUsername(ctx context.Context, req usecase.ReqGetProfileByUsername) (usecase.ResGetProfileByUsername, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetProfileByUsername", ctx, req)
-	ret0, _ := ret[0].(dto.ResGetProfileByUsername)
+	ret0, _ := ret[0].(usecase.ResGetProfileByUsername)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -56,7 +56,7 @@ func (mr *MockIProfileMockRecorder) GetProfileByUsername(ctx, req any) *gomock.C
 }
 
 // UpdateProfileByUserID mocks base method.
-func (m *MockIProfile) UpdateProfileByUserID(ctx context.Context, req dto.ReqUpdateProfileByUserID) error {
+func (m *MockIProfile) UpdateProfileByUserID(ctx context.Context, req usecase.ReqUpdateProfileByUserID) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateProfileByUserID", ctx, req)
 	ret0, _ := ret[0].(error)

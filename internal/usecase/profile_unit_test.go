@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/Hidayathamir/go-user/config"
-	"github.com/Hidayathamir/go-user/internal/dto"
 	"github.com/Hidayathamir/go-user/internal/entity"
 	"github.com/Hidayathamir/go-user/internal/pkg/auth"
 	"github.com/Hidayathamir/go-user/internal/repo/mockrepo"
@@ -43,10 +42,10 @@ func TestUnitProfileGetProfileByUsername(t *testing.T) {
 				UpdatedAt: time.Time{},
 			}, nil)
 
-		profile, err := p.GetProfileByUsername(context.Background(), dto.ReqGetProfileByUsername{Username: "hidayat"})
+		profile, err := p.GetProfileByUsername(context.Background(), ReqGetProfileByUsername{Username: "hidayat"})
 
 		assert.NotEmpty(t, profile)
-		assert.Equal(t, dto.ResGetProfileByUsername{
+		assert.Equal(t, ResGetProfileByUsername{
 			ID:        124,
 			Username:  "hidayat",
 			CreatedAt: time.Time{},
@@ -71,7 +70,7 @@ func TestUnitProfileGetProfileByUsername(t *testing.T) {
 			GetProfileByUsername(gomock.Any(), "hidayat").
 			Return(entity.User{}, assert.AnError)
 
-		profile, err := p.GetProfileByUsername(context.Background(), dto.ReqGetProfileByUsername{Username: "hidayat"})
+		profile, err := p.GetProfileByUsername(context.Background(), ReqGetProfileByUsername{Username: "hidayat"})
 
 		assert.Empty(t, profile)
 		require.Error(t, err)
@@ -90,7 +89,7 @@ func TestUnitProfileGetProfileByUsername(t *testing.T) {
 			repoProfile: repoProfile,
 		}
 
-		profile, err := p.GetProfileByUsername(context.Background(), dto.ReqGetProfileByUsername{Username: ""})
+		profile, err := p.GetProfileByUsername(context.Background(), ReqGetProfileByUsername{Username: ""})
 
 		assert.Empty(t, profile)
 		require.Error(t, err)
@@ -120,7 +119,7 @@ func TestUnitProfileUpdateProfileByUserID(t *testing.T) {
 
 		repoProfile.EXPECT().UpdateProfileByUserID(gomock.Any(), gomock.Any()).Return(nil)
 
-		err := p.UpdateProfileByUserID(context.Background(), dto.ReqUpdateProfileByUserID{
+		err := p.UpdateProfileByUserID(context.Background(), ReqUpdateProfileByUserID{
 			UserJWT:  auth.GenerateUserJWTToken(441, cfg),
 			Password: "dummypassword",
 		})
@@ -148,7 +147,7 @@ func TestUnitProfileUpdateProfileByUserID(t *testing.T) {
 			UpdateProfileByUserID(gomock.Any(), gomock.Any()).
 			Return(assert.AnError)
 
-		err := p.UpdateProfileByUserID(context.Background(), dto.ReqUpdateProfileByUserID{
+		err := p.UpdateProfileByUserID(context.Background(), ReqUpdateProfileByUserID{
 			UserJWT:  auth.GenerateUserJWTToken(2342, cfg),
 			Password: "dummypassword",
 		})
@@ -173,7 +172,7 @@ func TestUnitProfileUpdateProfileByUserID(t *testing.T) {
 			repoProfile: repoProfile,
 		}
 
-		err := p.UpdateProfileByUserID(context.Background(), dto.ReqUpdateProfileByUserID{
+		err := p.UpdateProfileByUserID(context.Background(), ReqUpdateProfileByUserID{
 			UserJWT:  "",
 			Password: "dummypassword",
 		})
@@ -198,7 +197,7 @@ func TestUnitProfileUpdateProfileByUserID(t *testing.T) {
 			repoProfile: repoProfile,
 		}
 
-		err := p.UpdateProfileByUserID(context.Background(), dto.ReqUpdateProfileByUserID{
+		err := p.UpdateProfileByUserID(context.Background(), ReqUpdateProfileByUserID{
 			UserJWT:  "Bearer dummyuserJWT",
 			Password: "dummypassword",
 		})
@@ -223,7 +222,7 @@ func TestUnitProfileUpdateProfileByUserID(t *testing.T) {
 			repoProfile: repoProfile,
 		}
 
-		err := p.UpdateProfileByUserID(context.Background(), dto.ReqUpdateProfileByUserID{
+		err := p.UpdateProfileByUserID(context.Background(), ReqUpdateProfileByUserID{
 			UserJWT:  "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTA1OTY1MDEsInVzZXJfaWQiOjIzfQ.ssdbnErvk_3aKxu3dUmhEFfPr36dhxR7Yx_nvMKzPMs",
 			Password: uuid.NewString() + uuid.NewString() + uuid.NewString(),
 		})

@@ -1,15 +1,15 @@
 package http
 
-import "github.com/Hidayathamir/go-user/internal/dto"
+import "github.com/Hidayathamir/go-user/internal/usecase"
 
 // ResRegisterUser -.
 type ResRegisterUser struct {
-	Data  dto.ResRegisterUser `json:"data"`
-	Error any                 `json:"error"`
+	Data  usecase.ResRegisterUser `json:"data"`
+	Error any                     `json:"error"`
 }
 
 // ResLoginUser -.
 type ResLoginUser struct {
-	Data  dto.ResLoginUser `json:"data"`
-	Error any              `json:"error"`
+	Data  usecase.ResLoginUser `json:"data"`
+	Error any                  `json:"error"`
 }

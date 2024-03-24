@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/Hidayathamir/go-user/config"
-	"github.com/Hidayathamir/go-user/internal/dto"
 	"github.com/Hidayathamir/go-user/internal/usecase"
 	"github.com/gin-gonic/gin"
 )
@@ -24,7 +23,7 @@ func newAuth(cfg config.Config, usecaseAuth usecase.IAuth) *Auth {
 }
 
 func (a *Auth) loginUser(c *gin.Context) {
-	req := dto.ReqLoginUser{}
+	req := usecase.ReqLoginUser{}
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		err := fmt.Errorf("gin.Context.ShouldBindJSON: %w", err)
@@ -43,7 +42,7 @@ func (a *Auth) loginUser(c *gin.Context) {
 }
 
 func (a *Auth) registerUser(c *gin.Context) {
-	req := dto.ReqRegisterUser{}
+	req := usecase.ReqRegisterUser{}
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		err := fmt.Errorf("gin.Context.ShouldBindJSON: %w", err)

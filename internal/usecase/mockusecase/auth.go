@@ -13,7 +13,7 @@ import (
 	context "context"
 	reflect "reflect"
 
-	dto "github.com/Hidayathamir/go-user/internal/dto"
+	usecase "github.com/Hidayathamir/go-user/internal/usecase"
 	gomock "go.uber.org/mock/gomock"
 )
 
@@ -41,10 +41,10 @@ func (m *MockIAuth) EXPECT() *MockIAuthMockRecorder {
 }
 
 // LoginUser mocks base method.
-func (m *MockIAuth) LoginUser(ctx context.Context, req dto.ReqLoginUser) (dto.ResLoginUser, error) {
+func (m *MockIAuth) LoginUser(ctx context.Context, req usecase.ReqLoginUser) (usecase.ResLoginUser, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "LoginUser", ctx, req)
-	ret0, _ := ret[0].(dto.ResLoginUser)
+	ret0, _ := ret[0].(usecase.ResLoginUser)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -56,10 +56,10 @@ func (mr *MockIAuthMockRecorder) LoginUser(ctx, req any) *gomock.Call {
 }
 
 // RegisterUser mocks base method.
-func (m *MockIAuth) RegisterUser(ctx context.Context, req dto.ReqRegisterUser) (dto.ResRegisterUser, error) {
+func (m *MockIAuth) RegisterUser(ctx context.Context, req usecase.ReqRegisterUser) (usecase.ResRegisterUser, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "RegisterUser", ctx, req)
-	ret0, _ := ret[0].(dto.ResRegisterUser)
+	ret0, _ := ret[0].(usecase.ResRegisterUser)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

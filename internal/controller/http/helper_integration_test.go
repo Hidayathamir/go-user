@@ -13,7 +13,6 @@ import (
 
 	"github.com/Hidayathamir/go-user/config"
 	"github.com/Hidayathamir/go-user/internal/db"
-	"github.com/Hidayathamir/go-user/internal/dto"
 	"github.com/Hidayathamir/go-user/internal/pkg/auth"
 	"github.com/Hidayathamir/go-user/internal/pkg/header"
 	"github.com/Hidayathamir/go-user/internal/pkg/jutil"
@@ -129,7 +128,6 @@ func registerUserWithAssertSuccess(t *testing.T, controllerAuth *Auth, username 
 	resBody := ResRegisterUser{}
 	require.NoError(t, json.Unmarshal(resBodyByte, &resBody))
 	assert.NotEmpty(t, resBody.Data)
-	assert.IsType(t, dto.ResRegisterUser{}, resBody.Data)
 	assert.Nil(t, resBody.Error)
 	return resBody
 }

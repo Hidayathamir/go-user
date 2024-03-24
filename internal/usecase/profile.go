@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/Hidayathamir/go-user/config"
-	"github.com/Hidayathamir/go-user/internal/dto"
 	"github.com/Hidayathamir/go-user/internal/pkg/auth"
 	"github.com/Hidayathamir/go-user/internal/repo"
 	"github.com/Hidayathamir/go-user/pkg/gouser"
@@ -16,9 +15,9 @@ import (
 // IProfile contains abstraction of usecase profile.
 type IProfile interface {
 	// GetProfileByUsername return user profile by username.
-	GetProfileByUsername(ctx context.Context, req dto.ReqGetProfileByUsername) (dto.ResGetProfileByUsername, error)
+	GetProfileByUsername(ctx context.Context, req ReqGetProfileByUsername) (ResGetProfileByUsername, error)
 	// UpdateProfileByUserID update user profile by user id.
-	UpdateProfileByUserID(ctx context.Context, req dto.ReqUpdateProfileByUserID) error
+	UpdateProfileByUserID(ctx context.Context, req ReqUpdateProfileByUserID) error
 }
 
 // Profile implement IProfile.
@@ -38,29 +37,29 @@ func NewProfile(cfg config.Config, repoProfile repo.IProfile) *Profile {
 }
 
 // GetProfileByUsername return user profile by username.
-func (p *Profile) GetProfileByUsername(ctx context.Context, req dto.ReqGetProfileByUsername) (dto.ResGetProfileByUsername, error) {
+func (p *Profile) GetProfileByUsername(ctx context.Context, req ReqGetProfileByUsername) (ResGetProfileByUsername, error) {
 	err := req.Validate()
 	if err != nil {
-		err := fmt.Errorf("dto.ReqGetProfileByUsername.Validate: %w", err)
-		return dto.ResGetProfileByUsername{}, fmt.Errorf("%w: %w", gouser.ErrRequestInvalid, err)
+		err := fmt.Errorf("ReqGetProfileByUsername.Validate: %w", err)
+		return ResGetProfileByUsername{}, fmt.Errorf("%w: %w", gouser.ErrRequestInvalid, err)
 	}
 
 	user, err := p.repoProfile.GetProfileByUsername(ctx, req.Username)
 	if err != nil {
-		return dto.ResGetProfileByUsername{}, fmt.Errorf("Profile.repoProfile.GetProfileByUsername: %w", err)
+		return ResGetProfileByUsername{}, fmt.Errorf("Profile.repoProfile.GetProfileByUsername: %w", err)
 	}
 
-	res := dto.ResGetProfileByUsername{}
+	res := ResGetProfileByUsername{}
 	res = res.LoadEntityUser(user)
 
 	return res, nil
 }
 
 // UpdateProfileByUserID update user profile by user id.
-func (p *Profile) UpdateProfileByUserID(ctx context.Context, req dto.ReqUpdateProfileByUserID) error {
+func (p *Profile) UpdateProfileByUserID(ctx context.Context, req ReqUpdateProfileByUserID) error {
 	err := req.Validate()
 	if err != nil {
-		err := fmt.Errorf("dto.ReqUpdateProfileByUserID.Validate: %w", err)
+		err := fmt.Errorf("ReqUpdateProfileByUserID.Validate: %w", err)
 		return fmt.Errorf("%w: %w", gouser.ErrRequestInvalid, err)
 	}
 

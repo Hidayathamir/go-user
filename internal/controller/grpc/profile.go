@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/Hidayathamir/go-user/config"
-	"github.com/Hidayathamir/go-user/internal/dto"
 	"github.com/Hidayathamir/go-user/internal/usecase"
 	"github.com/Hidayathamir/go-user/pkg/gousergrpc"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -30,7 +29,7 @@ func newProfile(cfg config.Config, usecaseProfile usecase.IProfile) *Profile {
 
 // GetProfileByUsername implements gousergrpc.ProfileServer.
 func (p *Profile) GetProfileByUsername(c context.Context, r *gousergrpc.ReqGetProfileByUsername) (*gousergrpc.ResGetProfileByUsername, error) {
-	req := dto.ReqGetProfileByUsername{Username: r.GetUsername()}
+	req := usecase.ReqGetProfileByUsername{Username: r.GetUsername()}
 
 	user, err := p.usecaseProfile.GetProfileByUsername(c, req)
 	if err != nil {
@@ -50,7 +49,7 @@ func (p *Profile) GetProfileByUsername(c context.Context, r *gousergrpc.ReqGetPr
 
 // UpdateProfileByUserID implements gousergrpc.ProfileServer.
 func (p *Profile) UpdateProfileByUserID(c context.Context, r *gousergrpc.ReqUpdateProfileByUserID) (*gousergrpc.ProfileEmpty, error) {
-	req := dto.ReqUpdateProfileByUserID{
+	req := usecase.ReqUpdateProfileByUserID{
 		UserJWT:  r.GetUserJwt(),
 		Password: r.GetPassword(),
 	}

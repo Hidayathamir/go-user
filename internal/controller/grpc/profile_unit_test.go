@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/Hidayathamir/go-user/config"
-	"github.com/Hidayathamir/go-user/internal/dto"
+	"github.com/Hidayathamir/go-user/internal/usecase"
 	"github.com/Hidayathamir/go-user/internal/usecase/mockusecase"
 	"github.com/Hidayathamir/go-user/pkg/gousergrpc"
 	"github.com/gin-gonic/gin"
@@ -33,7 +33,7 @@ func TestUnitProfileGetProfileByUsername(t *testing.T) {
 			usecaseProfile: usecaseProfile,
 		}
 
-		user := dto.ResGetProfileByUsername{
+		user := usecase.ResGetProfileByUsername{
 			ID:        23,
 			Username:  "hidayat",
 			CreatedAt: time.Time{},
@@ -41,7 +41,7 @@ func TestUnitProfileGetProfileByUsername(t *testing.T) {
 		}
 
 		usecaseProfile.EXPECT().
-			GetProfileByUsername(gomock.Any(), dto.ReqGetProfileByUsername{Username: "hidayat"}).
+			GetProfileByUsername(gomock.Any(), usecase.ReqGetProfileByUsername{Username: "hidayat"}).
 			Return(user, nil)
 
 		req := &gousergrpc.ReqGetProfileByUsername{
@@ -70,10 +70,10 @@ func TestUnitProfileGetProfileByUsername(t *testing.T) {
 			usecaseProfile: usecaseProfile,
 		}
 
-		user := dto.ResGetProfileByUsername{}
+		user := usecase.ResGetProfileByUsername{}
 
 		usecaseProfile.EXPECT().
-			GetProfileByUsername(gomock.Any(), dto.ReqGetProfileByUsername{Username: "hidayat"}).
+			GetProfileByUsername(gomock.Any(), usecase.ReqGetProfileByUsername{Username: "hidayat"}).
 			Return(user, assert.AnError)
 
 		req := &gousergrpc.ReqGetProfileByUsername{
@@ -107,7 +107,7 @@ func TestProfileUpdateProfileByUserID(t *testing.T) {
 		}
 
 		usecaseProfile.EXPECT().
-			UpdateProfileByUserID(gomock.Any(), dto.ReqUpdateProfileByUserID{
+			UpdateProfileByUserID(gomock.Any(), usecase.ReqUpdateProfileByUserID{
 				UserJWT:  "Bearer dummyUserJWT",
 				Password: "newpassword",
 			}).Return(nil)
@@ -136,7 +136,7 @@ func TestProfileUpdateProfileByUserID(t *testing.T) {
 		}
 
 		usecaseProfile.EXPECT().
-			UpdateProfileByUserID(gomock.Any(), dto.ReqUpdateProfileByUserID{
+			UpdateProfileByUserID(gomock.Any(), usecase.ReqUpdateProfileByUserID{
 				UserJWT:  "Bearer dummyUserJWT",
 				Password: "newpassword",
 			}).Return(assert.AnError)

@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"github.com/Hidayathamir/go-user/config"
-	"github.com/Hidayathamir/go-user/internal/dto"
 	"github.com/Hidayathamir/go-user/internal/pkg/header"
+	"github.com/Hidayathamir/go-user/internal/usecase"
 	"github.com/Hidayathamir/go-user/internal/usecase/mockusecase"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
@@ -45,14 +45,14 @@ func TestUnitProfileGetProfileByUsername(t *testing.T) {
 			Value: "hidayat",
 		})
 
-		user := dto.ResGetProfileByUsername{
+		user := usecase.ResGetProfileByUsername{
 			ID:        23,
 			Username:  "hidayat",
 			CreatedAt: time.Time{},
 			UpdatedAt: time.Time{},
 		}
 		usecaseProfile.EXPECT().
-			GetProfileByUsername(gomock.Any(), dto.ReqGetProfileByUsername{Username: "hidayat"}).
+			GetProfileByUsername(gomock.Any(), usecase.ReqGetProfileByUsername{Username: "hidayat"}).
 			Return(user, nil)
 
 		p.getProfileByUsername(ctx)
@@ -87,8 +87,8 @@ func TestUnitProfileGetProfileByUsername(t *testing.T) {
 		})
 
 		usecaseProfile.EXPECT().
-			GetProfileByUsername(gomock.Any(), dto.ReqGetProfileByUsername{Username: "hidayat"}).
-			Return(dto.ResGetProfileByUsername{}, assert.AnError)
+			GetProfileByUsername(gomock.Any(), usecase.ReqGetProfileByUsername{Username: "hidayat"}).
+			Return(usecase.ResGetProfileByUsername{}, assert.AnError)
 
 		p.getProfileByUsername(ctx)
 
@@ -121,7 +121,7 @@ func TestProfileUpdateProfileByUserID(t *testing.T) {
 
 		rr := httptest.NewRecorder()
 		ctx, _ := gin.CreateTestContext(rr)
-		reqBody, _ := json.Marshal(dto.ReqUpdateProfileByUserID{
+		reqBody, _ := json.Marshal(usecase.ReqUpdateProfileByUserID{
 			Password: "newpassword",
 		})
 		req := httptest.NewRequest(http.MethodGet, "/", bytes.NewReader(reqBody))
@@ -129,7 +129,7 @@ func TestProfileUpdateProfileByUserID(t *testing.T) {
 		ctx.Request = req
 
 		usecaseProfile.EXPECT().
-			UpdateProfileByUserID(gomock.Any(), dto.ReqUpdateProfileByUserID{
+			UpdateProfileByUserID(gomock.Any(), usecase.ReqUpdateProfileByUserID{
 				UserJWT:  "Bearer dummyUserJWT",
 				Password: "newpassword",
 			}).Return(nil)
@@ -158,7 +158,7 @@ func TestProfileUpdateProfileByUserID(t *testing.T) {
 
 		rr := httptest.NewRecorder()
 		ctx, _ := gin.CreateTestContext(rr)
-		reqBody, _ := json.Marshal(dto.ReqUpdateProfileByUserID{
+		reqBody, _ := json.Marshal(usecase.ReqUpdateProfileByUserID{
 			Password: "newpassword",
 		})
 		req := httptest.NewRequest(http.MethodGet, "/", bytes.NewReader(reqBody))
@@ -166,7 +166,7 @@ func TestProfileUpdateProfileByUserID(t *testing.T) {
 		ctx.Request = req
 
 		usecaseProfile.EXPECT().
-			UpdateProfileByUserID(gomock.Any(), dto.ReqUpdateProfileByUserID{
+			UpdateProfileByUserID(gomock.Any(), usecase.ReqUpdateProfileByUserID{
 				UserJWT:  "Bearer dummyUserJWT",
 				Password: "newpassword",
 			}).Return(assert.AnError)
