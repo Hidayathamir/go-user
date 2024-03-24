@@ -2,12 +2,9 @@ package app
 
 import (
 	"flag"
-	"path/filepath"
 
 	"github.com/Hidayathamir/go-user/config"
-	"github.com/Hidayathamir/go-user/internal/repo/db"
 	"github.com/ilyakaznacheev/cleanenv"
-	"github.com/sirupsen/logrus"
 )
 
 type cliArg struct {
@@ -26,15 +23,4 @@ func parseCLIArgs() cliArg {
 	flag.Parse()
 
 	return arg
-}
-
-// handleCommandLineArgsMigrate do db migration then exit if args migrate exists.
-func handleCommandLineArgsMigrate(cfg config.Config, arg cliArg) {
-	if arg.isIncludeMigrate {
-		schemaMigrationPath := filepath.Join("internal", "repo", "db", "schema_migration")
-		err := db.MigrateUp(cfg, schemaMigrationPath)
-		if err != nil {
-			logrus.Fatalf("db.MigrateUp: %v", err)
-		}
-	}
 }
