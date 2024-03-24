@@ -45,6 +45,16 @@ go-test-unit:
 	go test -cover ./internal/usecase -run TestUnit && \
 	go test -cover ./internal/repo -run TestUnit
 
+# Run test http client.
+go-test-http-client:
+	go clean -testcache && \
+	go test -v ./pkg/gouserhttp -run TestHTTPClient && \
+	go test -cover ./pkg/gouserhttp -run TestHTTPClient
+
+# Run test all.
+go-test-all:
+	make go-test-http-client && make go-test-integration && make go-test-unit 	
+
 ###################################
 
 # For deployment. Run postgres container also build and run go app container.

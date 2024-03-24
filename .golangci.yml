@@ -126,6 +126,8 @@ issues:
         - dupl
 
 linters-settings:
+  goconst:
+    min-occurrences: 10
   tagliatelle:
     case:
       rules:
@@ -138,6 +140,7 @@ linters-settings:
         files:
           - "!**/internal/controller/http/**"
           - "!**/config/gin.go"
+          - "!**/pkg/gouserhttp/**"
         deny:
           - pkg: github.com/gin-gonic/gin
             desc: "gin should only be used in controller http layer"

@@ -16,8 +16,9 @@ import (
 )
 
 // API path list.
-const (
+var (
 	APIAuthRegister = "/api/v1/auth/register"
+	APIAuthLogin    = "/api/v1/auth/login"
 )
 
 // IAuthClient -.
@@ -42,12 +43,61 @@ func NewAuthClient(baseURL string) *AuthClient {
 }
 
 // LoginUser implements AuthClient.
-func (a *AuthClient) LoginUser(context.Context, usecase.ReqLoginUser) (usecase.ResLoginUser, error) {
-	panic("unimplemented") // TODO: IMPLEMENT
+func (a *AuthClient) LoginUser(ctx context.Context, req usecase.ReqLoginUser) (usecase.ResLoginUser, error) { //nolint:dupl
+	url := a.BaseURL + APIAuthLogin
+
+	fail := func(msg string, err error) (usecase.ResLoginUser, error) {
+		return usecase.ResLoginUser{}, fmt.Errorf(msg+": %w", err)
+	}
+
+	reqJSONByte, err := json.Marshal(req)
+	if err != nil {
+		return fail("json.Marshal", err)
+	}
+
+	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewBuffer(reqJSONByte))
+	if err != nil {
+		return fail("http.NewRequestWithContext", err)
+	}
+	httpReq.Header.Add(header.ContentType, header.AppJSON)
+
+	httpRes, err := http.DefaultClient.Do(httpReq)
+	if err != nil {
+		return fail("http.DefaultClient.Do", err)
+	}
+	defer func() {
+		err := httpRes.Body.Close()
+		if err != nil {
+			logrus.Warnf("http.Response.Body.Close: %v", err)
+		}
+	}()
+
+	httpResBody, err := io.ReadAll(httpRes.Body)
+	if err != nil {
+		return fail("io.ReadAll", err)
+	}
+
+	if httpRes.StatusCode != http.StatusOK {
+		resErr := controllerHTTP.ResError{}
+		err := json.Unmarshal(httpResBody, &resErr)
+		if err != nil {
+			return fail("json.Unmarshal", err)
+		}
+		return fail("http.Response.StatusCode != http.StatusOk", errors.New(resErr.Error))
+	}
+
+	res := controllerHTTP.ResLoginUser{}
+
+	err = json.Unmarshal(httpResBody, &res)
+	if err != nil {
+		return fail("json.Unmarshal", err)
+	}
+
+	return res.Data, nil
 }
 
 // RegisterUser implements AuthClient.
-func (a *AuthClient) RegisterUser(ctx context.Context, req usecase.ReqRegisterUser) (usecase.ResRegisterUser, error) {
+func (a *AuthClient) RegisterUser(ctx context.Context, req usecase.ReqRegisterUser) (usecase.ResRegisterUser, error) { //nolint:dupl
 	url := a.BaseURL + APIAuthRegister
 
 	fail := func(msg string, err error) (usecase.ResRegisterUser, error) {
