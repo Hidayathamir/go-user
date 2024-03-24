@@ -1,6 +1,6 @@
 package http
 
-import "github.com/Hidayathamir/go-user/internal/usecase"
+import "github.com/Hidayathamir/go-user/pkg/gouser"
 
 // ResUpdatePofile -.
 type ResUpdatePofile struct {
@@ -10,6 +10,6 @@ type ResUpdatePofile struct {
 
 // ResGetProfileByUsername -.
 type ResGetProfileByUsername struct {
-	Data  usecase.ResGetProfileByUsername `json:"data"`
-	Error any                             `json:"error"`
+	Data  gouser.ResGetProfileByUsername `json:"data"`
+	Error any                            `json:"error"`
 }

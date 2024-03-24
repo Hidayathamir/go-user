@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/Hidayathamir/go-user/config"
-	"github.com/Hidayathamir/go-user/internal/usecase"
 	"github.com/Hidayathamir/go-user/internal/usecase/mockusecase"
+	"github.com/Hidayathamir/go-user/pkg/gouser"
 	"github.com/Hidayathamir/go-user/pkg/gousergrpc"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -30,7 +30,7 @@ func TestUnitProfileGetProfileByUsername(t *testing.T) {
 			usecaseProfile: usecaseProfile,
 		}
 
-		user := usecase.ResGetProfileByUsername{
+		user := gouser.ResGetProfileByUsername{
 			ID:        23,
 			Username:  "hidayat",
 			CreatedAt: time.Time{},
@@ -38,7 +38,7 @@ func TestUnitProfileGetProfileByUsername(t *testing.T) {
 		}
 
 		usecaseProfile.EXPECT().
-			GetProfileByUsername(gomock.Any(), usecase.ReqGetProfileByUsername{Username: "hidayat"}).
+			GetProfileByUsername(gomock.Any(), gouser.ReqGetProfileByUsername{Username: "hidayat"}).
 			Return(user, nil)
 
 		req := &gousergrpc.ReqGetProfileByUsername{
@@ -67,10 +67,10 @@ func TestUnitProfileGetProfileByUsername(t *testing.T) {
 			usecaseProfile: usecaseProfile,
 		}
 
-		user := usecase.ResGetProfileByUsername{}
+		user := gouser.ResGetProfileByUsername{}
 
 		usecaseProfile.EXPECT().
-			GetProfileByUsername(gomock.Any(), usecase.ReqGetProfileByUsername{Username: "hidayat"}).
+			GetProfileByUsername(gomock.Any(), gouser.ReqGetProfileByUsername{Username: "hidayat"}).
 			Return(user, assert.AnError)
 
 		req := &gousergrpc.ReqGetProfileByUsername{
@@ -102,7 +102,7 @@ func TestProfileUpdateProfileByUserID(t *testing.T) {
 		}
 
 		usecaseProfile.EXPECT().
-			UpdateProfileByUserID(gomock.Any(), usecase.ReqUpdateProfileByUserID{
+			UpdateProfileByUserID(gomock.Any(), gouser.ReqUpdateProfileByUserID{
 				UserJWT:  "Bearer dummyUserJWT",
 				Password: "newpassword",
 			}).Return(nil)
@@ -131,7 +131,7 @@ func TestProfileUpdateProfileByUserID(t *testing.T) {
 		}
 
 		usecaseProfile.EXPECT().
-			UpdateProfileByUserID(gomock.Any(), usecase.ReqUpdateProfileByUserID{
+			UpdateProfileByUserID(gomock.Any(), gouser.ReqUpdateProfileByUserID{
 				UserJWT:  "Bearer dummyUserJWT",
 				Password: "newpassword",
 			}).Return(assert.AnError)

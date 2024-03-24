@@ -11,7 +11,7 @@ import (
 
 	controllerHTTP "github.com/Hidayathamir/go-user/internal/controller/http"
 	"github.com/Hidayathamir/go-user/internal/pkg/header"
-	"github.com/Hidayathamir/go-user/internal/usecase"
+	"github.com/Hidayathamir/go-user/pkg/gouser"
 	"github.com/sirupsen/logrus"
 )
 
@@ -25,8 +25,8 @@ var (
 
 // IProfileClient -.
 type IProfileClient interface {
-	GetProfileByUsername(ctx context.Context, req usecase.ReqGetProfileByUsername) (usecase.ResGetProfileByUsername, error)
-	UpdateProfileByUserID(ctx context.Context, req usecase.ReqUpdateProfileByUserID) error
+	GetProfileByUsername(ctx context.Context, req gouser.ReqGetProfileByUsername) (gouser.ResGetProfileByUsername, error)
+	UpdateProfileByUserID(ctx context.Context, req gouser.ReqUpdateProfileByUserID) error
 }
 
 // ProfileClient -.
@@ -45,11 +45,11 @@ func NewProfileClient(baseURL string) *ProfileClient {
 }
 
 // GetProfileByUsername implements IProfileClient.
-func (p *ProfileClient) GetProfileByUsername(ctx context.Context, req usecase.ReqGetProfileByUsername) (usecase.ResGetProfileByUsername, error) {
+func (p *ProfileClient) GetProfileByUsername(ctx context.Context, req gouser.ReqGetProfileByUsername) (gouser.ResGetProfileByUsername, error) {
 	url := p.BaseURL + APIProfileGetProfileByUsername(req.Username)
 
-	fail := func(msg string, err error) (usecase.ResGetProfileByUsername, error) {
-		return usecase.ResGetProfileByUsername{}, fmt.Errorf(msg+": %w", err)
+	fail := func(msg string, err error) (gouser.ResGetProfileByUsername, error) {
+		return gouser.ResGetProfileByUsername{}, fmt.Errorf(msg+": %w", err)
 	}
 
 	httpReq, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
@@ -94,7 +94,7 @@ func (p *ProfileClient) GetProfileByUsername(ctx context.Context, req usecase.Re
 }
 
 // UpdateProfileByUserID implements IProfileClient.
-func (p *ProfileClient) UpdateProfileByUserID(ctx context.Context, req usecase.ReqUpdateProfileByUserID) error {
+func (p *ProfileClient) UpdateProfileByUserID(ctx context.Context, req gouser.ReqUpdateProfileByUserID) error {
 	url := p.BaseURL + APIProfileUsers
 
 	reqJSONByte, err := json.Marshal(req)

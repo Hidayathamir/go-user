@@ -6,6 +6,7 @@ import (
 
 	"github.com/Hidayathamir/go-user/config"
 	"github.com/Hidayathamir/go-user/internal/usecase"
+	"github.com/Hidayathamir/go-user/pkg/gouser"
 	"github.com/gin-gonic/gin"
 )
 
@@ -23,7 +24,7 @@ func newAuth(cfg config.Config, usecaseAuth usecase.IAuth) *Auth {
 }
 
 func (a *Auth) loginUser(c *gin.Context) {
-	req := usecase.ReqLoginUser{}
+	req := gouser.ReqLoginUser{}
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		err := fmt.Errorf("gin.Context.ShouldBindJSON: %w", err)
@@ -42,7 +43,7 @@ func (a *Auth) loginUser(c *gin.Context) {
 }
 
 func (a *Auth) registerUser(c *gin.Context) {
-	req := usecase.ReqRegisterUser{}
+	req := gouser.ReqRegisterUser{}
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		err := fmt.Errorf("gin.Context.ShouldBindJSON: %w", err)

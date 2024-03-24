@@ -48,7 +48,7 @@ func TestUnitAuthLoginUser(t *testing.T) {
 				UpdatedAt: time.Time{},
 			}, nil)
 
-		resLoginUser, err := a.LoginUser(context.Background(), ReqLoginUser{
+		resLoginUser, err := a.LoginUser(context.Background(), gouser.ReqLoginUser{
 			Username: "hidayat",
 			Password: "mypassword",
 		})
@@ -89,7 +89,7 @@ func TestUnitAuthLoginUser(t *testing.T) {
 				UpdatedAt: time.Time{},
 			}, nil)
 
-		resLoginUser, err := a.LoginUser(context.Background(), ReqLoginUser{
+		resLoginUser, err := a.LoginUser(context.Background(), gouser.ReqLoginUser{
 			Username: "hidayat",
 			Password: "wrongpassword",
 		})
@@ -121,7 +121,7 @@ func TestUnitAuthLoginUser(t *testing.T) {
 			GetProfileByUsername(gomock.Any(), "hidayat").
 			Return(entity.User{}, assert.AnError)
 
-		resLoginUser, err := a.LoginUser(context.Background(), ReqLoginUser{
+		resLoginUser, err := a.LoginUser(context.Background(), gouser.ReqLoginUser{
 			Username: "hidayat",
 			Password: "mypassword",
 		})
@@ -143,7 +143,7 @@ func TestUnitAuthLoginUser(t *testing.T) {
 		}
 
 		t.Run("username empty should return error", func(t *testing.T) {
-			resLoginUser, err := a.LoginUser(context.Background(), ReqLoginUser{
+			resLoginUser, err := a.LoginUser(context.Background(), gouser.ReqLoginUser{
 				Username: "",
 				Password: "mypassword",
 			})
@@ -153,7 +153,7 @@ func TestUnitAuthLoginUser(t *testing.T) {
 			require.ErrorIs(t, err, gouser.ErrRequestInvalid)
 		})
 		t.Run("password empty should return error", func(t *testing.T) {
-			resLoginUser, err := a.LoginUser(context.Background(), ReqLoginUser{
+			resLoginUser, err := a.LoginUser(context.Background(), gouser.ReqLoginUser{
 				Username: "hidayat",
 				Password: "",
 			})
@@ -185,7 +185,7 @@ func TestUnitAuthRegisterUser(t *testing.T) {
 
 		repoAuth.EXPECT().RegisterUser(gomock.Any(), gomock.Any()).Return(int64(34), nil)
 
-		resRegisterUser, err := a.RegisterUser(context.Background(), ReqRegisterUser{
+		resRegisterUser, err := a.RegisterUser(context.Background(), gouser.ReqRegisterUser{
 			Username: "hidayat",
 			Password: "mypassword",
 		})
@@ -213,7 +213,7 @@ func TestUnitAuthRegisterUser(t *testing.T) {
 			RegisterUser(gomock.Any(), gomock.Any()).
 			Return(int64(0), assert.AnError)
 
-		resRegisterUser, err := a.RegisterUser(context.Background(), ReqRegisterUser{
+		resRegisterUser, err := a.RegisterUser(context.Background(), gouser.ReqRegisterUser{
 			Username: "hidayat",
 			Password: "mypassword",
 		})
@@ -237,7 +237,7 @@ func TestUnitAuthRegisterUser(t *testing.T) {
 			repoProfile: repoProfile,
 		}
 
-		resRegisterUser, err := a.RegisterUser(context.Background(), ReqRegisterUser{
+		resRegisterUser, err := a.RegisterUser(context.Background(), gouser.ReqRegisterUser{
 			Username: "hidayat",
 			Password: uuid.NewString() + uuid.NewString() + uuid.NewString(), // password > 72 bytes will error bcrypt
 		})
@@ -261,7 +261,7 @@ func TestUnitAuthRegisterUser(t *testing.T) {
 		}
 
 		t.Run("empty username should return error", func(t *testing.T) {
-			resRegisterUser, err := a.RegisterUser(context.Background(), ReqRegisterUser{
+			resRegisterUser, err := a.RegisterUser(context.Background(), gouser.ReqRegisterUser{
 				Username: "",
 				Password: "mypassword",
 			})
@@ -271,7 +271,7 @@ func TestUnitAuthRegisterUser(t *testing.T) {
 			require.ErrorIs(t, err, gouser.ErrRequestInvalid)
 		})
 		t.Run("empty password should return error", func(t *testing.T) {
-			resRegisterUser, err := a.RegisterUser(context.Background(), ReqRegisterUser{
+			resRegisterUser, err := a.RegisterUser(context.Background(), gouser.ReqRegisterUser{
 				Username: "hidayat",
 				Password: "",
 			})

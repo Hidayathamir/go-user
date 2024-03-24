@@ -8,8 +8,8 @@ import (
 	"testing"
 
 	"github.com/Hidayathamir/go-user/config"
-	"github.com/Hidayathamir/go-user/internal/usecase"
 	"github.com/Hidayathamir/go-user/internal/usecase/mockusecase"
+	"github.com/Hidayathamir/go-user/pkg/gouser"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -36,7 +36,7 @@ func TestUnitAuthLoginUser(t *testing.T) {
 
 		rr := httptest.NewRecorder()
 		ctx, _ := gin.CreateTestContext(rr)
-		reqBody, err := json.Marshal(usecase.ReqLoginUser{
+		reqBody, err := json.Marshal(gouser.ReqLoginUser{
 			Username: "hidayat",
 			Password: "mypassword",
 		})
@@ -44,10 +44,10 @@ func TestUnitAuthLoginUser(t *testing.T) {
 		req := httptest.NewRequest(http.MethodPost, "/", bytes.NewReader(reqBody))
 		ctx.Request = req
 
-		usecaseAuth.EXPECT().LoginUser(gomock.Any(), usecase.ReqLoginUser{
+		usecaseAuth.EXPECT().LoginUser(gomock.Any(), gouser.ReqLoginUser{
 			Username: "hidayat",
 			Password: "mypassword",
-		}).Return(usecase.ResLoginUser{UserJWT: "Bearer dummyUserJWT"}, nil)
+		}).Return(gouser.ResLoginUser{UserJWT: "Bearer dummyUserJWT"}, nil)
 
 		a.loginUser(ctx)
 
@@ -73,7 +73,7 @@ func TestUnitAuthLoginUser(t *testing.T) {
 
 		rr := httptest.NewRecorder()
 		ctx, _ := gin.CreateTestContext(rr)
-		reqBody, err := json.Marshal(usecase.ReqLoginUser{
+		reqBody, err := json.Marshal(gouser.ReqLoginUser{
 			Username: "hidayat",
 			Password: "mypassword",
 		})
@@ -81,10 +81,10 @@ func TestUnitAuthLoginUser(t *testing.T) {
 		req := httptest.NewRequest(http.MethodPost, "/", bytes.NewReader(reqBody))
 		ctx.Request = req
 
-		usecaseAuth.EXPECT().LoginUser(gomock.Any(), usecase.ReqLoginUser{
+		usecaseAuth.EXPECT().LoginUser(gomock.Any(), gouser.ReqLoginUser{
 			Username: "hidayat",
 			Password: "mypassword",
-		}).Return(usecase.ResLoginUser{}, assert.AnError)
+		}).Return(gouser.ResLoginUser{}, assert.AnError)
 
 		a.loginUser(ctx)
 
@@ -117,7 +117,7 @@ func TestUnitAuthRegisterUser(t *testing.T) {
 
 		rr := httptest.NewRecorder()
 		ctx, _ := gin.CreateTestContext(rr)
-		reqBody, err := json.Marshal(usecase.ReqRegisterUser{
+		reqBody, err := json.Marshal(gouser.ReqRegisterUser{
 			Username: "hidayat",
 			Password: "mypassword",
 		})
@@ -125,10 +125,10 @@ func TestUnitAuthRegisterUser(t *testing.T) {
 		req := httptest.NewRequest(http.MethodPost, "/", bytes.NewReader(reqBody))
 		ctx.Request = req
 
-		usecaseAuth.EXPECT().RegisterUser(gomock.Any(), usecase.ReqRegisterUser{
+		usecaseAuth.EXPECT().RegisterUser(gomock.Any(), gouser.ReqRegisterUser{
 			Username: "hidayat",
 			Password: "mypassword",
-		}).Return(usecase.ResRegisterUser{UserID: 323}, nil)
+		}).Return(gouser.ResRegisterUser{UserID: 323}, nil)
 
 		a.registerUser(ctx)
 
@@ -154,7 +154,7 @@ func TestUnitAuthRegisterUser(t *testing.T) {
 
 		rr := httptest.NewRecorder()
 		ctx, _ := gin.CreateTestContext(rr)
-		reqBody, err := json.Marshal(usecase.ReqLoginUser{
+		reqBody, err := json.Marshal(gouser.ReqLoginUser{
 			Username: "hidayat",
 			Password: "mypassword",
 		})
@@ -162,10 +162,10 @@ func TestUnitAuthRegisterUser(t *testing.T) {
 		req := httptest.NewRequest(http.MethodPost, "/", bytes.NewReader(reqBody))
 		ctx.Request = req
 
-		usecaseAuth.EXPECT().RegisterUser(gomock.Any(), usecase.ReqRegisterUser{
+		usecaseAuth.EXPECT().RegisterUser(gomock.Any(), gouser.ReqRegisterUser{
 			Username: "hidayat",
 			Password: "mypassword",
-		}).Return(usecase.ResRegisterUser{UserID: 0}, assert.AnError)
+		}).Return(gouser.ResRegisterUser{UserID: 0}, assert.AnError)
 
 		a.registerUser(ctx)
 

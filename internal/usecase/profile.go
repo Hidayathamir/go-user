@@ -15,9 +15,9 @@ import (
 // IProfile contains abstraction of usecase profile.
 type IProfile interface {
 	// GetProfileByUsername return user profile by username.
-	GetProfileByUsername(ctx context.Context, req ReqGetProfileByUsername) (ResGetProfileByUsername, error)
+	GetProfileByUsername(ctx context.Context, req gouser.ReqGetProfileByUsername) (gouser.ResGetProfileByUsername, error)
 	// UpdateProfileByUserID update user profile by user id.
-	UpdateProfileByUserID(ctx context.Context, req ReqUpdateProfileByUserID) error
+	UpdateProfileByUserID(ctx context.Context, req gouser.ReqUpdateProfileByUserID) error
 }
 
 // Profile implement IProfile.
@@ -37,26 +37,26 @@ func NewProfile(cfg config.Config, repoProfile repo.IProfile) *Profile {
 }
 
 // GetProfileByUsername return user profile by username.
-func (p *Profile) GetProfileByUsername(ctx context.Context, req ReqGetProfileByUsername) (ResGetProfileByUsername, error) {
+func (p *Profile) GetProfileByUsername(ctx context.Context, req gouser.ReqGetProfileByUsername) (gouser.ResGetProfileByUsername, error) {
 	err := req.Validate()
 	if err != nil {
-		err := fmt.Errorf("ReqGetProfileByUsername.Validate: %w", err)
-		return ResGetProfileByUsername{}, fmt.Errorf("%w: %w", gouser.ErrRequestInvalid, err)
+		err := fmt.Errorf("gouser.ReqGetProfileByUsername.Validate: %w", err)
+		return gouser.ResGetProfileByUsername{}, fmt.Errorf("%w: %w", gouser.ErrRequestInvalid, err)
 	}
 
 	user, err := p.repoProfile.GetProfileByUsername(ctx, req.Username)
 	if err != nil {
-		return ResGetProfileByUsername{}, fmt.Errorf("Profile.repoProfile.GetProfileByUsername: %w", err)
+		return gouser.ResGetProfileByUsername{}, fmt.Errorf("Profile.repoProfile.GetProfileByUsername: %w", err)
 	}
 
-	res := ResGetProfileByUsername{}
+	res := gouser.ResGetProfileByUsername{}
 	res = res.LoadEntityUser(user)
 
 	return res, nil
 }
 
 // UpdateProfileByUserID update user profile by user id.
-func (p *Profile) UpdateProfileByUserID(ctx context.Context, req ReqUpdateProfileByUserID) error {
+func (p *Profile) UpdateProfileByUserID(ctx context.Context, req gouser.ReqUpdateProfileByUserID) error {
 	err := req.Validate()
 	if err != nil {
 		err := fmt.Errorf("ReqUpdateProfileByUserID.Validate: %w", err)

@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	"github.com/Hidayathamir/go-user/config"
-	"github.com/Hidayathamir/go-user/internal/usecase"
 	"github.com/Hidayathamir/go-user/internal/usecase/mockusecase"
+	"github.com/Hidayathamir/go-user/pkg/gouser"
 	"github.com/Hidayathamir/go-user/pkg/gousergrpc"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -29,10 +29,10 @@ func TestUnitAuthLoginUser(t *testing.T) {
 			usecaseAuth: usecaseAuth,
 		}
 
-		usecaseAuth.EXPECT().LoginUser(gomock.Any(), usecase.ReqLoginUser{
+		usecaseAuth.EXPECT().LoginUser(gomock.Any(), gouser.ReqLoginUser{
 			Username: "hidayat",
 			Password: "mypassword",
-		}).Return(usecase.ResLoginUser{UserJWT: "Bearer dummyUserJWT"}, nil)
+		}).Return(gouser.ResLoginUser{UserJWT: "Bearer dummyUserJWT"}, nil)
 
 		req := &gousergrpc.ReqLoginUser{
 			Username: "hidayat",
@@ -58,10 +58,10 @@ func TestUnitAuthLoginUser(t *testing.T) {
 			usecaseAuth: usecaseAuth,
 		}
 
-		usecaseAuth.EXPECT().LoginUser(gomock.Any(), usecase.ReqLoginUser{
+		usecaseAuth.EXPECT().LoginUser(gomock.Any(), gouser.ReqLoginUser{
 			Username: "hidayat",
 			Password: "mypassword",
-		}).Return(usecase.ResLoginUser{}, assert.AnError)
+		}).Return(gouser.ResLoginUser{}, assert.AnError)
 
 		req := &gousergrpc.ReqLoginUser{
 			Username: "hidayat",
@@ -92,10 +92,10 @@ func TestUnitAuthRegisterUser(t *testing.T) {
 			usecaseAuth: usecaseAuth,
 		}
 
-		usecaseAuth.EXPECT().RegisterUser(gomock.Any(), usecase.ReqRegisterUser{
+		usecaseAuth.EXPECT().RegisterUser(gomock.Any(), gouser.ReqRegisterUser{
 			Username: "hidayat",
 			Password: "mypassword",
-		}).Return(usecase.ResRegisterUser{UserID: 323}, nil)
+		}).Return(gouser.ResRegisterUser{UserID: 323}, nil)
 
 		req := &gousergrpc.ReqRegisterUser{
 			Username: "hidayat",
@@ -120,10 +120,10 @@ func TestUnitAuthRegisterUser(t *testing.T) {
 			usecaseAuth: usecaseAuth,
 		}
 
-		usecaseAuth.EXPECT().RegisterUser(gomock.Any(), usecase.ReqRegisterUser{
+		usecaseAuth.EXPECT().RegisterUser(gomock.Any(), gouser.ReqRegisterUser{
 			Username: "hidayat",
 			Password: "mypassword",
-		}).Return(usecase.ResRegisterUser{UserID: 0}, assert.AnError)
+		}).Return(gouser.ResRegisterUser{UserID: 0}, assert.AnError)
 
 		req := &gousergrpc.ReqRegisterUser{
 			Username: "hidayat",

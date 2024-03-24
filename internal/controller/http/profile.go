@@ -7,6 +7,7 @@ import (
 	"github.com/Hidayathamir/go-user/config"
 	"github.com/Hidayathamir/go-user/internal/pkg/header"
 	"github.com/Hidayathamir/go-user/internal/usecase"
+	"github.com/Hidayathamir/go-user/pkg/gouser"
 	"github.com/gin-gonic/gin"
 )
 
@@ -24,7 +25,7 @@ func newProfile(cfg config.Config, usecaseProfile usecase.IProfile) *Profile {
 }
 
 func (p *Profile) getProfileByUsername(c *gin.Context) {
-	req := usecase.ReqGetProfileByUsername{Username: c.Param("username")}
+	req := gouser.ReqGetProfileByUsername{Username: c.Param("username")}
 
 	user, err := p.usecaseProfile.GetProfileByUsername(c, req)
 	if err != nil {
@@ -37,7 +38,7 @@ func (p *Profile) getProfileByUsername(c *gin.Context) {
 }
 
 func (p *Profile) updateProfileByUserID(c *gin.Context) {
-	req := usecase.ReqUpdateProfileByUserID{}
+	req := gouser.ReqUpdateProfileByUserID{}
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		err := fmt.Errorf("gin.Context.ShouldBindJSON: %w", err)

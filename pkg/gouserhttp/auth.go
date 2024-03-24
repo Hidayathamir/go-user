@@ -11,7 +11,7 @@ import (
 
 	controllerHTTP "github.com/Hidayathamir/go-user/internal/controller/http"
 	"github.com/Hidayathamir/go-user/internal/pkg/header"
-	"github.com/Hidayathamir/go-user/internal/usecase"
+	"github.com/Hidayathamir/go-user/pkg/gouser"
 	"github.com/sirupsen/logrus"
 )
 
@@ -23,8 +23,8 @@ var (
 
 // IAuthClient -.
 type IAuthClient interface {
-	LoginUser(ctx context.Context, req usecase.ReqLoginUser) (usecase.ResLoginUser, error)
-	RegisterUser(ctx context.Context, req usecase.ReqRegisterUser) (usecase.ResRegisterUser, error)
+	LoginUser(ctx context.Context, req gouser.ReqLoginUser) (gouser.ResLoginUser, error)
+	RegisterUser(ctx context.Context, req gouser.ReqRegisterUser) (gouser.ResRegisterUser, error)
 }
 
 // AuthClient -.
@@ -43,11 +43,11 @@ func NewAuthClient(baseURL string) *AuthClient {
 }
 
 // LoginUser implements AuthClient.
-func (a *AuthClient) LoginUser(ctx context.Context, req usecase.ReqLoginUser) (usecase.ResLoginUser, error) { //nolint:dupl
+func (a *AuthClient) LoginUser(ctx context.Context, req gouser.ReqLoginUser) (gouser.ResLoginUser, error) { //nolint:dupl
 	url := a.BaseURL + APIAuthLogin
 
-	fail := func(msg string, err error) (usecase.ResLoginUser, error) {
-		return usecase.ResLoginUser{}, fmt.Errorf(msg+": %w", err)
+	fail := func(msg string, err error) (gouser.ResLoginUser, error) {
+		return gouser.ResLoginUser{}, fmt.Errorf(msg+": %w", err)
 	}
 
 	reqJSONByte, err := json.Marshal(req)
@@ -97,11 +97,11 @@ func (a *AuthClient) LoginUser(ctx context.Context, req usecase.ReqLoginUser) (u
 }
 
 // RegisterUser implements AuthClient.
-func (a *AuthClient) RegisterUser(ctx context.Context, req usecase.ReqRegisterUser) (usecase.ResRegisterUser, error) { //nolint:dupl
+func (a *AuthClient) RegisterUser(ctx context.Context, req gouser.ReqRegisterUser) (gouser.ResRegisterUser, error) { //nolint:dupl
 	url := a.BaseURL + APIAuthRegister
 
-	fail := func(msg string, err error) (usecase.ResRegisterUser, error) {
-		return usecase.ResRegisterUser{}, fmt.Errorf(msg+": %w", err)
+	fail := func(msg string, err error) (gouser.ResRegisterUser, error) {
+		return gouser.ResRegisterUser{}, fmt.Errorf(msg+": %w", err)
 	}
 
 	reqJSONByte, err := json.Marshal(req)

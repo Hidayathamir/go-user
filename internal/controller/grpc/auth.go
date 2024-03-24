@@ -6,6 +6,7 @@ import (
 
 	"github.com/Hidayathamir/go-user/config"
 	"github.com/Hidayathamir/go-user/internal/usecase"
+	"github.com/Hidayathamir/go-user/pkg/gouser"
 	"github.com/Hidayathamir/go-user/pkg/gousergrpc"
 )
 
@@ -28,7 +29,7 @@ func newAuth(cfg config.Config, usecaseAuth usecase.IAuth) *Auth {
 
 // LoginUser implements gousergrpc.AuthServer.
 func (a *Auth) LoginUser(c context.Context, r *gousergrpc.ReqLoginUser) (*gousergrpc.ResLoginUser, error) {
-	req := usecase.ReqLoginUser{
+	req := gouser.ReqLoginUser{
 		Username: r.GetUsername(),
 		Password: r.GetPassword(),
 	}
@@ -48,7 +49,7 @@ func (a *Auth) LoginUser(c context.Context, r *gousergrpc.ReqLoginUser) (*gouser
 
 // RegisterUser implements gousergrpc.AuthServer.
 func (a *Auth) RegisterUser(c context.Context, r *gousergrpc.ReqRegisterUser) (*gousergrpc.ResRegisterUser, error) {
-	req := usecase.ReqRegisterUser{
+	req := gouser.ReqRegisterUser{
 		Username: r.GetUsername(),
 		Password: r.GetPassword(),
 	}

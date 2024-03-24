@@ -15,9 +15,9 @@ import (
 // IAuth contains abstraction of usecase authentication.
 type IAuth interface {
 	// RegisterUser register new user.
-	RegisterUser(ctx context.Context, req ReqRegisterUser) (ResRegisterUser, error)
+	RegisterUser(ctx context.Context, req gouser.ReqRegisterUser) (gouser.ResRegisterUser, error)
 	// LoginUser validate username and password.
-	LoginUser(ctx context.Context, req ReqLoginUser) (ResLoginUser, error)
+	LoginUser(ctx context.Context, req gouser.ReqLoginUser) (gouser.ResLoginUser, error)
 }
 
 // Auth implement IAuth.
@@ -39,27 +39,27 @@ func NewAuth(cfg config.Config, repoAuth repo.IAuth, repoProfile repo.IProfile) 
 }
 
 // LoginUser validate username and password.
-func (a *Auth) LoginUser(ctx context.Context, req ReqLoginUser) (ResLoginUser, error) {
+func (a *Auth) LoginUser(ctx context.Context, req gouser.ReqLoginUser) (gouser.ResLoginUser, error) {
 	err := req.Validate()
 	if err != nil {
 		err := fmt.Errorf("ReqLoginUser.Validate: %w", err)
-		return ResLoginUser{}, fmt.Errorf("%w: %w", gouser.ErrRequestInvalid, err)
+		return gouser.ResLoginUser{}, fmt.Errorf("%w: %w", gouser.ErrRequestInvalid, err)
 	}
 
 	user, err := a.repoProfile.GetProfileByUsername(ctx, req.Username)
 	if err != nil {
-		return ResLoginUser{}, fmt.Errorf("Auth.repoProfile.GetProfileByUsername: %w", err)
+		return gouser.ResLoginUser{}, fmt.Errorf("Auth.repoProfile.GetProfileByUsername: %w", err)
 	}
 
 	err = auth.CompareHashAndPassword(user.Password, req.Password)
 	if err != nil {
 		err := fmt.Errorf("auth.CompareHashAndPassword: %w", err)
-		return ResLoginUser{}, fmt.Errorf("%w: %w", gouser.ErrWrongPassword, err)
+		return gouser.ResLoginUser{}, fmt.Errorf("%w: %w", gouser.ErrWrongPassword, err)
 	}
 
 	userJWT := auth.GenerateUserJWTToken(user.ID, a.cfg)
 
-	res := ResLoginUser{
+	res := gouser.ResLoginUser{
 		UserJWT: userJWT,
 	}
 
@@ -67,25 +67,25 @@ func (a *Auth) LoginUser(ctx context.Context, req ReqLoginUser) (ResLoginUser, e
 }
 
 // RegisterUser register new user.
-func (a *Auth) RegisterUser(ctx context.Context, req ReqRegisterUser) (ResRegisterUser, error) {
+func (a *Auth) RegisterUser(ctx context.Context, req gouser.ReqRegisterUser) (gouser.ResRegisterUser, error) {
 	err := req.Validate()
 	if err != nil {
 		err := fmt.Errorf("ReqRegisterUser.Validate: %w", err)
-		return ResRegisterUser{}, fmt.Errorf("%w: %w", gouser.ErrRequestInvalid, err)
+		return gouser.ResRegisterUser{}, fmt.Errorf("%w: %w", gouser.ErrRequestInvalid, err)
 	}
 
 	user := req.ToEntityUser()
 	user.Password, err = auth.GenerateHashPassword(user.Password)
 	if err != nil {
-		return ResRegisterUser{}, fmt.Errorf("auth.GenerateHashPassword: %w", err)
+		return gouser.ResRegisterUser{}, fmt.Errorf("auth.GenerateHashPassword: %w", err)
 	}
 
 	userID, err := a.repoAuth.RegisterUser(ctx, user)
 	if err != nil {
-		return ResRegisterUser{}, fmt.Errorf("Auth.repoAuth.RegisterUser: %w", err)
+		return gouser.ResRegisterUser{}, fmt.Errorf("Auth.repoAuth.RegisterUser: %w", err)
 	}
 
-	res := ResRegisterUser{
+	res := gouser.ResRegisterUser{
 		UserID: userID,
 	}
 

@@ -8,7 +8,7 @@ import (
 
 	"github.com/Hidayathamir/go-user/internal/controller/http"
 	"github.com/Hidayathamir/go-user/internal/repo/db"
-	"github.com/Hidayathamir/go-user/internal/usecase"
+	"github.com/Hidayathamir/go-user/pkg/gouser"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
@@ -42,14 +42,14 @@ func TestHTTPClientLoginUser(t *testing.T) {
 	username := uuid.NewString()
 	password := uuid.NewString()
 
-	reqRegister := usecase.ReqRegisterUser{
+	reqRegister := gouser.ReqRegisterUser{
 		Username: username,
 		Password: password,
 	}
 	_, err = gouserAuthClient.RegisterUser(context.Background(), reqRegister)
 	require.NoError(t, err)
 
-	reqLogin := usecase.ReqLoginUser{
+	reqLogin := gouser.ReqLoginUser{
 		Username: username,
 		Password: password,
 	}
@@ -78,7 +78,7 @@ func TestHTTPClientRegisterUser(t *testing.T) {
 	baseURL := "http://" + cfg.HTTP.Host + ":" + strconv.Itoa(cfg.HTTP.Port)
 	gouserAuthClient := NewAuthClient(baseURL)
 
-	req := usecase.ReqRegisterUser{
+	req := gouser.ReqRegisterUser{
 		Username: uuid.NewString(),
 		Password: uuid.NewString(),
 	}

@@ -8,7 +8,7 @@ import (
 
 	"github.com/Hidayathamir/go-user/internal/controller/http"
 	"github.com/Hidayathamir/go-user/internal/repo/db"
-	"github.com/Hidayathamir/go-user/internal/usecase"
+	"github.com/Hidayathamir/go-user/pkg/gouser"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
@@ -42,14 +42,14 @@ func TestHTTPClientUpdateProfile(t *testing.T) {
 	username := uuid.NewString()
 	password := uuid.NewString()
 
-	reqRegister := usecase.ReqRegisterUser{
+	reqRegister := gouser.ReqRegisterUser{
 		Username: username,
 		Password: password,
 	}
 	_, err = gouserAuthClient.RegisterUser(context.Background(), reqRegister)
 	require.NoError(t, err)
 
-	reqLogin := usecase.ReqLoginUser{
+	reqLogin := gouser.ReqLoginUser{
 		Username: username,
 		Password: password,
 	}
@@ -58,7 +58,7 @@ func TestHTTPClientUpdateProfile(t *testing.T) {
 
 	gouserProfileClient := NewProfileClient(baseURL)
 
-	reqUpdateProfile := usecase.ReqUpdateProfileByUserID{
+	reqUpdateProfile := gouser.ReqUpdateProfileByUserID{
 		UserJWT:  resLogin.UserJWT,
 		Password: password,
 	}
@@ -89,7 +89,7 @@ func TestHTTPClientGetProfile(t *testing.T) {
 	username := uuid.NewString()
 	password := uuid.NewString()
 
-	reqRegister := usecase.ReqRegisterUser{
+	reqRegister := gouser.ReqRegisterUser{
 		Username: username,
 		Password: password,
 	}
@@ -98,7 +98,7 @@ func TestHTTPClientGetProfile(t *testing.T) {
 
 	gouserProfileClient := NewProfileClient(baseURL)
 
-	reqGetProfile := usecase.ReqGetProfileByUsername{
+	reqGetProfile := gouser.ReqGetProfileByUsername{
 		Username: username,
 	}
 	resGetProfile, err := gouserProfileClient.GetProfileByUsername(context.Background(), reqGetProfile)
