@@ -10,6 +10,7 @@ import (
 	"net/http"
 
 	controllerHTTP "github.com/Hidayathamir/go-user/internal/controller/http"
+	"github.com/Hidayathamir/go-user/internal/usecase"
 	"github.com/Hidayathamir/go-user/pkg/header"
 	"github.com/sirupsen/logrus"
 )
@@ -21,8 +22,8 @@ const (
 
 // IAuthClient -.
 type IAuthClient interface {
-	LoginUser(ctx context.Context, req ReqLoginUser) (ResLoginUser, error)
-	RegisterUser(ctx context.Context, req ReqRegisterUser) (ResRegisterUser, error)
+	LoginUser(ctx context.Context, req usecase.ReqLoginUser) (usecase.ResLoginUser, error)
+	RegisterUser(ctx context.Context, req usecase.ReqRegisterUser) (usecase.ResRegisterUser, error)
 }
 
 // AuthClient -.
@@ -41,16 +42,16 @@ func NewAuthClient(baseURL string) *AuthClient {
 }
 
 // LoginUser implements AuthClient.
-func (a *AuthClient) LoginUser(context.Context, ReqLoginUser) (ResLoginUser, error) {
+func (a *AuthClient) LoginUser(context.Context, usecase.ReqLoginUser) (usecase.ResLoginUser, error) {
 	panic("unimplemented") // TODO: IMPLEMENT
 }
 
 // RegisterUser implements AuthClient.
-func (a *AuthClient) RegisterUser(ctx context.Context, req ReqRegisterUser) (ResRegisterUser, error) {
+func (a *AuthClient) RegisterUser(ctx context.Context, req usecase.ReqRegisterUser) (usecase.ResRegisterUser, error) {
 	url := a.BaseURL + APIAuthRegister
 
-	fail := func(msg string, err error) (ResRegisterUser, error) {
-		return ResRegisterUser{}, fmt.Errorf(msg+": %w", err)
+	fail := func(msg string, err error) (usecase.ResRegisterUser, error) {
+		return usecase.ResRegisterUser{}, fmt.Errorf(msg+": %w", err)
 	}
 
 	reqJSONByte, err := json.Marshal(req)
@@ -86,19 +87,15 @@ func (a *AuthClient) RegisterUser(ctx context.Context, req ReqRegisterUser) (Res
 		if err != nil {
 			return fail("json.Unmarshal", err)
 		}
-		return ResRegisterUser{}, errors.New(resErr.Error)
+		return fail("http.Response.StatusCode != http.StatusOk", errors.New(resErr.Error))
 	}
 
-	resBody := controllerHTTP.ResRegisterUser{}
+	res := controllerHTTP.ResRegisterUser{}
 
-	err = json.Unmarshal(httpResBody, &resBody)
+	err = json.Unmarshal(httpResBody, &res)
 	if err != nil {
 		return fail("json.Unmarshal", err)
 	}
 
-	res := ResRegisterUser{
-		UserID: resBody.Data.UserID,
-	}
-
-	return res, nil
+	return res.Data, nil
 }
