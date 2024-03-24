@@ -10,7 +10,7 @@ import (
 	"net/http"
 
 	controllerHTTP "github.com/Hidayathamir/go-user/internal/controller/http"
-	"github.com/Hidayathamir/go-user/pkg/h"
+	"github.com/Hidayathamir/go-user/pkg/header"
 	"github.com/sirupsen/logrus"
 )
 
@@ -62,7 +62,7 @@ func (a *AuthClient) RegisterUser(ctx context.Context, req ReqRegisterUser) (Res
 	if err != nil {
 		return fail("http.NewRequestWithContext", err)
 	}
-	httpReq.Header.Add(h.ContentType, h.AppJSON)
+	httpReq.Header.Add(header.ContentType, header.AppJSON)
 
 	httpRes, err := http.DefaultClient.Do(httpReq)
 	if err != nil {
