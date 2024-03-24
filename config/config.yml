@@ -5,11 +5,11 @@ app:
 
 http:
   host: "localhost"
-  port: 8080
+  port: 10000
 
 grpc:
   host: "localhost"
-  port: 9080
+  port: 11000
 
 logger:
   log_level: "debug" # 'panic', 'fatal', 'error', 'warn', 'warning', 'info', 'debug', 'trace'
@@ -19,7 +19,7 @@ postgres:
   username: "user"
   password: "password"
   host: "localhost"
-  port: 5432
+  port: 5000
   db_name: "playground"
 
 jwt:

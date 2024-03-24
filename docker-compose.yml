@@ -15,11 +15,13 @@ services:
       HTTP_HOST: 0.0.0.0
       GRPC_HOST: 0.0.0.0
       POSTGRES_HOST: go-user-db-postgres-container
+      POSTGRES_PORT: 5432
     image: go-user-app
     networks:
       - go-user
     ports:
-      - "8080:8080"
+      - "10000:10000"
+      - "11000:11000"
   go-user-db-postgres:
     container_name: go-user-db-postgres-container
     environment:
@@ -30,4 +32,4 @@ services:
     networks:
       - go-user
     ports:
-      - "5432:5432"
+      - "5000:5432"
