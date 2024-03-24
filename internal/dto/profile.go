@@ -7,6 +7,19 @@ import (
 	"github.com/Hidayathamir/go-user/internal/entity"
 )
 
+// ReqGetProfileByUsername -.
+type ReqGetProfileByUsername struct {
+	Username string `json:"username"`
+}
+
+// Validate validate ReqGetProfileByUsername.
+func (r ReqGetProfileByUsername) Validate() error {
+	if r.Username == "" {
+		return errors.New("username can not be empty")
+	}
+	return nil
+}
+
 // ResGetProfileByUsername -.
 type ResGetProfileByUsername struct {
 	ID        int64     `json:"id"`

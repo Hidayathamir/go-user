@@ -25,7 +25,8 @@ func newProfile(cfg config.Config, usecaseProfile usecase.IProfile) *Profile {
 }
 
 func (p *Profile) getProfileByUsername(c *gin.Context) {
-	user, err := p.usecaseProfile.GetProfileByUsername(c, c.Param("username"))
+	req := dto.ReqGetProfileByUsername{Username: c.Param("username")}
+	user, err := p.usecaseProfile.GetProfileByUsername(c, req)
 	if err != nil {
 		err := fmt.Errorf("Profile.usecaseProfile.GetProfileByUsername: %w", err)
 		c.JSON(http.StatusBadRequest, ResError{Error: err.Error()})

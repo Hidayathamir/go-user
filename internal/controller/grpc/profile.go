@@ -30,7 +30,9 @@ func newProfile(cfg config.Config, usecaseProfile usecase.IProfile) *Profile {
 
 // GetProfileByUsername implements gousergrpc.ProfileServer.
 func (p *Profile) GetProfileByUsername(c context.Context, r *gousergrpc.ReqGetProfileByUsername) (*gousergrpc.ResGetProfileByUsername, error) {
-	user, err := p.usecaseProfile.GetProfileByUsername(c, r.GetUsername())
+	req := dto.ReqGetProfileByUsername{Username: r.GetUsername()}
+
+	user, err := p.usecaseProfile.GetProfileByUsername(c, req)
 	if err != nil {
 		err := fmt.Errorf("Profile.usecaseProfile.GetProfileByUsername: %w", err)
 		return nil, err

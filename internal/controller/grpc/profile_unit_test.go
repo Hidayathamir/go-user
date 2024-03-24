@@ -41,7 +41,7 @@ func TestUnitProfileGetProfileByUsername(t *testing.T) {
 		}
 
 		usecaseProfile.EXPECT().
-			GetProfileByUsername(gomock.Any(), "hidayat").
+			GetProfileByUsername(gomock.Any(), dto.ReqGetProfileByUsername{Username: "hidayat"}).
 			Return(user, nil)
 
 		req := &gousergrpc.ReqGetProfileByUsername{
@@ -73,7 +73,7 @@ func TestUnitProfileGetProfileByUsername(t *testing.T) {
 		user := dto.ResGetProfileByUsername{}
 
 		usecaseProfile.EXPECT().
-			GetProfileByUsername(gomock.Any(), "hidayat").
+			GetProfileByUsername(gomock.Any(), dto.ReqGetProfileByUsername{Username: "hidayat"}).
 			Return(user, assert.AnError)
 
 		req := &gousergrpc.ReqGetProfileByUsername{

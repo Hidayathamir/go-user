@@ -43,7 +43,7 @@ func TestUnitProfileGetProfileByUsername(t *testing.T) {
 				UpdatedAt: time.Time{},
 			}, nil)
 
-		profile, err := p.GetProfileByUsername(context.Background(), "hidayat")
+		profile, err := p.GetProfileByUsername(context.Background(), dto.ReqGetProfileByUsername{Username: "hidayat"})
 
 		assert.NotEmpty(t, profile)
 		assert.Equal(t, dto.ResGetProfileByUsername{
@@ -71,7 +71,7 @@ func TestUnitProfileGetProfileByUsername(t *testing.T) {
 			GetProfileByUsername(gomock.Any(), "hidayat").
 			Return(entity.User{}, assert.AnError)
 
-		profile, err := p.GetProfileByUsername(context.Background(), "hidayat")
+		profile, err := p.GetProfileByUsername(context.Background(), dto.ReqGetProfileByUsername{Username: "hidayat"})
 
 		assert.Empty(t, profile)
 		require.Error(t, err)
@@ -90,7 +90,7 @@ func TestUnitProfileGetProfileByUsername(t *testing.T) {
 			repoProfile: repoProfile,
 		}
 
-		profile, err := p.GetProfileByUsername(context.Background(), "")
+		profile, err := p.GetProfileByUsername(context.Background(), dto.ReqGetProfileByUsername{Username: ""})
 
 		assert.Empty(t, profile)
 		require.Error(t, err)

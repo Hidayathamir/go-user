@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/Hidayathamir/go-user/config"
@@ -17,7 +16,7 @@ import (
 // IProfile contains abstraction of usecase profile.
 type IProfile interface {
 	// GetProfileByUsername return user profile by username.
-	GetProfileByUsername(ctx context.Context, username string) (dto.ResGetProfileByUsername, error)
+	GetProfileByUsername(ctx context.Context, req dto.ReqGetProfileByUsername) (dto.ResGetProfileByUsername, error)
 	// UpdateProfileByUserID update user profile by user id.
 	UpdateProfileByUserID(ctx context.Context, req dto.ReqUpdateProfileByUserID) error
 }
@@ -39,13 +38,14 @@ func NewProfile(cfg config.Config, repoProfile repo.IProfile) *Profile {
 }
 
 // GetProfileByUsername return user profile by username.
-func (p *Profile) GetProfileByUsername(ctx context.Context, username string) (dto.ResGetProfileByUsername, error) {
-	if username == "" {
-		err := errors.New("username can not be empty")
+func (p *Profile) GetProfileByUsername(ctx context.Context, req dto.ReqGetProfileByUsername) (dto.ResGetProfileByUsername, error) {
+	err := req.Validate()
+	if err != nil {
+		err := fmt.Errorf("dto.ReqGetProfileByUsername.Validate: %w", err)
 		return dto.ResGetProfileByUsername{}, fmt.Errorf("%w: %w", gouser.ErrRequestInvalid, err)
 	}
 
-	user, err := p.repoProfile.GetProfileByUsername(ctx, username)
+	user, err := p.repoProfile.GetProfileByUsername(ctx, req.Username)
 	if err != nil {
 		return dto.ResGetProfileByUsername{}, fmt.Errorf("Profile.repoProfile.GetProfileByUsername: %w", err)
 	}

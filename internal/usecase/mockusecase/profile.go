@@ -41,18 +41,18 @@ func (m *MockIProfile) EXPECT() *MockIProfileMockRecorder {
 }
 
 // GetProfileByUsername mocks base method.
-func (m *MockIProfile) GetProfileByUsername(ctx context.Context, username string) (dto.ResGetProfileByUsername, error) {
+func (m *MockIProfile) GetProfileByUsername(ctx context.Context, req dto.ReqGetProfileByUsername) (dto.ResGetProfileByUsername, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetProfileByUsername", ctx, username)
+	ret := m.ctrl.Call(m, "GetProfileByUsername", ctx, req)
 	ret0, _ := ret[0].(dto.ResGetProfileByUsername)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetProfileByUsername indicates an expected call of GetProfileByUsername.
-func (mr *MockIProfileMockRecorder) GetProfileByUsername(ctx, username any) *gomock.Call {
+func (mr *MockIProfileMockRecorder) GetProfileByUsername(ctx, req any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetProfileByUsername", reflect.TypeOf((*MockIProfile)(nil).GetProfileByUsername), ctx, username)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetProfileByUsername", reflect.TypeOf((*MockIProfile)(nil).GetProfileByUsername), ctx, req)
 }
 
 // UpdateProfileByUserID mocks base method.
