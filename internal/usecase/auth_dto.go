@@ -3,7 +3,7 @@ package usecase
 import (
 	"errors"
 
-	"github.com/Hidayathamir/go-user/internal/entity"
+	"github.com/Hidayathamir/go-user/internal/repo/db/entity"
 )
 
 // ReqLoginUser -.

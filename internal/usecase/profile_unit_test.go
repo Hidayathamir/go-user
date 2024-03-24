@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/Hidayathamir/go-user/config"
-	"github.com/Hidayathamir/go-user/internal/entity"
 	"github.com/Hidayathamir/go-user/internal/pkg/auth"
+	"github.com/Hidayathamir/go-user/internal/repo/db/entity"
 	"github.com/Hidayathamir/go-user/internal/repo/mockrepo"
 	"github.com/Hidayathamir/go-user/pkg/gouser"
 	"github.com/google/uuid"

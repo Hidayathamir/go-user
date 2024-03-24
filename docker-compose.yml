@@ -13,7 +13,9 @@ services:
     depends_on:
       - go-user-db-postgres
     environment:
+      APP_ENVIRONMENT: prod
       HTTP_HOST: 0.0.0.0
+      GRPC_HOST: 0.0.0.0
       POSTGRES_HOST: go-user-db-postgres-container
     image: go-user-app
     networks:

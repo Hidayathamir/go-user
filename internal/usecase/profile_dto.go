@@ -4,7 +4,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/Hidayathamir/go-user/internal/entity"
+	"github.com/Hidayathamir/go-user/internal/repo/db/entity"
 )
 
 // ReqGetProfileByUsername -.

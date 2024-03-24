@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/Hidayathamir/go-user/config"
-	"github.com/Hidayathamir/go-user/internal/entity"
 	"github.com/Hidayathamir/go-user/internal/pkg/auth"
+	"github.com/Hidayathamir/go-user/internal/repo/db/entity"
 	"github.com/Hidayathamir/go-user/internal/repo/mockrepo"
 	"github.com/Hidayathamir/go-user/pkg/gouser"
 	"github.com/google/uuid"
@@ -272,8 +272,8 @@ func TestUnitAuthRegisterUser(t *testing.T) {
 		})
 		t.Run("empty password should return error", func(t *testing.T) {
 			resRegisterUser, err := a.RegisterUser(context.Background(), ReqRegisterUser{
-				Username: "",
-				Password: "mypassword",
+				Username: "hidayat",
+				Password: "",
 			})
 
 			assert.Empty(t, resRegisterUser)

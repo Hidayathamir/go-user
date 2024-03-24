@@ -2,7 +2,7 @@ package http
 
 import (
 	"github.com/Hidayathamir/go-user/config"
-	"github.com/Hidayathamir/go-user/internal/db"
+	"github.com/Hidayathamir/go-user/internal/repo/db"
 	"github.com/gin-gonic/gin"
 )
 
