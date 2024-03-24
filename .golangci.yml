@@ -136,15 +136,16 @@ linters-settings:
       controller_layer_only:
         list-mode: lax
         files:
-          - "**/internal/usecase/**"
+          - "!**/internal/controller/http/**"
+          - "!**/config/gin.go"
         deny:
           - pkg: github.com/gin-gonic/gin
-            desc: "usecase and repo layer should not know implementation in controller layer"
+            desc: "gin should only be used in controller http layer"
       repo_layer_only:
         list-mode: lax
         files:
-          - "**/internal/controller/**"
-          - "**/internal/usecase/**/"
+          - "!**/internal/repo/**"
+          - "!**/internal/db/**"
         deny:
           - pkg: github.com/jackc/pgx
-            desc: "controller and usecase layer should not know implementation in repo layer"
+            desc: "pgx should only be used in repo layer"

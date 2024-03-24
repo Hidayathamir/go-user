@@ -8,7 +8,6 @@ import (
 	"github.com/Hidayathamir/go-user/internal/usecase"
 	"github.com/Hidayathamir/go-user/internal/usecase/mockusecase"
 	"github.com/Hidayathamir/go-user/pkg/gousergrpc"
-	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
@@ -16,8 +15,6 @@ import (
 
 func TestUnitAuthLoginUser(t *testing.T) {
 	t.Parallel()
-
-	gin.SetMode(gin.TestMode)
 
 	t.Run("call usecase LoginUser success should return success", func(t *testing.T) {
 		t.Parallel()
@@ -81,8 +78,6 @@ func TestUnitAuthLoginUser(t *testing.T) {
 
 func TestUnitAuthRegisterUser(t *testing.T) {
 	t.Parallel()
-
-	gin.SetMode(gin.TestMode)
 
 	t.Run("call usecase RegisterUser success should return success", func(t *testing.T) {
 		t.Parallel()
