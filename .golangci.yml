@@ -148,7 +148,6 @@ linters-settings:
         list-mode: lax
         files:
           - "!**/internal/repo/**"
-          - "!**/internal/db/**"
         deny:
           - pkg: github.com/jackc/pgx
             desc: "pgx should only be used in repo layer"
