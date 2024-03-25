@@ -7,15 +7,15 @@ import "github.com/sirupsen/logrus"
 var User *user
 
 type user struct {
-	tableName string
+	tableName  string
+	Dot        *user
+	Constraint userConstraint
 
 	ID        string
 	Username  string
 	Password  string
 	CreatedAt string
 	UpdatedAt string
-
-	Constraint userConstraint
 }
 
 type userConstraint struct {
@@ -33,20 +33,31 @@ func initTableUser() {
 		return
 	}
 
-	// We need to use \"user\" because user is a reserved keyword.
-	//
-	// Error:   select user.id from user
-	// Success: select "user".id from "user"
 	User = &user{
 		tableName: "\"user\"",
+		Dot:       &user{},
+		Constraint: userConstraint{
+			UserPk: "user_pk",
+			UserUn: "user_un",
+		},
 		ID:        "id",
 		Username:  "username",
 		Password:  "password",
 		CreatedAt: "created_at",
 		UpdatedAt: "updated_at",
+	}
+
+	User.Dot = &user{
+		tableName: User.tableName,
+		Dot:       &user{},
 		Constraint: userConstraint{
-			UserPk: "user_pk",
-			UserUn: "user_un",
+			UserPk: User.Constraint.UserPk,
+			UserUn: User.Constraint.UserUn,
 		},
+		ID:        User.tableName + "." + User.ID,
+		Username:  User.tableName + "." + User.Username,
+		Password:  User.tableName + "." + User.Password,
+		CreatedAt: User.tableName + "." + User.CreatedAt,
+		UpdatedAt: User.tableName + "." + User.UpdatedAt,
 	}
 }

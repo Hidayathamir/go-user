@@ -62,7 +62,7 @@ func (p *Profile) GetProfileByUsername(ctx context.Context, username string) (en
 		&user.CreatedAt, &user.UpdatedAt,
 	)
 	if err != nil {
-		err := fmt.Errorf("pgx.Rows.Scan: %w", err)
+		err := fmt.Errorf("Profile.db.Pool.QueryRow: %w", err)
 		if errors.Is(err, pgx.ErrNoRows) {
 			err = fmt.Errorf("%w: %w", gouser.ErrUnknownUsername, err)
 		}
